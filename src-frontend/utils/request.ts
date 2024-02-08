@@ -24,7 +24,7 @@ export const httpReq = async ({
   errorShouldNotifyUI = true,
   onCatchErrorMsg = "",
   errorDuration = 10000,
-}: RequestProps) => {
+}: RequestProps): Promise<ApiResponse> => {
   try {
     if (
       payload &&
@@ -68,6 +68,6 @@ export const httpReq = async ({
         isClosable: true,
       });
     }
-    return error;
+    return error as any;
   }
 };
