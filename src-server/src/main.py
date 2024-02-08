@@ -1,8 +1,27 @@
+from contextlib import asynccontextmanager
+import os
 import uvicorn
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from decorators import LogException
+from orm import create_tables
+from route_project import router as project_router
 
-app = FastAPI()
+from log import get_logger
+
+
+@asynccontextmanager
+async def lifespan(
+    app: FastAPI,
+):
+    """The code before the yield statement will be executed on boot. The code after the yield statement will be executed as a cleanup on application close."""
+
+    with LogException("Succesfully initiated tables"):
+        create_tables()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -11,6 +30,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+class Routers:
+    PROJECT = "/project"
+    STREAMS = "/streams"
+
+
+app.include_router(project_router, prefix=Routers.PROJECT)
+
+
+@app.post("/shutdown")
+def shutdown_server():
+    logger = get_logger()
+    logger.info("Application is shutting down")
+    os._exit(0)
 
 
 @app.get("/")
