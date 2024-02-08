@@ -1,0 +1,35 @@
+{
+  "name": "visual-detect",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "dev": "vite & npm run sass",
+    "sass": "sass --watch src-frontend/styles/sass/styles.scss:src-frontend/styles/css/styles.css"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@tauri-apps/api": "^1.5.2",
+    "autoprefixer": "^10.4.17",
+    "framer-motion": "^11.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.0",
+    "sass": "^1.70.0",
+    "tailwind-merge": "^2.2.1",
+    "tailwindcss": "^3.4.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^1.5.8",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.0.2",
+    "vite": "^5.0.0"
+  }
+}

@@ -1,0 +1,79 @@
+@import "colors";
+
+.data-sets-container {
+  margin-top: 32px;
+}
+
+.basic-table {
+  border: 1px solid $bg-primary-shade-two;
+  background-color: $bg-primary-shade-one;
+
+  th,
+  td {
+    border-bottom: 1px solid $bg-primary-shade-two;
+    color: $content-primary;
+  }
+
+  th {
+    &:hover {
+      background-color: $bg-primary-shade-three;
+    }
+  }
+
+  tr {
+    &:hover {
+      background-color: $bg-primary-shade-three;
+
+      td {
+        background-color: $bg-primary-shade-three;
+      }
+    }
+  }
+}
+
+.column-modal {
+  &__toolbar {
+    display: flex;
+    gap: 16px;
+  }
+}
+
+.tooltip-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.combine-datasets {
+  display: flex;
+  gap: 32px;
+
+  white-space: normal;
+  overflow-wrap: break-word;
+  &__base {
+    width: 50%;
+    height: max-content;
+    background-color: $bg-primary-shade-two;
+    padding: 16px;
+    border-radius: 3px;
+  }
+
+  &__all-columns {
+    width: 50%;
+    height: max-content;
+    background-color: $bg-primary-shade-two;
+    padding: 16px;
+    border-radius: 3px;
+  }
+}
+
+.dataset-item {
+  &__header {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 7px;
+  }
+}
