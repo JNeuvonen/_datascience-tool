@@ -8,6 +8,12 @@ import { usePathParams } from "../../hooks/usePathParams";
 import { createProject } from "../../client/requests";
 import { useNavigate } from "react-router-dom";
 import { ROUTES, ROUTE_KEYS } from "../../utils/constants";
+import useQueryParams from "../../hooks/useQueryParams";
+
+interface PageQueryParams {
+  defaultTab: string | undefined;
+  openFileSelection: string | undefined;
+}
 
 const TAB_LABELS = ["Info", "Datasets"];
 const TABS = [<ProjectInfoPage key={0} />, <ProjectDatasetsPage key={1} />];
@@ -16,10 +22,11 @@ export const ProjectIndexPage = () => {
   //UTIL
   const navigate = useNavigate();
   const { project } = usePathParams<{ project: string }>();
+  const { defaultTab } = useQueryParams<PageQueryParams>();
   const toast = useToast();
 
   //STATE
-  const [isUnnamed, setIsUnnamed] = useState(project === "unnamed");
+  const [isUnnamed] = useState(project === "unnamed");
   const [projectNameInput, setProjectNameInput] = useState(project);
 
   const updateProjectName = async () => {
@@ -51,6 +58,7 @@ export const ProjectIndexPage = () => {
         labels={TAB_LABELS}
         tabs={TABS}
         style={{ marginTop: "8px" }}
+        defaultTab={defaultTab ? Number(defaultTab) : 0}
       />
     </Box>
   );
