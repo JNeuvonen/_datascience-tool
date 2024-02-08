@@ -21,3 +21,11 @@ class ProjectQuery:
                 session.add(project)
                 session.commit()
                 return project.id
+
+    @staticmethod
+    def retrieve_project(value, field="id"):
+        with LogException():
+            with Session() as session:
+                query = session.query(Project)
+                train_job_data = query.filter(getattr(Project, field) == value).first()
+                return train_job_data
