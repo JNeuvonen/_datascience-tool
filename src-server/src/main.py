@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from decorators import LogException
 from orm import create_tables
 from route_project import router as project_router
+from route_websocket import router as websocket_router
 
 from log import get_logger
 
@@ -38,6 +39,7 @@ class Routers:
 
 
 app.include_router(project_router, prefix=Routers.PROJECT)
+app.include_router(websocket_router, prefix=Routers.STREAMS)
 
 
 @app.post("/shutdown")
@@ -55,7 +57,13 @@ def route_get_root():
 
 
 def run():
-    uvicorn.run("server:app", host="0.0.0.0", port=8000, log_level="info")
+    uvicorn.run(
+        "server:app",
+        host="0.0.0.0",
+        port=8000,
+        log_level="info",
+        timeout_keep_alive=600000,
+    )
 
 
 if __name__ == "__main__":
