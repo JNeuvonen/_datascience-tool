@@ -26,7 +26,7 @@ export const FormSubmitBar = ({
   const stickyBottomStyle: CSSProperties = {
     position: "fixed",
     bottom: 20,
-    width: `calc(100%px)`,
+    width: `calc(100% - 46px)`,
   };
 
   useKeyListener({
