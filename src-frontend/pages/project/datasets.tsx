@@ -1,67 +1,52 @@
 import {
   Box,
   Button,
+  Divider,
+  Heading,
+  Switch,
+  Tooltip,
   useDisclosure,
-  useTimeout,
   useToast,
 } from "@chakra-ui/react";
 import { open } from "@tauri-apps/api/dialog";
-import { ApiResponse } from "../../utils/request";
-import { uploadDataset, uploadDatasets } from "../../client/requests";
+import { uploadDatasets } from "../../client/requests";
 import { usePathParams } from "../../hooks/usePathParams";
 import { ChakraModal } from "../../components/Modal";
 import { NameProjectModal } from "../../components/NameProjectModal";
 import { useNavigate } from "react-router-dom";
-import { DOM_EVENT_CHANNELS, ROUTES, ROUTE_KEYS } from "../../utils/constants";
+import { ROUTES, ROUTE_KEYS } from "../../utils/constants";
 import { useEffect, useRef, useState } from "react";
 import useQueryParams from "../../hooks/useQueryParams";
 import { removeQueryParam } from "../../utils/location";
-import { UploadScreen } from "../../components/UploadFilesScreen";
-import { useMessageListener } from "../../hooks/useMessageListener";
+import { ChakraDrawer } from "../../components/Drawer";
+import { FormSubmitBar } from "../../components/SubmitBar";
+import { ChakraCard } from "../../components/Card";
+import { getPathLastItem } from "../../utils/content";
+import { Label } from "../../components/Label";
+import { useUploadMetadataQuery } from "../../client/queries";
+import { formatToGigaBytes } from "../../utils/number";
+import { COLOR_BG_PRIMARY_SHADE_FOUR } from "../../styles/colors";
 
 interface PageQueryParams {
   openFileSelection: string | undefined;
 }
 
-export const ProjectDatasetsPage = () => {
-  const { project } = usePathParams<{ project: string }>();
-  const navigate = useNavigate();
-  const { openFileSelection } = useQueryParams<PageQueryParams>();
-  const renameProjectModal = useDisclosure();
-  const toast = useToast();
-  const fileSelectorOpenedLock = useRef(false);
-  const [uploadingFiles, setUploadingFiles] = useState(false);
-  const [loadingScreenText, setLoadingScreenText] = useState(
-    `Loading... 0 out of 7 files have been uploaded.`
-  );
-  const [loadingScreenProgress, setLoadingScreenProgress] = useState(0);
+interface SelectFilesDrawerProps {
+  onClose: () => void;
+}
 
-  useMessageListener({
-    messageName: DOM_EVENT_CHANNELS.upload_file,
-    messageCallback: (e) => {
-      const data: { filesUploaded: number; filesMax: number } = JSON.parse(
-        e.detail
-      );
-      setLoadingScreenText(
-        `Loading... ${data.filesUploaded} out of ${data.filesMax} files have been uploaded.`
-      );
-      setLoadingScreenProgress(
-        Math.round((data.filesUploaded / data.filesMax) * 100)
-      );
-    },
-  });
+const SelectFilesDrawer = (props: SelectFilesDrawerProps) => {
+  const { onClose } = props;
+  const { project } = usePathParams<{ project: string }>();
+  const toast = useToast();
+  const navigate = useNavigate();
+  const renameProjectModal = useDisclosure();
+  const [fileList, setFilelist] = useState<string[]>([]);
+  const fileUploadMetadata = useUploadMetadataQuery(fileList);
 
   useEffect(() => {
-    if (openFileSelection && Number(openFileSelection) === 1) {
-      setTimeout(() => {
-        if (fileSelectorOpenedLock.current == false) {
-          handleFileSelection();
-          removeQueryParam("openFileSelection");
-          fileSelectorOpenedLock.current = true;
-        }
-      }, 250);
-    }
-  }, [openFileSelection]);
+    fileUploadMetadata.refetch();
+  }, [fileList]);
 
   const handleFileSelection = async () => {
     if (project === "unnamed") {
@@ -72,29 +57,69 @@ export const ProjectDatasetsPage = () => {
     const files = await open({ multiple: true });
 
     if (Array.isArray(files)) {
-      setLoadingScreenText(
-        `Loading... 0 out of ${files.length} files have been uploaded.`
-      );
-      setUploadingFiles(true);
       const res = await uploadDatasets(project, files);
       if (res.status === 200) {
-        setUploadingFiles(false);
-        setLoadingScreenText("");
+        setFilelist(files);
       } else {
-        setUploadingFiles(false);
       }
-    } else {
     }
+  };
+
+  const submit = async () => {
+    const res = await uploadDatasets(project, fileList);
+    if (res.status === 200) {
+      toast({
+        title: `Started processing ${fileList.length} files`,
+        position: "top-right",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+    }
+  };
+
+  const renderFileMetadata = () => {
+    if (!fileUploadMetadata.data || fileUploadMetadata.data.length === 0) {
+      return null;
+    }
+
+    let totalSizeGb = 0;
+
+    return (
+      <ChakraCard
+        style={{ marginTop: "8px", maxHeight: "55vh", overflowY: "auto" }}
+      >
+        <Box display={"flex"} justifyContent={"space-between"}>
+          <Heading size={"s"}>File</Heading>
+          <Heading size={"s"}>Size (GB)</Heading>
+        </Box>
+        {fileUploadMetadata.data.map((item, i) => {
+          totalSizeGb += item.uncompressed_size;
+          return (
+            <Box key={i} display={"flex"} justifyContent={"space-between"}>
+              <div>{getPathLastItem(item.file_path)}</div>
+              <div>{formatToGigaBytes(item.uncompressed_size)}</div>
+            </Box>
+          );
+        })}
+
+        <Divider
+          marginTop={"6px"}
+          marginBottom={"6px"}
+          borderColor={COLOR_BG_PRIMARY_SHADE_FOUR}
+        />
+
+        <Box display={"flex"} justifyContent={"space-between"}>
+          <Heading size={"s"}>Total uncompressed</Heading>
+          <Heading size={"s"}>{formatToGigaBytes(totalSizeGb)} GB</Heading>
+        </Box>
+      </ChakraCard>
+    );
   };
 
   return (
     <Box>
-      <UploadScreen
-        shouldBeVisible={uploadingFiles}
-        text={loadingScreenText}
-        loadingScreenProgress={loadingScreenProgress}
-      />
-      <Button onClick={handleFileSelection}>+ Add</Button>
       <ChakraModal
         {...renameProjectModal}
         title={"Let's name your project first"}
@@ -117,6 +142,59 @@ export const ProjectDatasetsPage = () => {
           }}
         />
       </ChakraModal>
+
+      <Button onClick={handleFileSelection}>Select files</Button>
+      <Heading size={"s"} marginTop={"16px"}>
+        {fileList.length} files selected
+      </Heading>
+      {renderFileMetadata()}
+      <Label
+        label={
+          <Tooltip label="This option is recommended if the files are large relative to computer's available RAM.">
+            Process files in chunks
+          </Tooltip>
+        }
+        containerStyles={{ marginTop: "16px" }}
+      >
+        <Switch />
+      </Label>
+      <FormSubmitBar
+        mode="STICKY-BOTTOM"
+        cancelCallback={onClose}
+        submitDisabled={fileList.length === 0}
+        submitCallback={submit}
+      />
+    </Box>
+  );
+};
+
+export const ProjectDatasetsPage = () => {
+  const { openFileSelection } = useQueryParams<PageQueryParams>();
+  const selectFilesDrawer = useDisclosure();
+  const fileSelectorOpenedLock = useRef(false);
+
+  useEffect(() => {
+    if (openFileSelection && Number(openFileSelection) === 1) {
+      setTimeout(() => {
+        if (fileSelectorOpenedLock.current == false) {
+          selectFilesDrawer.onOpen();
+          removeQueryParam("openFileSelection");
+          fileSelectorOpenedLock.current = true;
+        }
+      }, 150);
+    }
+  }, [openFileSelection]);
+
+  return (
+    <Box>
+      <ChakraDrawer
+        title="Add files to project"
+        drawerContentStyles={{ maxWidth: "600px" }}
+        {...selectFilesDrawer}
+      >
+        <SelectFilesDrawer {...selectFilesDrawer} />
+      </ChakraDrawer>
+      <Button onClick={selectFilesDrawer.onOpen}>+ Add</Button>
     </Box>
   );
 };

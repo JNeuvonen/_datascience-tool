@@ -14,3 +14,7 @@ export const DOM_EVENT_CHANNELS = {
   refetch_component: "refetch_component",
   upload_file: "upload_file",
 };
+
+export const QUERY_KEYS = {
+  file_upload_metadata: "file-upload-metadata",
+};

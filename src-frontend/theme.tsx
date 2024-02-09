@@ -2,6 +2,8 @@ import { extendTheme } from "@chakra-ui/react";
 import { menuAnatomy } from "@chakra-ui/anatomy";
 import {
   COLOR_BG_PRIMARY,
+  COLOR_BG_PRIMARY_SHADE_FOUR,
+  COLOR_BG_PRIMARY_SHADE_ONE,
   COLOR_BG_PRIMARY_SHADE_THREE,
   COLOR_BG_PRIMARY_SHADE_TWO,
   COLOR_BG_SECONDARY,
@@ -119,11 +121,14 @@ const cardTheme = {
   parts: ["container", "header", "body"],
   baseStyle: {
     container: {
-      backgroundColor: COLOR_BG_PRIMARY,
+      backgroundColor: COLOR_BG_PRIMARY_SHADE_ONE,
+      color: COLOR_CONTENT_PRIMARY,
+      borderRadius: "10px",
     },
     header: {},
     body: {
-      backgroundColor: COLOR_BG_PRIMARY,
+      backgroundColor: COLOR_BG_PRIMARY_SHADE_ONE,
+      borderRadius: "10px",
     },
   },
 };
