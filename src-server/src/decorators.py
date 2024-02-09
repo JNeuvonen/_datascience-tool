@@ -3,7 +3,7 @@ from functools import wraps
 import inspect
 from fastapi import HTTPException
 import logging
-from config import is_debug, is_dev
+from config import is_debug
 
 from log import capture_stack_frame, get_context_frame_params, get_logger
 
@@ -67,3 +67,17 @@ def LogException(
         )
         if re_raise:
             raise
+
+
+@contextmanager
+def HttpResponseContext(endpoint_call_success_msg=""):
+    try:
+        yield
+        logger = get_logger()
+        if endpoint_call_success_msg != "":
+            logger.log(
+                endpoint_call_success_msg,
+                logging.INFO,
+            )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

@@ -1,14 +1,17 @@
+import logging
 import pandas as pd
 import sqlite3
 from typing import Dict
 
 from pandas.compat import os
 from config import append_app_data_path
+from log import get_logger
+from request_types import BodyUploadDatasets
 from sqlalchemy import Column, ForeignKey, Integer, String
-from constants import TEMP_EXTRACTED_FILES, AppConstants
+from constants import TEMP_EXTRACTED_FILES, AppConstants, Messages
 from decorators import LogException
 from orm import Base, Session
-from utils import get_datafile_metadata, unzip_file
+from utils import get_datafile_metadata, run_in_thread, unzip_file
 
 
 class Datafile(Base):
@@ -63,3 +66,30 @@ def process_file(project_name, project_id, file_path):
         DatafileQuery.create_datafile_entry(
             get_datafile_metadata(file_path, project_id)
         )
+
+
+async def upload_datasets(project, body: BodyUploadDatasets):
+    def non_blocking():
+        logger = get_logger()
+        logger.log(
+            Messages.UPLOAD_FILES.format(
+                FILES_DONE="0", FILES_MAX=len(body.dataset_paths)
+            ),
+            logging.INFO,
+            False,
+            False,
+        )
+        idx = 0
+        for item in body.dataset_paths:
+            datafile_to_sql(project.name, project.id, item)
+            logger.log(
+                Messages.UPLOAD_FILES.format(
+                    FILES_DONE=str(idx + 1), FILES_MAX=len(body.dataset_paths)
+                ),
+                logging.INFO,
+                False,
+                False,
+            )
+            idx += 1
+
+    run_in_thread(non_blocking)

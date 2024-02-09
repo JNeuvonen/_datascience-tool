@@ -2,6 +2,10 @@ from typing import List
 from pydantic import BaseModel
 
 
+class BodyGetUploadsSize(BaseModel):
+    file_paths: List[str]
+
+
 class BodyUploadDataset(BaseModel):
     datasetPath: str
 
