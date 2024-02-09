@@ -3,7 +3,7 @@ from functools import wraps
 import inspect
 from fastapi import HTTPException
 import logging
-from config import is_dev
+from config import is_debug, is_dev
 
 from log import capture_stack_frame, get_context_frame_params, get_logger
 
@@ -36,7 +36,7 @@ def LogException(
     success_log_msg="",
 ):
     logger = get_logger()
-    if is_dev():
+    if is_debug():
         stack_frame = capture_stack_frame(
             inspect.stack()[2].function, get_context_frame_params()
         )
