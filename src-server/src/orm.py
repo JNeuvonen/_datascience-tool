@@ -1,11 +1,11 @@
-from constants import DATASET_DB_PATH
+from constants import APP_DB
 from sqlalchemy import (
     create_engine,
 )
 from sqlalchemy.orm import sessionmaker, declarative_base
 from config import append_app_data_path
 
-DATABASE_URI = f"sqlite:///{append_app_data_path(DATASET_DB_PATH)}"
+DATABASE_URI = f"sqlite:///{append_app_data_path(APP_DB)}"
 
 engine = create_engine(DATABASE_URI)
 Base = declarative_base()
