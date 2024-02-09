@@ -1,11 +1,22 @@
-import { URLS } from "../utils/endpoints";
+import { REST_API_URL } from "../utils/endpoints";
 import { httpReq } from "../utils/request";
 
-export const uploadDataset = ({ datasetPath }: { datasetPath: string }) => {
+export const uploadDataset = (
+  projectName: string,
+  { datasetPath }: { datasetPath: string }
+) => {
   return httpReq({
-    url: URLS.project_dataset,
+    url: REST_API_URL.project_upload_dataset(projectName),
     method: "POST",
     payload: { datasetPath },
+  });
+};
+
+export const uploadDatasets = (projectName: string, filePaths: string[]) => {
+  return httpReq({
+    url: REST_API_URL.project_upload_datasets(projectName),
+    method: "POST",
+    payload: { dataset_paths: filePaths },
   });
 };
 
@@ -15,7 +26,7 @@ interface ReqCreateProject {
 
 export const createProject = (body: ReqCreateProject) => {
   return httpReq({
-    url: URLS.project,
+    url: REST_API_URL.project,
     method: "POST",
     payload: body,
   });
