@@ -31,3 +31,28 @@ export const createProject = (body: ReqCreateProject) => {
     payload: body,
   });
 };
+
+export interface FileMetadata {
+  file_path: string;
+  uncompressed_size: number;
+}
+
+export interface ResFileUploadMetadata {
+  res: {
+    data: FileMetadata[];
+  };
+  status: number;
+}
+
+export const getFileUploadMetadata = async (files: string[]) => {
+  const res: ResFileUploadMetadata = await httpReq({
+    url: REST_API_URL.file_upload_metadata,
+    method: "POST",
+    payload: { file_paths: files },
+  });
+
+  if (res.status === 200) {
+    return res.res["data"];
+  }
+  return null;
+};
