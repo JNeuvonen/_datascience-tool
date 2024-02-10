@@ -11,8 +11,7 @@ import {
   BACKEND_STREAM_MESSAGES,
   DOM_EVENT_CHANNELS,
 } from "../utils/constants";
-import { useAppContext } from "./app";
-import { LoadingDots, SpinnerText } from "../components/LoadingDots";
+import { useLayoutContext } from "./layout";
 
 interface LogContextType {
   logs: LogMessage[];
@@ -51,7 +50,7 @@ export const dispatchDomEvent = ({
 };
 
 export const LogProvider: React.FC<LogProviderProps> = ({ children }) => {
-  const { updateTitleBarContent } = useAppContext();
+  const { updateTitleBarContent } = useLayoutContext();
   const [logs, setLogs] = useState<LogMessage[]>([]);
   const toast = useToast();
 

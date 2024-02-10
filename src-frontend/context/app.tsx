@@ -16,9 +16,6 @@ export type ToolbarMode = "TRAINING" | "";
 interface AppContextType {
   platform: Platform;
   serverLaunched: boolean;
-  titleBarHeight: number;
-  titleBarContent: JSX.Element | null;
-  updateTitleBarContent: (element: JSX.Element | null) => void;
 }
 
 export const AppContext = createContext<AppContextType>({} as AppContextType);
@@ -30,14 +27,6 @@ interface AppProviderProps {
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [platform, setPlatform] = useState<Platform>("");
   const [serverLaunched, setServerLaunched] = useState(false);
-  const [titleBarHeight] = useState(45);
-  const [titleBarContent, setTitleBarContent] = useState<JSX.Element | null>(
-    null
-  );
-
-  const updateTitleBarContent = (element: JSX.Element | null) => {
-    setTitleBarContent(element);
-  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -73,9 +62,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       value={{
         platform,
         serverLaunched,
-        titleBarHeight,
-        titleBarContent,
-        updateTitleBarContent,
       }}
     >
       {children}
