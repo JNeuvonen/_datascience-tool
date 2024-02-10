@@ -56,3 +56,39 @@ export const getFileUploadMetadata = async (files: string[]) => {
   }
   return null;
 };
+
+export interface DataFile {
+  file_name: string;
+  id: number;
+  size_bytes: number;
+  project_id: number;
+  was_import: boolean;
+}
+export interface Project {
+  name: string;
+  id: number;
+}
+
+export interface ProjectData {
+  project: Project;
+  datafiles: DataFile;
+}
+
+export interface ResProject {
+  res: {
+    data: ProjectData[];
+  };
+  status: number;
+}
+
+export const getProjectData = async (projectName: string) => {
+  const res: ResProject = await httpReq({
+    url: REST_API_URL.get_project(projectName),
+    method: "GET",
+  });
+
+  if (res.status === 200) {
+    return res.res["data"];
+  }
+  return null;
+};
