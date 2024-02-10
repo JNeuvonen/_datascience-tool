@@ -57,11 +57,7 @@ const SelectFilesDrawer = (props: SelectFilesDrawerProps) => {
     const files = await open({ multiple: true });
 
     if (Array.isArray(files)) {
-      const res = await uploadDatasets(project, files);
-      if (res.status === 200) {
-        setFilelist(files);
-      } else {
-      }
+      setFilelist(files);
     }
   };
 
@@ -70,7 +66,7 @@ const SelectFilesDrawer = (props: SelectFilesDrawerProps) => {
     if (res.status === 200) {
       toast({
         title: `Started processing ${fileList.length} files`,
-        position: "top-right",
+        position: "bottom-left",
         status: "info",
         duration: 5000,
         isClosable: true,
@@ -129,7 +125,7 @@ const SelectFilesDrawer = (props: SelectFilesDrawerProps) => {
           successCallback={(projectName) => {
             toast({
               title: "Created project",
-              position: "top-right",
+              position: "bottom-left",
               status: "info",
               duration: 5000,
               isClosable: true,

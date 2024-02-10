@@ -35,7 +35,7 @@ export const ProjectIndexPage = () => {
       if (res.status === 200) {
         toast({
           title: "Created project",
-          position: "top-right",
+          position: "bottom-left",
           status: "info",
           duration: 5000,
           isClosable: true,
