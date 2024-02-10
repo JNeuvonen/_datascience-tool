@@ -22,6 +22,7 @@ class RoutePaths:
     UPLOAD_DATASET = "/{project_name}/dataset"
     UPLOAD_DATASETS = "/{project_name}/datasets"
     GET_SIZE_OF_UPLOAD = "/size-of-uploads"
+    PROJECT = "/{project_name}"
 
 
 @router.post(RoutePaths.GET_SIZE_OF_UPLOAD)
@@ -62,3 +63,12 @@ async def route_create_project(body: BodyCreateProject):
     with HttpResponseContext():
         id = ProjectQuery.create_project_entry(body)
         return {"id": id}
+
+
+@router.get(RoutePaths.PROJECT)
+async def route_get_project(project_name: str):
+    with HttpResponseContext():
+        project = ProjectQuery.retrieve_project(project_name, "name")
+        datafiles = DatafileQuery.get_datafiles_by_project(project.id)
+        ret = {"datafiles": datafiles, "project": project}
+        return {"data": ret}

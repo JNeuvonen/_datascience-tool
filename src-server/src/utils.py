@@ -8,7 +8,7 @@ import shutil
 from decorators import LogException
 
 
-def get_datafile_metadata(path: str, project_id):
+def get_datafile_metadata(path: str, project_id, was_import=True):
     with LogException():
         file_size_bytes = os.path.getsize(path)
         file_name = get_path_last_item(path)
@@ -16,6 +16,7 @@ def get_datafile_metadata(path: str, project_id):
             "size_bytes": file_size_bytes,
             "file_name": file_name,
             "project_id": project_id,
+            "was_import": was_import,
         }
 
 
