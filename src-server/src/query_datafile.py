@@ -70,26 +70,44 @@ def process_file(project_name, project_id, file_path):
 
 async def upload_datasets(project, body: BodyUploadDatasets):
     def non_blocking():
-        logger = get_logger()
-        logger.log(
-            Messages.UPLOAD_FILES.format(
-                FILES_DONE="0", FILES_MAX=len(body.dataset_paths)
-            ),
-            logging.INFO,
-            False,
-            False,
-        )
-        idx = 0
-        for item in body.dataset_paths:
-            datafile_to_sql(project.name, project.id, item)
+        try:
+            logger = get_logger()
             logger.log(
                 Messages.UPLOAD_FILES.format(
-                    FILES_DONE=str(idx + 1), FILES_MAX=len(body.dataset_paths)
+                    FILES_DONE="0", FILES_MAX=len(body.dataset_paths)
                 ),
                 logging.INFO,
                 False,
                 False,
             )
-            idx += 1
+            idx = 0
+            for item in body.dataset_paths:
+                datafile_to_sql(project.name, project.id, item)
+                logger.log(
+                    Messages.UPLOAD_FILES.format(
+                        FILES_DONE=str(idx + 1), FILES_MAX=len(body.dataset_paths)
+                    ),
+                    logging.INFO,
+                    False,
+                    False,
+                )
+                idx += 1
+
+            logger = get_logger()
+            logger.log(
+                Messages.FILE_UPLOAD_FINISH,
+                logging.INFO,
+                False,
+                False,
+            )
+        except Exception as e:
+            logger = get_logger()
+            logger.log(
+                Messages.FILE_UPLOAD_FINISH,
+                logging.INFO,
+                False,
+                False,
+            )
+            raise e
 
     run_in_thread(non_blocking)

@@ -32,9 +32,11 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "visual-detect",
-        "width": 800,
-        "height": 600
+        "title": "",
+        "minWidth": 1000,
+        "minHeight": 1000,
+        "decorations": false,
+        "transparent": true
       }
     ]
   }

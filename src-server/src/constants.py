@@ -9,6 +9,7 @@ TEMP_EXTRACTED_FILES = "temp_extracted_files"
 
 class Messages:
     UPLOAD_FILES = "MESSAGE_UPLOAD_FILES:{FILES_DONE}/{FILES_MAX}"
+    FILE_UPLOAD_FINISH = "MESSAGE_FILE_UPLOAD_FINISH"
 
 
 class DomEventChannels:
