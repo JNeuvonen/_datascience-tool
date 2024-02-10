@@ -1,13 +1,17 @@
 import { FaGear } from "react-icons/fa6";
 import { WindowTitlebar } from "../thirdparty/tauri-controls";
-import { Spinner } from "@chakra-ui/react";
+import { Box, IconButton, Spinner } from "@chakra-ui/react";
 import { useAppContext } from "../context/app";
 import { COLOR_DARK_BG_PRIMARY } from "../styles/colors";
 import { TooltipIcon } from "./TooltipIcon";
 import { ROUTES } from "../utils/constants";
+import { useLayoutContext } from "../context/layout";
+import { MdArrowForward } from "react-icons/md";
+import { BUTTON_VARIANTS } from "../theme";
 
 export const TauriTitleBar = () => {
-  const { titleBarHeight, titleBarContent } = useAppContext();
+  const { titleBarHeight, titleBarContent, breadCrumbsContent } =
+    useLayoutContext();
   const { platform, serverLaunched } = useAppContext();
 
   const getPlatform = () => {
@@ -58,7 +62,7 @@ export const TauriTitleBar = () => {
           height: titleBarHeight,
           display: "flex",
           alignItems: "center",
-          justifyContent: "flex-end",
+          justifyContent: "space-between",
           width: "100%",
           paddingRight: "16px",
           gap: "16px",
@@ -66,11 +70,28 @@ export const TauriTitleBar = () => {
         }}
         data-tauri-drag-region
       >
-        {renderTitleBarContent()}
-        <TooltipIcon
-          icon={(props) => <FaGear {...props} />}
-          to={ROUTES.settings}
-        />
+        <div style={{ display: "flex", gap: "6px" }}>
+          <IconButton
+            aria-label="Icon button"
+            icon={<MdArrowForward style={{ transform: "rotate(180deg)" }} />}
+            variant={BUTTON_VARIANTS.grey}
+            onClick={() => window.history.back()}
+          />
+          <IconButton
+            aria-label="Icon button"
+            icon={<MdArrowForward />}
+            variant={BUTTON_VARIANTS.grey}
+            onClick={() => window.history.forward()}
+          />
+          <Box>{breadCrumbsContent}</Box>
+        </div>
+        <div>
+          {renderTitleBarContent()}
+          <TooltipIcon
+            icon={(props) => <FaGear {...props} />}
+            to={ROUTES.settings}
+          />
+        </div>
       </div>
     </WindowTitlebar>
   );

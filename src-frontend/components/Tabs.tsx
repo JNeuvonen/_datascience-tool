@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 import { TabList, Tab, Tabs, TabPanels, TabPanel } from "@chakra-ui/react";
 
 interface Props {
@@ -14,8 +14,14 @@ export const ChakraTabs = ({
   style = {},
   defaultTab = 0,
 }: Props) => {
+  const [selectedIndex, setSelectedIndex] = useState(defaultTab);
+
+  useEffect(() => {
+    setSelectedIndex(defaultTab);
+  }, [defaultTab]);
+
   return (
-    <Tabs style={style} defaultIndex={defaultTab}>
+    <Tabs style={style} index={selectedIndex}>
       <TabList style={{ width: "max-content" }}>
         {labels.map((label, index) => (
           <Tab key={index}>{label}</Tab>
@@ -24,7 +30,9 @@ export const ChakraTabs = ({
 
       <TabPanels>
         {tabs.map((tabContent, index) => (
-          <TabPanel key={index}>{tabContent}</TabPanel>
+          <TabPanel key={index} hidden={index !== selectedIndex}>
+            {index === selectedIndex && tabContent}
+          </TabPanel>
         ))}
       </TabPanels>
     </Tabs>
