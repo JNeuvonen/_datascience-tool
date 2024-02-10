@@ -10,5 +10,6 @@ export const REST_API_URL = {
     `${BASE_URL}/${PROJECT}/${projectName}/datasets`,
   project: `${BASE_URL}/${PROJECT}`,
   file_upload_metadata: `${BASE_URL}/${PROJECT}/size-of-uploads`,
+  get_project: (projectName: string) => `${BASE_URL}/${PROJECT}/${projectName}`,
   log_stream: "ws://localhost:8000/streams/subscribe-log",
 };

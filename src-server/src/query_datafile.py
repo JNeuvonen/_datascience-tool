@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 import sqlite3
-from typing import Dict
+from typing import Dict, List
 
 from pandas.compat import os
 from config import append_app_data_path
@@ -20,6 +20,7 @@ class Datafile(Base):
     id = Column(Integer, primary_key=True)
     file_name = Column(String, nullable=False)
     size_bytes = Column(Integer)
+    was_import = Column(Integer)
     project_id = Column(Integer, ForeignKey("project.id"), nullable=False)
 
 
@@ -32,6 +33,13 @@ class DatafileQuery:
                 session.add(entry)
                 session.commit()
                 return entry.id
+
+    @staticmethod
+    def get_datafiles_by_project(project_id: int) -> List[Datafile]:
+        with Session() as session:
+            return (
+                session.query(Datafile).filter(Datafile.project_id == project_id).all()
+            )
 
 
 def datafile_to_sql(project_name, project_id, file_path: str):
