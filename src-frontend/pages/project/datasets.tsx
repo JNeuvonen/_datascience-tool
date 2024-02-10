@@ -182,7 +182,7 @@ export const ProjectDatasetsPage = () => {
   }, [openFileSelection]);
 
   return (
-    <Box>
+    <Box marginTop={"16px"}>
       <ChakraDrawer
         title="Add files to project"
         drawerContentStyles={{ maxWidth: "600px" }}

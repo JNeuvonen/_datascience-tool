@@ -5,9 +5,9 @@ import "./styles/css/styles.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { customChakraTheme } from "./theme";
-import { Layout } from "./layout/layout";
 import { LogProvider } from "./context/log";
 import { AppProvider } from "./context/app";
+import { LayoutProvider } from "./context/layout";
 
 const queryClient = new QueryClient();
 
@@ -16,9 +16,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
       <AppProvider>
         <ChakraProvider theme={customChakraTheme}>
-          <LogProvider>
-            <App />
-          </LogProvider>
+          <LayoutProvider>
+            <LogProvider>
+              <App />
+            </LogProvider>
+          </LayoutProvider>
         </ChakraProvider>
       </AppProvider>
     </QueryClientProvider>
