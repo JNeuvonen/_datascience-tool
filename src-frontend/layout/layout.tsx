@@ -1,18 +1,29 @@
 import { Box } from "@chakra-ui/react";
 import React from "react";
 import { TauriTitleBar } from "../components/TitleBar";
-import { useAppContext } from "../context/app";
+import { useLayoutContext } from "../context/layout";
+import { COLOR_BG_PRIMARY_SHADE_TWO } from "../styles/colors";
 
 interface Props {
   children: React.ReactNode;
 }
 
 export const Layout = ({ children }: Props) => {
-  const { titleBarHeight } = useAppContext();
+  const { titleBarHeight, sideBarWidth, sideBarContent, pageTabsheight } =
+    useLayoutContext();
   return (
-    <Box padding={"16px"} paddingTop={titleBarHeight + 16}>
+    <Box paddingTop={titleBarHeight}>
       <TauriTitleBar />
-      {children}
+      {sideBarContent}
+      <Box
+        marginLeft={sideBarWidth}
+        bg={COLOR_BG_PRIMARY_SHADE_TWO}
+        padding={"16px"}
+        minHeight={"100vh"}
+        marginTop={pageTabsheight}
+      >
+        {children}
+      </Box>
     </Box>
   );
 };
