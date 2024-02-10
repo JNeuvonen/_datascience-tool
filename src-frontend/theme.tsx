@@ -11,6 +11,7 @@ import {
   COLOR_BRAND_SECONDARY_HIGHLIGHT,
   COLOR_BRAND_SECONDARY_SHADE_ONE,
   COLOR_CONTENT_PRIMARY,
+  COLOR_CONTENT_SECONDARY,
 } from "./styles/colors";
 
 export const BUTTON_VARIANTS = {
@@ -136,7 +137,7 @@ const menuItemTheme = {
   parts: menuAnatomy.keys,
   baseStyle: {
     item: {
-      backgroundColor: COLOR_BG_PRIMARY_SHADE_TWO,
+      backgroundColor: COLOR_BG_PRIMARY_SHADE_ONE,
       color: COLOR_CONTENT_PRIMARY,
       _hover: {
         bg: COLOR_BG_SECONDARY,
@@ -147,16 +148,19 @@ const menuItemTheme = {
     },
     list: {
       border: "none",
-
-      backgroundColor: COLOR_BG_PRIMARY_SHADE_TWO,
+      backgroundColor: COLOR_BG_PRIMARY_SHADE_ONE,
+      borderRadius: "8px",
     },
     button: {
-      fontWeight: "medium",
-      bg: "teal.500",
-      color: "gray.200",
+      fontWeight: "300",
+      color: COLOR_CONTENT_PRIMARY,
+      fontSize: 16,
+      cursor: "pointer",
+      padding: "6px",
+      borderRadius: "3px",
       _hover: {
-        bg: "teal.600",
         color: "white",
+        backgroundColor: COLOR_BG_PRIMARY_SHADE_ONE,
       },
     },
     command: {},

@@ -1,6 +1,10 @@
 import {
   Box,
   Divider,
+  Heading,
+  MenuButton,
+  MenuItem,
+  Stack,
   Tab,
   TabList,
   TabPanel,
@@ -21,6 +25,14 @@ import { useProjectContext } from "../../context/project";
 import { useLayoutContext } from "../../context/layout";
 import { COLOR_BG_PRIMARY_SHADE_TWO } from "../../styles/colors";
 import { Breadcrumbs } from "../../components/BreadCrumbs";
+import { ChakraMenu } from "../../components/Menu";
+import {
+  FaDownload,
+  FaFileExcel,
+  FaFileImport,
+  FaFileSignature,
+} from "react-icons/fa6";
+import { UNNAMED_PROJECT_PLACEHOLDER } from "..";
 
 export interface ProjectPageQueryParams {
   defaultTab: string | undefined;
@@ -70,10 +82,10 @@ export const ProjectIndexPage = () => {
   const toast = useToast();
 
   //STATE
-  const [isUnnamed] = useState(project === "unnamed");
+  const [isUnnamed] = useState(project === UNNAMED_PROJECT_PLACEHOLDER);
   const [projectNameInput, setProjectNameInput] = useState(project);
-  const { tabIndex, setTabIndex } = useProjectContext();
   const { updateBreadCrumbsContent } = useLayoutContext();
+  const { selectFilesDrawer } = useProjectContext();
 
   useEffect(() => {
     updateBreadCrumbsContent(
@@ -86,7 +98,7 @@ export const ProjectIndexPage = () => {
     );
 
     return () => updateBreadCrumbsContent(null);
-  }, [project, updateBreadCrumbsContent]);
+  }, [project]);
 
   const updateProjectName = async () => {
     if (isUnnamed) {
@@ -107,33 +119,31 @@ export const ProjectIndexPage = () => {
 
   return (
     <Box>
-      <Tabs
-        index={tabIndex}
-        onChange={setTabIndex}
-        isFitted
-        variant="enclosed"
-        overflowX={"auto"}
-      >
-        <PageTabs />
-        <SideBarProject />
-        <EditableHeader
-          defaultValue={project}
-          setValue={setProjectNameInput}
-          value={projectNameInput}
-          onInputBlur={updateProjectName}
-        />
-        <TabPanels>
-          {TABS.map((tabContent, index) => (
-            <TabPanel
-              key={index}
-              hidden={index !== tabIndex}
-              style={{ padding: 0 }}
-            >
-              {index === tabIndex && tabContent}
-            </TabPanel>
-          ))}
-        </TabPanels>
-      </Tabs>
+      <SideBarProject />
+      <EditableHeader
+        defaultValue={project}
+        setValue={setProjectNameInput}
+        value={projectNameInput}
+        onInputBlur={updateProjectName}
+      />
+
+      <Box gap={"4px"} display={"flex"} marginLeft={"-6px"} marginTop={"2px"}>
+        <ChakraMenu menuButton={<MenuButton>File</MenuButton>}>
+          <MenuItem icon={<FaFileImport />} onClick={selectFilesDrawer.onOpen}>
+            Import data
+          </MenuItem>
+          <MenuItem icon={<FaDownload />}>Export data</MenuItem>
+          <MenuItem icon={<FaFileSignature />}>Create pivot dataframe</MenuItem>
+          <MenuItem icon={<FaFileExcel />}>Save project</MenuItem>
+        </ChakraMenu>
+        <ChakraMenu menuButton={<MenuButton>Visualize</MenuButton>}>
+          <MenuItem icon={<FaFileImport />}>Import data</MenuItem>
+          <MenuItem icon={<FaDownload />}>Export data</MenuItem>
+          <MenuItem icon={<FaFileExcel />}>Save project</MenuItem>
+        </ChakraMenu>
+      </Box>
+
+      <ProjectDatasetsPage />
     </Box>
   );
 };

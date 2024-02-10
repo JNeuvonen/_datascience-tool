@@ -26,6 +26,8 @@ import { Label } from "../../components/Label";
 import { useUploadMetadataQuery } from "../../client/queries";
 import { formatToGigaBytes } from "../../utils/number";
 import { COLOR_BG_PRIMARY_SHADE_FOUR } from "../../styles/colors";
+import { useProjectContext } from "../../context/project";
+import { UNNAMED_PROJECT_PLACEHOLDER } from "..";
 
 interface PageQueryParams {
   openFileSelection: string | undefined;
@@ -49,7 +51,7 @@ const SelectFilesDrawer = (props: SelectFilesDrawerProps) => {
   }, [fileList]);
 
   const handleFileSelection = async () => {
-    if (project === "unnamed") {
+    if (project === UNNAMED_PROJECT_PLACEHOLDER) {
       renameProjectModal.onOpen();
       return;
     }
@@ -166,7 +168,7 @@ const SelectFilesDrawer = (props: SelectFilesDrawerProps) => {
 
 export const ProjectDatasetsPage = () => {
   const { openFileSelection } = useQueryParams<PageQueryParams>();
-  const selectFilesDrawer = useDisclosure();
+  const { selectFilesDrawer } = useProjectContext();
   const fileSelectorOpenedLock = useRef(false);
 
   useEffect(() => {
@@ -190,7 +192,6 @@ export const ProjectDatasetsPage = () => {
       >
         <SelectFilesDrawer {...selectFilesDrawer} />
       </ChakraDrawer>
-      <Button onClick={selectFilesDrawer.onOpen}>+ Add</Button>
     </Box>
   );
 };
