@@ -1,4 +1,4 @@
-import { useToast } from "@chakra-ui/react";
+import { Spinner, useToast } from "@chakra-ui/react";
 import React, {
   createContext,
   useState,
@@ -11,6 +11,8 @@ import {
   BACKEND_STREAM_MESSAGES,
   DOM_EVENT_CHANNELS,
 } from "../utils/constants";
+import { useAppContext } from "./app";
+import { LoadingDots, SpinnerText } from "../components/LoadingDots";
 
 interface LogContextType {
   logs: LogMessage[];
@@ -49,6 +51,7 @@ export const dispatchDomEvent = ({
 };
 
 export const LogProvider: React.FC<LogProviderProps> = ({ children }) => {
+  const { updateTitleBarContent } = useAppContext();
   const [logs, setLogs] = useState<LogMessage[]>([]);
   const toast = useToast();
 
@@ -74,6 +77,11 @@ export const LogProvider: React.FC<LogProviderProps> = ({ children }) => {
       const filesDone = Number(parts[0]);
       const filesMax = Number(parts[1]);
 
+      if (filesDone == filesMax) {
+        updateTitleBarContent(null);
+        return;
+      }
+
       const domMessage = JSON.stringify({
         filesUploaded: filesDone,
         filesMax: filesMax,
@@ -82,7 +90,20 @@ export const LogProvider: React.FC<LogProviderProps> = ({ children }) => {
         channel: DOM_EVENT_CHANNELS.upload_file,
         data: domMessage,
       });
-      return;
+      updateTitleBarContent(
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <Spinner size={"xs"} /> Added {filesDone}/{filesMax} files
+        </div>
+      );
+    } else if (msg.includes(BACKEND_STREAM_MESSAGES.file_upload_finish)) {
+      updateTitleBarContent(null);
+      toast({
+        title: "Added files to the project",
+        position: "bottom-left",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
