@@ -70,7 +70,7 @@ export const TauriTitleBar = () => {
         }}
         data-tauri-drag-region
       >
-        <div style={{ display: "flex", gap: "6px" }}>
+        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
           <IconButton
             aria-label="Icon button"
             icon={<MdArrowForward style={{ transform: "rotate(180deg)" }} />}
@@ -85,7 +85,8 @@ export const TauriTitleBar = () => {
           />
           <Box>{breadCrumbsContent}</Box>
         </div>
-        <div>
+
+        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
           {renderTitleBarContent()}
           <TooltipIcon
             icon={(props) => <FaGear {...props} />}

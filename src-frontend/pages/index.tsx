@@ -2,6 +2,8 @@ import { Heading } from "@chakra-ui/layout";
 import { Box, Button, Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
+export const UNNAMED_PROJECT_PLACEHOLDER = "Unnamed project";
+
 export const IndexPage = () => {
   const navigate = useNavigate();
   return (
@@ -13,7 +15,11 @@ export const IndexPage = () => {
       >
         <Heading size={"md"}>Previous projects</Heading>
 
-        <Button onClick={() => navigate("/project/unnamed")}>+ Add</Button>
+        <Button
+          onClick={() => navigate("/project/" + UNNAMED_PROJECT_PLACEHOLDER)}
+        >
+          + Add
+        </Button>
       </Stack>
     </Box>
   );
