@@ -20,8 +20,8 @@ export function useUploadMetadataQuery(
 
 export function useProjectQuery(
   projectName: string
-): UseQueryResult<ProjectData[] | null, unknown> {
-  return useQuery<ProjectData[] | null, unknown>({
+): UseQueryResult<ProjectData | null, unknown> {
+  return useQuery<ProjectData | null, unknown>({
     queryKey: [QUERY_KEYS.file_upload_metadata, projectName],
     queryFn: () => getProjectData(projectName),
     enabled: projectName !== UNNAMED_PROJECT_PLACEHOLDER,

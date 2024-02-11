@@ -71,12 +71,12 @@ export interface Project {
 
 export interface ProjectData {
   project: Project;
-  datafiles: DataFile;
+  datafiles: DataFile[];
 }
 
 export interface ResProject {
   res: {
-    data: ProjectData[];
+    data: ProjectData;
   };
   status: number;
 }
