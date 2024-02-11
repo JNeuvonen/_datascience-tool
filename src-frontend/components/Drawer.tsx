@@ -10,6 +10,7 @@ import {
   DrawerProps,
 } from "@chakra-ui/react";
 import { COLOR_BG_PRIMARY } from "../styles/colors";
+import { useLayoutContext } from "../context/layout";
 
 interface CustomDrawerProps extends DrawerProps {
   title: string;
@@ -27,10 +28,15 @@ export const ChakraDrawer: React.FC<CustomDrawerProps> = ({
   drawerContentStyles,
   ...props
 }) => {
+  const { titleBarHeight } = useLayoutContext();
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose} {...props}>
       <DrawerOverlay />
-      <DrawerContent background={COLOR_BG_PRIMARY} style={drawerContentStyles}>
+      <DrawerContent
+        background={COLOR_BG_PRIMARY}
+        style={drawerContentStyles}
+        marginTop={titleBarHeight}
+      >
         <DrawerCloseButton />
         <DrawerHeader>{title}</DrawerHeader>
         <DrawerBody>{children}</DrawerBody>
