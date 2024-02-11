@@ -9,12 +9,10 @@ interface Props {
 }
 
 export const Layout = ({ children }: Props) => {
-  const { titleBarHeight, sideBarWidth, sideBarContent, pageTabsheight } =
-    useLayoutContext();
+  const { titleBarHeight, sideBarWidth, pageTabsheight } = useLayoutContext();
   return (
     <Box paddingTop={titleBarHeight}>
       <TauriTitleBar />
-      {sideBarContent}
       <Box
         marginLeft={sideBarWidth}
         bg={COLOR_BG_PRIMARY_SHADE_TWO}
