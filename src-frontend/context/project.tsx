@@ -1,20 +1,19 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
-import { ProjectPageQueryParams } from "../pages/project";
-import useQueryParams from "../hooks/useQueryParams";
 import { useDisclosure } from "@chakra-ui/react";
 import { usePathParams } from "../hooks/usePathParams";
-import { useProjectQuery } from "../client/queries";
+import { useFileColumnsQuery, useProjectQuery } from "../client/queries";
 import { UseQueryResult } from "@tanstack/react-query";
-import { ProjectData } from "../client/requests";
+import { DataFile, ProjectData } from "../client/requests";
 
 type UseDisclosureReturn = ReturnType<typeof useDisclosure>;
 
 interface ProjectContextType {
-  tabIndex: number;
-  setTabIndex: React.Dispatch<React.SetStateAction<number>>;
   selectFilesDrawer: UseDisclosureReturn;
   importedFilesDrawer: UseDisclosureReturn;
   projectQuery: UseQueryResult<ProjectData | null, unknown>;
+  fileColumnsQuery: UseQueryResult<string[] | null, unknown>;
+  selectedFile: DataFile | null;
+  setSelectedFile: React.Dispatch<React.SetStateAction<DataFile | null>>;
 }
 
 export const ProjectContext = createContext<ProjectContextType>(
@@ -28,20 +27,27 @@ interface ProjectProviderProps {
 export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   children,
 }) => {
-  const { defaultTab } = useQueryParams<ProjectPageQueryParams>();
-  const [tabIndex, setTabIndex] = useState(Number(defaultTab) || 0);
+  const [selectedFile, setSelectedFile] = useState<DataFile | null>(null);
+  const { project } = usePathParams<{ project: string }>();
+
+  const projectQuery = useProjectQuery(project);
+  const fileColumnsQuery = useFileColumnsQuery(
+    project,
+    selectedFile?.file_name || ""
+  );
+
   const selectFilesDrawer = useDisclosure();
   const importedFilesDrawer = useDisclosure();
-  const { project } = usePathParams<{ project: string }>();
-  const projectQuery = useProjectQuery(project);
+
   return (
     <ProjectContext.Provider
       value={{
-        tabIndex,
-        setTabIndex,
         selectFilesDrawer,
         projectQuery,
         importedFilesDrawer,
+        selectedFile,
+        setSelectedFile,
+        fileColumnsQuery,
       }}
     >
       {children}
