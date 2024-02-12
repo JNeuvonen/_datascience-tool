@@ -3,9 +3,11 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
 interface LayoutContextType {
   titleBarHeight: number;
   sideBarWidth: number;
+  menuBarHeight: number;
   pageTabsheight: number;
   setSideBarWidth: React.Dispatch<React.SetStateAction<number>>;
   setPageTabsHeight: React.Dispatch<React.SetStateAction<number>>;
+  setMenuBarHeight: React.Dispatch<React.SetStateAction<number>>;
   titleBarContent: JSX.Element | null;
   sideBarContent: JSX.Element | null;
   breadCrumbsContent: JSX.Element | null;
@@ -24,6 +26,7 @@ interface LayoutProviderProps {
 
 export const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
   const [titleBarHeight] = useState(45);
+  const [menuBarHeight, setMenuBarHeight] = useState(0);
   const [sideBarWidth, setSideBarWidth] = useState(0);
   const [pageTabsheight, setPageTabsHeight] = useState(0);
   const [titleBarContent, setTitleBarContent] = useState<JSX.Element | null>(
@@ -61,6 +64,8 @@ export const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
         setPageTabsHeight,
         updateBreadCrumbsContent,
         breadCrumbsContent,
+        menuBarHeight,
+        setMenuBarHeight,
       }}
     >
       {children}
