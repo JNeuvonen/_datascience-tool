@@ -2,7 +2,6 @@ import {
   CellClickedEvent,
   CellValueChangedEvent,
   ColDef,
-  GridApi,
   IGetRowsParams,
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
@@ -10,7 +9,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "ag-grid-community/styles/ag-theme-balham.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getProjectPagination } from "../../client/requests";
 import { useProjectContext } from "../../context/project";
 import { convertColumnsToAgGridFormat } from "../../utils/table";
@@ -21,7 +20,6 @@ interface Props {
   columnLabels: string[];
   onCellClicked: (event: CellClickedEvent) => void;
   handleCellValueChanged: (rowData: CellValueChangedEvent) => void;
-  maxRows: number;
   projectName: string;
 }
 
@@ -29,13 +27,10 @@ export const DatasetDataGrid = ({
   columnDefs,
   onCellClicked,
   handleCellValueChanged,
-  maxRows,
   columnLabels,
   projectName,
 }: Props) => {
-  const [gridApi, setGridApi] = useState<GridApi | null>(null);
-  const [stateColumnDefs] = useState(columnDefs);
-  const { selectedFile } = useProjectContext();
+  const { selectedFile, gridApi, setGridApi } = useProjectContext();
   const { titleBarHeight, menuBarHeight } = useLayoutContext();
 
   useEffect(() => {
@@ -44,16 +39,18 @@ export const DatasetDataGrid = ({
         getRows: (params: IGetRowsParams) => {
           const pageSize = params.endRow - params.startRow;
           const page = params.endRow / pageSize;
+          const filters = gridApi?.getFilterModel();
           getProjectPagination(
             projectName,
             selectedFile?.file_name,
             page,
-            pageSize
+            pageSize,
+            filters
           )
             .then((res) => {
               params.successCallback(
                 convertColumnsToAgGridFormat(res.data, columnLabels),
-                maxRows
+                res.max_rows
               );
             })
             .catch(() => {});
@@ -75,14 +72,13 @@ export const DatasetDataGrid = ({
         onGridReady={(params) => {
           setGridApi(params.api);
         }}
-        columnDefs={stateColumnDefs}
+        columnDefs={columnDefs}
         pagination={true}
         onColumnHeaderClicked={onCellClicked}
         onCellValueChanged={handleCellValueChanged}
         rowModelType={"infinite"}
         paginationAutoPageSize={true}
-        ensureDomOrder={true}
-        suppressColumnVirtualisation={true}
+        cacheBlockSize={100}
       />
     </div>
   );

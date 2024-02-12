@@ -16,10 +16,12 @@ import { usePathParams } from "../../hooks/usePathParams";
 import { ROUTES, ROUTE_KEYS } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
 import { COLOR_BG_PRIMARY_SHADE_TWO } from "../../styles/colors";
+import { MdClearAll } from "react-icons/md";
 
 export const ProjectMenuBar = () => {
   const { project } = usePathParams<{ project: string }>();
-  const { selectFilesDrawer, importedFilesDrawer } = useProjectContext();
+  const { selectFilesDrawer, importedFilesDrawer, gridApi } =
+    useProjectContext();
   const { setMenuBarHeight, titleBarHeight } = useLayoutContext();
 
   const [isUnnamed] = useState(project === UNNAMED_PROJECT_PLACEHOLDER);
@@ -82,6 +84,16 @@ export const ProjectMenuBar = () => {
           <MenuItem icon={<FaDownload />}>Export data</MenuItem>
           <MenuItem icon={<FaFileSignature />}>Create pivot dataframe</MenuItem>
           <MenuItem icon={<FaFileExcel />}>Save project</MenuItem>
+        </ChakraMenu>
+        <ChakraMenu menuButton={<MenuButton>Edit</MenuButton>}>
+          <MenuItem
+            icon={<MdClearAll />}
+            onClick={() => {
+              gridApi?.setFilterModel(null);
+            }}
+          >
+            Clear filters
+          </MenuItem>
         </ChakraMenu>
         <ChakraMenu menuButton={<MenuButton>Visualize</MenuButton>}>
           <MenuItem icon={<FaFileImport />}>Import data</MenuItem>
