@@ -1,4 +1,5 @@
 import logging
+import datetime
 from sys import exception
 import pandas as pd
 import sqlite3
@@ -70,13 +71,45 @@ def get_datafile_table_name(project_name: str, file_path: str):
     return project_name + "_" + file_path
 
 
-def get_dataset_pagination(
-    project_name: str, file_path: str, page: int, page_size: int
-):
-    offset = (page - 1) * page_size
+def count_rows(project_name: str, file_path: str, filters: List[str]):
+    where_conditions = "WHERE " + " AND ".join(filters) if filters else ""
+
     with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
         cursor = conn.cursor()
-        query = f'SELECT * FROM "{get_datafile_table_name(project_name, file_path)}" LIMIT {page_size} OFFSET {offset};'
+        query = f'SELECT COUNT(*) FROM "{get_datafile_table_name(project_name, file_path)}" {where_conditions};'
+        cursor.execute(query)
+        return cursor.fetchone()[0]
+
+
+def is_sqlite_text_date(column_type, value):
+    if column_type.upper() != "TEXT":
+        return False
+
+    try:
+        datetime.datetime.strptime(value, "%Y-%m-%d")
+        return True
+    except ValueError:
+        pass
+
+    try:
+        datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+        return True
+    except ValueError:
+        pass
+
+    return False
+
+
+def get_dataset_pagination(
+    project_name: str, file_path: str, page: int, page_size: int, filters: List[str]
+):
+    offset = (page - 1) * page_size
+
+    where_conditions = "WHERE " + " AND ".join(filters) if len(filters) > 0 else ""
+
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        cursor = conn.cursor()
+        query = f'SELECT * FROM "{get_datafile_table_name(project_name, file_path)}" {where_conditions} LIMIT {page_size} OFFSET {offset};'
         cursor.execute(query)
         return cursor.fetchall()
 
@@ -106,12 +139,24 @@ def process_file(project_name, project_id, file_path):
 
 def get_datafile_columns(project_name, file_path):
     print(project_name, file_path)
+    columns = []
     with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
         cursor = conn.cursor()
-        cursor.execute(
-            f'PRAGMA table_info("{get_datafile_table_name(project_name, file_path)}")'
-        )
-        columns = [row[1] for row in cursor.fetchall()]
+        table_name = get_datafile_table_name(project_name, file_path)
+        cursor.execute(f'PRAGMA table_info("{table_name}")')
+        for row in cursor.fetchall():
+            column_name = row[1]
+            column_type = row[2]
+
+            # Check the first row value to determine if the TEXT type might be a date
+            cursor.execute(
+                f'SELECT {column_name} FROM "{table_name}" WHERE {column_name} IS NOT NULL LIMIT 1'
+            )
+            first_row_value = cursor.fetchone()
+            if first_row_value and is_sqlite_text_date(column_type, first_row_value[0]):
+                columns.append([column_name, "DATE"])
+            else:
+                columns.append([column_name, column_type])
     return columns
 
 

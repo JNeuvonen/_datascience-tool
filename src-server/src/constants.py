@@ -23,3 +23,36 @@ class AppConstants:
 
 SIZE_1KB = 1024
 SIZE_1GB = SIZE_1KB * SIZE_1KB * SIZE_1KB
+
+
+class NumericalFilterTypes:
+    EQUALS = "equals"
+    DOES_NOT_EQUAL = "notEqual"
+    GREATER_THAN = "greaterThan"
+    GREATER_THAN_OR_EQUAL_TO = "greaterThanOrEqual"
+    LESS_THAN = "lessThan"
+    LESS_THAN_OR_EQUAL_TO = "lessThanOrEqual"
+    BETWEEN = "inRange"
+    BLANK = "blank"
+    NOT_BLANK = "notBlank"
+
+
+class TextFilterTypes:
+    CONTAINS = "contains"
+    DOES_NOT_CONTAIN = "notContains"
+    EQUALS = "equals"
+    DOES_NOT_EQUAL = "notEqual"
+    BEGINS_WITH = "startsWith"
+    ENDS_WITH = "endsWith"
+    BLANK = "blank"
+    NOT_BLANK = "notBlank"
+
+
+class DateFilterTypes:
+    EQUALS = "equals"
+    DOES_NOT_EQUAL = "notEqual"
+    BEFORE = "lessThan"
+    AFTER = "greaterThan"
+    BETWEEN = "inRange"
+    BLANK = "blank"
+    NOT_BLANK = "not_blank"
