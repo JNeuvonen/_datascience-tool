@@ -3,7 +3,12 @@ from fastapi import APIRouter, HTTPException, Response, status
 import pandas as pd
 
 from decorators import HttpResponseContext
-from query_datafile import DatafileQuery, upload_datasets
+from query_datafile import (
+    DatafileQuery,
+    get_datafile_columns,
+    get_dataset_pagination,
+    upload_datasets,
+)
 from query_project import ProjectQuery
 from request_types import (
     BodyCreateProject,
@@ -19,8 +24,10 @@ router = APIRouter()
 
 class RoutePaths:
     ROOT = "/"
-    UPLOAD_DATASET = "/{project_name}/dataset"
-    UPLOAD_DATASETS = "/{project_name}/datasets"
+    DATASET = "/{project_name}/dataset"
+    FILE_ROWS_PAGINATION = "/{project_name}/row-pagination/{file_name}"
+    FILE_BY_NAME = "/{project_name}/file/{file_name}"
+    DATASETS = "/{project_name}/datasets"
     GET_SIZE_OF_UPLOAD = "/size-of-uploads"
     PROJECT = "/{project_name}"
 
@@ -32,7 +39,7 @@ async def route_get_uploads_size(body: BodyGetUploadsSize):
         return {"data": res}
 
 
-@router.post(RoutePaths.UPLOAD_DATASET)
+@router.post(RoutePaths.DATASET)
 async def route_upload_dataset(project_name: str, body: BodyUploadDataset):
     with HttpResponseContext():
         project = ProjectQuery.retrieve_project(project_name, "name")
@@ -46,12 +53,12 @@ async def route_upload_dataset(project_name: str, body: BodyUploadDataset):
         return {"id": id}
 
 
-@router.post(RoutePaths.UPLOAD_DATASETS)
+@router.post(RoutePaths.DATASETS)
 async def route_upload_datasets(project_name: str, body: BodyUploadDatasets):
     with HttpResponseContext():
         project = ProjectQuery.retrieve_project(project_name, "name")
         if project is None:
-            raise HTTPException(status_code=400, detail="Incorrect project ID")
+            raise HTTPException(status_code=400, detail="Incorrect project name")
         asyncio.create_task(upload_datasets(project, body))
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
@@ -72,3 +79,28 @@ async def route_get_project(project_name: str):
         datafiles = DatafileQuery.get_datafiles_by_project(project.id)
         ret = {"datafiles": datafiles, "project": project}
         return {"data": ret}
+
+
+@router.get(RoutePaths.FILE_ROWS_PAGINATION)
+async def route_get_project_dataset(
+    project_name: str, file_name: str, page: int, page_size: int
+):
+    with HttpResponseContext():
+        project = ProjectQuery.retrieve_project(project_name, "name")
+
+        if project is None:
+            raise HTTPException(status_code=400, detail="Incorrect project name")
+
+        pagination_data = get_dataset_pagination(
+            project.name, file_name, page, page_size
+        )
+
+        return {"data": pagination_data}
+
+
+@router.get(RoutePaths.FILE_BY_NAME)
+async def route_(project_name: str, file_name: str):
+    with HttpResponseContext():
+        return {
+            "data": get_datafile_columns(project_name, file_name),
+        }

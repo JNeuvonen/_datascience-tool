@@ -1,4 +1,5 @@
 import logging
+from sys import exception
 import pandas as pd
 import sqlite3
 from typing import Dict, List
@@ -11,7 +12,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from constants import TEMP_EXTRACTED_FILES, AppConstants, Messages
 from decorators import LogException
 from orm import Base, Session
-from utils import get_datafile_metadata, run_in_thread, unzip_file
+from utils import get_datafile_metadata, get_path_last_item, run_in_thread, unzip_file
 
 
 class Datafile(Base):
@@ -41,6 +42,13 @@ class DatafileQuery:
                 session.query(Datafile).filter(Datafile.project_id == project_id).all()
             )
 
+    @staticmethod
+    def get_datafile_by_name(datafile: str) -> Datafile:
+        with Session() as session:
+            return (
+                session.query(Datafile).filter(Datafile.file_name == datafile).first()
+            )
+
 
 def datafile_to_sql(project_name, project_id, file_path: str):
     with LogException():
@@ -58,22 +66,53 @@ def datafile_to_sql(project_name, project_id, file_path: str):
             process_file(project_name, project_id, file_path)
 
 
+def get_datafile_table_name(project_name: str, file_path: str):
+    return project_name + "_" + file_path
+
+
+def get_dataset_pagination(
+    project_name: str, file_path: str, page: int, page_size: int
+):
+    offset = (page - 1) * page_size
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        cursor = conn.cursor()
+        query = f'SELECT * FROM "{get_datafile_table_name(project_name, file_path)}" LIMIT {page_size} OFFSET {offset};'
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
 def process_file(project_name, project_id, file_path):
     with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
         first_chunk = True
         for chunk in pd.read_csv(file_path, chunksize=300000, header=0):
-            chunk.to_sql(
-                project_name + "_" + str(project_id),
-                conn,
-                if_exists="replace" if first_chunk else "append",
-                index=False,
-            )
+            try:
+                chunk.to_sql(
+                    get_datafile_table_name(
+                        project_name, get_path_last_item(file_path)
+                    ),
+                    conn,
+                    if_exists="replace" if first_chunk else "append",
+                    index=False,
+                )
+            except Exception as _:
+                pass
             if first_chunk:
                 first_chunk = False
 
         DatafileQuery.create_datafile_entry(
             get_datafile_metadata(file_path, project_id)
         )
+
+
+def get_datafile_columns(project_name, file_path):
+    print(project_name, file_path)
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            f'PRAGMA table_info("{get_datafile_table_name(project_name, file_path)}")'
+        )
+        columns = [row[1] for row in cursor.fetchall()]
+    return columns
 
 
 async def upload_datasets(project, body: BodyUploadDatasets):
