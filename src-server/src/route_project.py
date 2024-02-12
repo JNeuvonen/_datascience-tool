@@ -1,10 +1,12 @@
 import asyncio
+import json
 from fastapi import APIRouter, HTTPException, Response, status
 import pandas as pd
 
 from decorators import HttpResponseContext
 from query_datafile import (
     DatafileQuery,
+    count_rows,
     get_datafile_columns,
     get_dataset_pagination,
     upload_datasets,
@@ -16,7 +18,11 @@ from request_types import (
     BodyUploadDataset,
     BodyUploadDatasets,
 )
-from utils import get_datafile_metadata, get_sizes_of_files
+from utils import (
+    ag_grid_filters_struct_to_sql,
+    get_datafile_metadata,
+    get_sizes_of_files,
+)
 
 
 router = APIRouter()
@@ -83,19 +89,29 @@ async def route_get_project(project_name: str):
 
 @router.get(RoutePaths.FILE_ROWS_PAGINATION)
 async def route_get_project_dataset(
-    project_name: str, file_name: str, page: int, page_size: int
+    project_name: str, file_name: str, page: int, page_size: int, filters: str
 ):
     with HttpResponseContext():
+        filters_parsed = json.loads(filters)
+        filters_arr = []
+
+        for key, value in filters_parsed.items():
+            sql_filters = ag_grid_filters_struct_to_sql(key, value)
+            filters_arr.append(sql_filters)
+
         project = ProjectQuery.retrieve_project(project_name, "name")
 
         if project is None:
             raise HTTPException(status_code=400, detail="Incorrect project name")
 
         pagination_data = get_dataset_pagination(
-            project.name, file_name, page, page_size
+            project.name, file_name, page, page_size, filters_arr
         )
 
-        return {"data": pagination_data}
+        return {
+            "data": pagination_data,
+            "max_rows": count_rows(project.name, file_name, filters_arr),
+        }
 
 
 @router.get(RoutePaths.FILE_BY_NAME)
