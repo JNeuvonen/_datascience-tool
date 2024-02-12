@@ -98,7 +98,8 @@ export const getProjectPagination = async (
   fileName: string,
   page: number,
   pageSize: number,
-  filters: object
+  filters: object,
+  options: { signal: AbortSignal }
 ) => {
   const res = await httpReq({
     url: REST_API_URL.project_file_pagination(
@@ -109,6 +110,11 @@ export const getProjectPagination = async (
       JSON.stringify(filters)
     ),
     method: "GET",
+    signal: options.signal,
+    options: {
+      signal: options.signal,
+    },
+    errorShouldNotifyUI: false,
   });
 
   if (res.status === 200) {

@@ -9,7 +9,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "ag-grid-community/styles/ag-theme-balham.css";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { getProjectPagination } from "../../client/requests";
 import { useProjectContext } from "../../context/project";
 import { convertColumnsToAgGridFormat } from "../../utils/table";
@@ -30,6 +30,7 @@ export const DatasetDataGrid = ({
   columnLabels,
   projectName,
 }: Props) => {
+  const abortControllerRef = useRef<AbortController>();
   const { selectedFile, gridApi, setGridApi } = useProjectContext();
   const { titleBarHeight, menuBarHeight } = useLayoutContext();
 
@@ -37,23 +38,41 @@ export const DatasetDataGrid = ({
     if (gridApi && selectedFile) {
       const dataSource = {
         getRows: (params: IGetRowsParams) => {
+          if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+          }
+
+          abortControllerRef.current = new AbortController();
+          gridApi!.showLoadingOverlay();
+          gridApi!.showNoRowsOverlay();
+
           const pageSize = params.endRow - params.startRow;
           const page = params.endRow / pageSize;
           const filters = gridApi?.getFilterModel();
+
           getProjectPagination(
             projectName,
             selectedFile?.file_name,
             page,
             pageSize,
-            filters
+            filters,
+            { signal: abortControllerRef.current.signal }
           )
             .then((res) => {
               params.successCallback(
                 convertColumnsToAgGridFormat(res.data, columnLabels),
                 res.max_rows
               );
+              gridApi.hideOverlay();
             })
-            .catch(() => {});
+            .catch((error) => {
+              if (error.name !== "AbortError") {
+                gridApi.hideOverlay();
+              } else {
+                gridApi!.showLoadingOverlay();
+                gridApi!.showNoRowsOverlay();
+              }
+            });
         },
       };
       gridApi.setGridOption("datasource", dataSource);
@@ -79,6 +98,12 @@ export const DatasetDataGrid = ({
         rowModelType={"infinite"}
         paginationAutoPageSize={true}
         cacheBlockSize={100}
+        overlayLoadingTemplate={
+          '<span class="ag-overlay-loading-center">Loading...</span>'
+        }
+        overlayNoRowsTemplate={
+          '<span class="ag-overlay-loading-center">Loading...</span>'
+        }
       />
     </div>
   );
