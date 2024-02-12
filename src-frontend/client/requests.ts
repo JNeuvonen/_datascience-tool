@@ -92,3 +92,40 @@ export const getProjectData = async (projectName: string) => {
   }
   return null;
 };
+
+export const getProjectPagination = async (
+  projectName: string,
+  fileName: string,
+  page: number,
+  pageSize: number
+) => {
+  const res = await httpReq({
+    url: REST_API_URL.project_file_pagination(
+      projectName,
+      fileName,
+      page,
+      pageSize
+    ),
+    method: "GET",
+  });
+
+  if (res.status === 200) {
+    return res.res;
+  }
+  return null;
+};
+
+export const getDatafileColumns = async (
+  projectName: string,
+  fileName: string
+) => {
+  const res = await httpReq({
+    url: REST_API_URL.project_file_by_name(projectName, fileName),
+    method: "GET",
+  });
+
+  if (res.status === 200) {
+    return res.res["data"];
+  }
+  return null;
+};

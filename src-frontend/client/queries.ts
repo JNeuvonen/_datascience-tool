@@ -3,6 +3,7 @@ import { QUERY_KEYS } from "../utils/constants";
 import {
   FileMetadata,
   ProjectData,
+  getDatafileColumns,
   getFileUploadMetadata,
   getProjectData,
 } from "./requests";
@@ -25,5 +26,16 @@ export function useProjectQuery(
     queryKey: [QUERY_KEYS.file_upload_metadata, projectName],
     queryFn: () => getProjectData(projectName),
     enabled: projectName !== UNNAMED_PROJECT_PLACEHOLDER,
+  });
+}
+
+export function useFileColumnsQuery(
+  projectName: string,
+  fileName: string
+): UseQueryResult<string[] | null, unknown> {
+  return useQuery<string[] | null, unknown>({
+    queryKey: [QUERY_KEYS.file_upload_metadata, projectName, fileName],
+    queryFn: () => getDatafileColumns(projectName, fileName),
+    enabled: projectName !== UNNAMED_PROJECT_PLACEHOLDER && !!fileName,
   });
 }
