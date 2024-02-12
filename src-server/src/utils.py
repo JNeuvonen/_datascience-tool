@@ -1,23 +1,137 @@
+import json
 import threading
+import sqlite3
+import datetime
 from contextlib import contextmanager
 from typing import List
 import zipfile
 import os
 import shutil
-from constants import DateFilterTypes, NumericalFilterTypes, TextFilterTypes
+from constants import (
+    AppConstants,
+    DateFilterTypes,
+    NumericalFilterTypes,
+    TextFilterTypes,
+)
 
 from decorators import LogException
+from query_project import ProjectQuery
+
+
+def is_sqlite_text_date(column_type, value):
+    if column_type.upper() != "TEXT":
+        return False
+
+    try:
+        datetime.datetime.strptime(value, "%Y-%m-%d")
+        return True
+    except ValueError:
+        pass
+
+    try:
+        datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+        return True
+    except ValueError:
+        pass
+
+    return False
+
+
+def get_datafile_table_name(project_name: str, file_path: str):
+    return project_name + "_" + file_path
+
+
+def get_distinct_count(table_name: str, column_name: str):
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        cursor = conn.cursor()
+        cursor.execute(f'SELECT COUNT(DISTINCT {column_name}) FROM "{table_name}"')
+        distinct_count = cursor.fetchone()[0]
+        return distinct_count
+
+
+def get_distinct_values(table_name: str, column_name: str):
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        cursor = conn.cursor()
+        cursor.execute(f'SELECT DISTINCT {column_name} FROM "{table_name}"')
+        distinct_values = cursor.fetchall()
+        return [value[0] for value in distinct_values]
+
+
+def get_first_nonnull(table_name: str, column_name: str):
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            f'SELECT {column_name} FROM "{table_name}" WHERE {column_name} IS NOT NULL LIMIT 1'
+        )
+        first_row_value = cursor.fetchone()
+        return first_row_value
+
+
+def get_columns(table_name: str):
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        cursor = conn.cursor()
+        cursor.execute(f'PRAGMA table_info("{table_name}")')
+        cols = []
+        for row in cursor.fetchall():
+            cols.append(row[1])
+        return cols
+
+
+def get_datafile_columns(project_name, file_path, datafile_metadata):
+    columns = []
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        cursor = conn.cursor()
+        table_name = get_datafile_table_name(project_name, file_path)
+        cursor.execute(f'PRAGMA table_info("{table_name}")')
+        distinct_counts = json.loads(datafile_metadata.distinct_counts)
+        distinct_values = json.loads(datafile_metadata.distinct_values)
+        for row in cursor.fetchall():
+            column_name = row[1]
+            column_type = row[2]
+
+            distinct_count = distinct_counts.get(column_name)
+            distinct_values = distinct_values.get(column_name)
+            first_row_value = get_first_nonnull(table_name, column_name)
+
+            if distinct_count < 15:
+                columns.append([column_name, "CATEGORY", distinct_values])
+            elif first_row_value and is_sqlite_text_date(
+                column_type, first_row_value[0]
+            ):
+                columns.append([column_name, "DATE", None])
+            else:
+                columns.append([column_name, column_type, None])
+    return columns
 
 
 def get_datafile_metadata(path: str, project_id, was_import=True):
     with LogException():
+        project = ProjectQuery.retrieve_project(project_id)
         file_size_bytes = os.path.getsize(path)
         file_name = get_path_last_item(path)
+        distinct_counts = {}
+        distinct_values = {}
+        for item in get_columns(get_datafile_table_name(project.name, file_name)):
+            count = get_distinct_count(
+                get_datafile_table_name(project.name, file_name), item
+            )
+            distinct_counts[item] = count
+
+            if count < 15:
+                values = get_distinct_values(
+                    get_datafile_table_name(project.name, file_name), item
+                )
+                distinct_values[item] = values
+            else:
+                distinct_values[item] = None
+
         return {
             "size_bytes": file_size_bytes,
             "file_name": file_name,
             "project_id": project_id,
             "was_import": was_import,
+            "distinct_counts": json.dumps(distinct_counts),
+            "distinct_values": json.dumps(distinct_values),
         }
 
 
