@@ -9,6 +9,10 @@ import { ImportedFilesDrawer } from "../../components/ImportedFilesDrawer";
 import { DatasetDataGrid } from "../../components/project/DataGrid";
 import { usePathParams } from "../../hooks/usePathParams";
 import { getAgGridDtype } from "../../utils/dataset";
+import {
+  CategoricalFilter,
+  PartialMatchFilter,
+} from "../../components/project/CategoricalFilter";
 
 interface PageQueryParams {
   openFileSelection: string | undefined;
@@ -60,9 +64,10 @@ export const ProjectDatasetsPage = () => {
               sortable: true,
               editable: true,
               // filter: getAgGridDtype(item[1]),
-              filter: "agSetColumnFilter",
+              filter: CategoricalFilter,
               filterParams: {
-                values: ["2017-07-06"],
+                values: ["Array", "Lol"],
+                filterType: "categorical",
               },
             };
           })}
