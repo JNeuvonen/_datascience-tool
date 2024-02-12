@@ -1,6 +1,4 @@
 import logging
-import datetime
-from sys import exception
 import pandas as pd
 import sqlite3
 from typing import Dict, List
@@ -13,7 +11,13 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from constants import TEMP_EXTRACTED_FILES, AppConstants, Messages
 from decorators import LogException
 from orm import Base, Session
-from utils import get_datafile_metadata, get_path_last_item, run_in_thread, unzip_file
+from utils import (
+    get_datafile_metadata,
+    get_datafile_table_name,
+    get_path_last_item,
+    run_in_thread,
+    unzip_file,
+)
 
 
 class Datafile(Base):
@@ -22,6 +26,8 @@ class Datafile(Base):
     id = Column(Integer, primary_key=True)
     file_name = Column(String, nullable=False)
     size_bytes = Column(Integer)
+    distinct_counts = Column(String, nullable=True)
+    distinct_values = Column(String, nullable=True)
     was_import = Column(Integer)
     project_id = Column(Integer, ForeignKey("project.id"), nullable=False)
 
@@ -67,10 +73,6 @@ def datafile_to_sql(project_name, project_id, file_path: str):
             process_file(project_name, project_id, file_path)
 
 
-def get_datafile_table_name(project_name: str, file_path: str):
-    return project_name + "_" + file_path
-
-
 def count_rows(project_name: str, file_path: str, filters: List[str]):
     where_conditions = "WHERE " + " AND ".join(filters) if filters else ""
 
@@ -79,25 +81,6 @@ def count_rows(project_name: str, file_path: str, filters: List[str]):
         query = f'SELECT COUNT(*) FROM "{get_datafile_table_name(project_name, file_path)}" {where_conditions};'
         cursor.execute(query)
         return cursor.fetchone()[0]
-
-
-def is_sqlite_text_date(column_type, value):
-    if column_type.upper() != "TEXT":
-        return False
-
-    try:
-        datetime.datetime.strptime(value, "%Y-%m-%d")
-        return True
-    except ValueError:
-        pass
-
-    try:
-        datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
-        return True
-    except ValueError:
-        pass
-
-    return False
 
 
 def get_dataset_pagination(
@@ -135,29 +118,6 @@ def process_file(project_name, project_id, file_path):
         DatafileQuery.create_datafile_entry(
             get_datafile_metadata(file_path, project_id)
         )
-
-
-def get_datafile_columns(project_name, file_path):
-    print(project_name, file_path)
-    columns = []
-    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
-        cursor = conn.cursor()
-        table_name = get_datafile_table_name(project_name, file_path)
-        cursor.execute(f'PRAGMA table_info("{table_name}")')
-        for row in cursor.fetchall():
-            column_name = row[1]
-            column_type = row[2]
-
-            # Check the first row value to determine if the TEXT type might be a date
-            cursor.execute(
-                f'SELECT {column_name} FROM "{table_name}" WHERE {column_name} IS NOT NULL LIMIT 1'
-            )
-            first_row_value = cursor.fetchone()
-            if first_row_value and is_sqlite_text_date(column_type, first_row_value[0]):
-                columns.append([column_name, "DATE"])
-            else:
-                columns.append([column_name, column_type])
-    return columns
 
 
 async def upload_datasets(project, body: BodyUploadDatasets):

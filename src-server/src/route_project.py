@@ -7,7 +7,6 @@ from decorators import HttpResponseContext
 from query_datafile import (
     DatafileQuery,
     count_rows,
-    get_datafile_columns,
     get_dataset_pagination,
     upload_datasets,
 )
@@ -20,6 +19,7 @@ from request_types import (
 )
 from utils import (
     ag_grid_filters_struct_to_sql,
+    get_datafile_columns,
     get_datafile_metadata,
     get_sizes_of_files,
 )
@@ -117,6 +117,7 @@ async def route_get_project_dataset(
 @router.get(RoutePaths.FILE_BY_NAME)
 async def route_(project_name: str, file_name: str):
     with HttpResponseContext():
+        datafile = DatafileQuery.get_datafile_by_name(file_name)
         return {
-            "data": get_datafile_columns(project_name, file_name),
+            "data": get_datafile_columns(project_name, file_name, datafile),
         }
