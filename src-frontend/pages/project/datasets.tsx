@@ -6,14 +6,18 @@ import { useProjectContext } from "../../context/project";
 import useQueryParams from "../../hooks/useQueryParams";
 import { removeQueryParam } from "../../utils/location";
 import { ImportedFilesDrawer } from "../../components/ImportedFilesDrawer";
+import { DatasetDataGrid } from "../../components/project/DataGrid";
+import { usePathParams } from "../../hooks/usePathParams";
 
 interface PageQueryParams {
   openFileSelection: string | undefined;
 }
 
 export const ProjectDatasetsPage = () => {
+  const { project } = usePathParams<{ project: string }>();
   const { openFileSelection } = useQueryParams<PageQueryParams>();
-  const { selectFilesDrawer, importedFilesDrawer } = useProjectContext();
+  const { selectFilesDrawer, importedFilesDrawer, fileColumnsQuery } =
+    useProjectContext();
   const fileSelectorOpenedLock = useRef(false);
 
   useEffect(() => {
@@ -45,6 +49,24 @@ export const ProjectDatasetsPage = () => {
       >
         <ImportedFilesDrawer {...importedFilesDrawer} />
       </ChakraDrawer>
+
+      {fileColumnsQuery.data && (
+        <DatasetDataGrid
+          columnDefs={fileColumnsQuery.data.map((item) => {
+            return {
+              headerName: item,
+              field: item,
+              sortable: false,
+              editable: true,
+            };
+          })}
+          onCellClicked={(e: CellClickedEvent) => {}}
+          handleCellValueChanged={(rowData: CellValueChangedEvent) => {}}
+          maxRows={400}
+          columnLabels={fileColumnsQuery.data}
+          projectName={project}
+        />
+      )}
     </Box>
   );
 };
