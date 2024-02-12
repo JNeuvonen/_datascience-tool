@@ -97,14 +97,16 @@ export const getProjectPagination = async (
   projectName: string,
   fileName: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  filters: object
 ) => {
   const res = await httpReq({
     url: REST_API_URL.project_file_pagination(
       projectName,
       fileName,
       page,
-      pageSize
+      pageSize,
+      JSON.stringify(filters)
     ),
     method: "GET",
   });

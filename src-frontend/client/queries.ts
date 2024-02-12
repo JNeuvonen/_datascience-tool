@@ -29,11 +29,14 @@ export function useProjectQuery(
   });
 }
 
+export type SqlDtype = "NULL" | "INTEGER" | "REAL" | "TEXT" | "BLOB" | "DATE";
+export type ColumnInfo = [string, SqlDtype];
+
 export function useFileColumnsQuery(
   projectName: string,
   fileName: string
-): UseQueryResult<string[] | null, unknown> {
-  return useQuery<string[] | null, unknown>({
+): UseQueryResult<ColumnInfo[] | null, unknown> {
+  return useQuery<ColumnInfo[] | null, unknown>({
     queryKey: [QUERY_KEYS.file_upload_metadata, projectName, fileName],
     queryFn: () => getDatafileColumns(projectName, fileName),
     enabled: projectName !== UNNAMED_PROJECT_PLACEHOLDER && !!fileName,
