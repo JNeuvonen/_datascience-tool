@@ -16,9 +16,10 @@ export const REST_API_URL = {
     projectName: string,
     fileName: string,
     page: number,
-    page_size: number
+    page_size: number,
+    filters: string
   ) =>
-    `${BASE_URL}/${PROJECT}/${projectName}/row-pagination/${fileName}?page=${page}&page_size=${page_size}`,
+    `${BASE_URL}/${PROJECT}/${projectName}/row-pagination/${fileName}?page=${page}&page_size=${page_size}&filters=${filters}`,
   project_file_by_name: (projectName: string, fileName: string) =>
     `${BASE_URL}/${PROJECT}/${projectName}/file/${fileName}`,
 };
