@@ -19,6 +19,7 @@ export const DOM_EVENT_CHANNELS = {
 
 export const QUERY_KEYS = {
   file_upload_metadata: "file-upload-metadata",
+  file_columns: "file-columns",
   project: "project",
 };
 

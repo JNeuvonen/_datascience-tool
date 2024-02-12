@@ -12,4 +12,13 @@ export const REST_API_URL = {
   file_upload_metadata: `${BASE_URL}/${PROJECT}/size-of-uploads`,
   get_project: (projectName: string) => `${BASE_URL}/${PROJECT}/${projectName}`,
   log_stream: "ws://localhost:8000/streams/subscribe-log",
+  project_file_pagination: (
+    projectName: string,
+    fileName: string,
+    page: number,
+    page_size: number
+  ) =>
+    `${BASE_URL}/${PROJECT}/${projectName}/row-pagination/${fileName}?page=${page}&page_size=${page_size}`,
+  project_file_by_name: (projectName: string, fileName: string) =>
+    `${BASE_URL}/${PROJECT}/${projectName}/file/${fileName}`,
 };
