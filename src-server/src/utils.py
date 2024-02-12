@@ -85,22 +85,41 @@ def get_datafile_columns(project_name, file_path, datafile_metadata):
         cursor.execute(f'PRAGMA table_info("{table_name}")')
         distinct_counts = json.loads(datafile_metadata.distinct_counts)
         distinct_values = json.loads(datafile_metadata.distinct_values)
+        print(distinct_values)
         for row in cursor.fetchall():
             column_name = row[1]
             column_type = row[2]
 
             distinct_count = distinct_counts.get(column_name)
-            distinct_values = distinct_values.get(column_name)
+            categorical_values = distinct_values.get(column_name)
             first_row_value = get_first_nonnull(table_name, column_name)
 
             if distinct_count < 15:
-                columns.append([column_name, "CATEGORY", distinct_values])
+                columns.append(
+                    {
+                        "name": column_name,
+                        "type": "CATEGORY",
+                        "categorical_values": categorical_values,
+                    }
+                )
             elif first_row_value and is_sqlite_text_date(
                 column_type, first_row_value[0]
             ):
-                columns.append([column_name, "DATE", None])
+                columns.append(
+                    {
+                        "name": column_name,
+                        "type": "DATE",
+                        "categorical_values": None,
+                    }
+                )
             else:
-                columns.append([column_name, column_type, None])
+                columns.append(
+                    {
+                        "name": column_name,
+                        "type": column_type,
+                        "categorical_values": None,
+                    }
+                )
     return columns
 
 

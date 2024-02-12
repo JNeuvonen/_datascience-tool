@@ -1,6 +1,7 @@
 import { SqlDtype } from "../client/queries";
+import { CategoricalFilter } from "../components/project/CategoricalFilter";
 
-export const getAgGridDtype = (sqlDType: SqlDtype) => {
+export const getAgGridFilterType = (sqlDType: SqlDtype) => {
   switch (sqlDType) {
     case "NULL":
       return false;
@@ -12,6 +13,8 @@ export const getAgGridDtype = (sqlDType: SqlDtype) => {
       return "agDateColumnFilter";
     case "TEXT":
       return "agTextColumnFilter";
+    case "CATEGORY":
+      return CategoricalFilter;
     case "BLOB":
       return false;
     default:
