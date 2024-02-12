@@ -58,7 +58,6 @@ export const ProjectDatasetsPage = () => {
             return {
               headerName: item.name,
               field: item.name,
-              sortable: true,
               editable: true,
               filter: getAgGridFilterType(item.type),
               filterParams:

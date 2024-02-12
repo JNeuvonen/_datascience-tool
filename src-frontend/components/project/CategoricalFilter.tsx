@@ -13,9 +13,17 @@ export class CategoricalFilter implements IFilterComp {
   init(params: IFilterParams & { values: string[] }): void {
     this.filterParams = params;
     this.gui = document.createElement("div");
+    this.gui.style.display = "flex";
+    this.gui.style.flexDirection = "column";
+    this.gui.style.gap = "6px";
+    this.gui.style.padding = "8px";
 
     const categories = params.values;
-    categories.slice(0, 10).forEach((category) => {
+    categories.forEach((category) => {
+      const checkboxContainer = document.createElement("div");
+      checkboxContainer.style.display = "flex";
+      checkboxContainer.style.gap = "6px";
+      checkboxContainer.style.alignItems = "center";
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.id = category;
@@ -30,12 +38,13 @@ export class CategoricalFilter implements IFilterComp {
         params.filterChangedCallback();
       });
 
+      checkboxContainer.appendChild(checkbox);
       const label = document.createElement("label");
       label.htmlFor = category;
       label.appendChild(document.createTextNode(category));
+      checkboxContainer.appendChild(label);
 
-      this.gui.appendChild(checkbox);
-      this.gui.appendChild(label);
+      this.gui.appendChild(checkboxContainer);
       this.checkboxes.push(checkbox);
     });
   }
@@ -56,7 +65,10 @@ export class CategoricalFilter implements IFilterComp {
       return null;
     }
 
-    return Array.from(this.selectedCategories);
+    return {
+      filter: Array.from(this.selectedCategories),
+      filterType: "category",
+    };
   }
 
   setModel(model: any): void {
@@ -73,9 +85,5 @@ export class CategoricalFilter implements IFilterComp {
 
   getGui(): HTMLElement {
     return this.gui;
-  }
-
-  componentMethod(message: string): void {
-    alert(`Alert from CategoricalFilterComponent: ${message}`);
   }
 }
