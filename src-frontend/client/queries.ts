@@ -29,8 +29,20 @@ export function useProjectQuery(
   });
 }
 
-export type SqlDtype = "NULL" | "INTEGER" | "REAL" | "TEXT" | "BLOB" | "DATE";
-export type ColumnInfo = [string, SqlDtype];
+export type SqlDtype =
+  | "NULL"
+  | "INTEGER"
+  | "REAL"
+  | "TEXT"
+  | "BLOB"
+  | "DATE"
+  | "CATEGORY";
+
+export type ColumnInfo = {
+  name: string;
+  type: SqlDtype;
+  categorical_values: string[];
+};
 
 export function useFileColumnsQuery(
   projectName: string,

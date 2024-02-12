@@ -8,11 +8,8 @@ import { removeQueryParam } from "../../utils/location";
 import { ImportedFilesDrawer } from "../../components/ImportedFilesDrawer";
 import { DatasetDataGrid } from "../../components/project/DataGrid";
 import { usePathParams } from "../../hooks/usePathParams";
-import { getAgGridDtype } from "../../utils/dataset";
-import {
-  CategoricalFilter,
-  PartialMatchFilter,
-} from "../../components/project/CategoricalFilter";
+import { CategoricalFilter } from "../../components/project/CategoricalFilter";
+import { getAgGridDtype, getAgGridFilterType } from "../../utils/dataset";
 
 interface PageQueryParams {
   openFileSelection: string | undefined;
@@ -59,21 +56,23 @@ export const ProjectDatasetsPage = () => {
         <DatasetDataGrid
           columnDefs={fileColumnsQuery.data.map((item) => {
             return {
-              headerName: item[0],
-              field: item[0],
+              headerName: item.name,
+              field: item.name,
               sortable: true,
               editable: true,
-              // filter: getAgGridDtype(item[1]),
-              filter: CategoricalFilter,
-              filterParams: {
-                values: ["Array", "Lol"],
-                filterType: "categorical",
-              },
+              filter: getAgGridFilterType(item.type),
+              filterParams:
+                item.type === "CATEGORY"
+                  ? {
+                      values: item.categorical_values,
+                      type: item.type,
+                    }
+                  : {},
             };
           })}
           onCellClicked={(e: CellClickedEvent) => {}}
           handleCellValueChanged={(rowData: CellValueChangedEvent) => {}}
-          columnLabels={fileColumnsQuery.data.map((item) => item[0])}
+          columnLabels={fileColumnsQuery.data.map((item) => item.name)}
           projectName={project}
         />
       )}
