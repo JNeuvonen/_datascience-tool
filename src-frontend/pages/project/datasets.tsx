@@ -8,6 +8,7 @@ import { removeQueryParam } from "../../utils/location";
 import { ImportedFilesDrawer } from "../../components/ImportedFilesDrawer";
 import { DatasetDataGrid } from "../../components/project/DataGrid";
 import { usePathParams } from "../../hooks/usePathParams";
+import { getAgGridDtype } from "../../utils/dataset";
 
 interface PageQueryParams {
   openFileSelection: string | undefined;
@@ -54,16 +55,20 @@ export const ProjectDatasetsPage = () => {
         <DatasetDataGrid
           columnDefs={fileColumnsQuery.data.map((item) => {
             return {
-              headerName: item,
-              field: item,
-              sortable: false,
+              headerName: item[0],
+              field: item[0],
+              sortable: true,
               editable: true,
+              // filter: getAgGridDtype(item[1]),
+              filter: "agSetColumnFilter",
+              filterParams: {
+                values: ["2017-07-06"],
+              },
             };
           })}
           onCellClicked={(e: CellClickedEvent) => {}}
           handleCellValueChanged={(rowData: CellValueChangedEvent) => {}}
-          maxRows={400}
-          columnLabels={fileColumnsQuery.data}
+          columnLabels={fileColumnsQuery.data.map((item) => item[0])}
           projectName={project}
         />
       )}

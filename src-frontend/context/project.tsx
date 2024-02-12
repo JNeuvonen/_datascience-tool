@@ -1,9 +1,14 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import { usePathParams } from "../hooks/usePathParams";
-import { useFileColumnsQuery, useProjectQuery } from "../client/queries";
+import {
+  ColumnInfo,
+  useFileColumnsQuery,
+  useProjectQuery,
+} from "../client/queries";
 import { UseQueryResult } from "@tanstack/react-query";
 import { DataFile, ProjectData } from "../client/requests";
+import { GridApi } from "ag-grid-community";
 
 type UseDisclosureReturn = ReturnType<typeof useDisclosure>;
 
@@ -11,9 +16,11 @@ interface ProjectContextType {
   selectFilesDrawer: UseDisclosureReturn;
   importedFilesDrawer: UseDisclosureReturn;
   projectQuery: UseQueryResult<ProjectData | null, unknown>;
-  fileColumnsQuery: UseQueryResult<string[] | null, unknown>;
+  fileColumnsQuery: UseQueryResult<ColumnInfo[] | null, unknown>;
   selectedFile: DataFile | null;
   setSelectedFile: React.Dispatch<React.SetStateAction<DataFile | null>>;
+  setGridApi: React.Dispatch<React.SetStateAction<GridApi<any> | null>>;
+  gridApi: GridApi | null;
 }
 
 export const ProjectContext = createContext<ProjectContextType>(
@@ -38,6 +45,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
 
   const selectFilesDrawer = useDisclosure();
   const importedFilesDrawer = useDisclosure();
+  const [gridApi, setGridApi] = useState<GridApi | null>(null);
 
   return (
     <ProjectContext.Provider
@@ -48,6 +56,8 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         selectedFile,
         setSelectedFile,
         fileColumnsQuery,
+        gridApi,
+        setGridApi,
       }}
     >
       {children}
