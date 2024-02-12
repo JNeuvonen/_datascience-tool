@@ -279,6 +279,23 @@ def ag_grid_numerical_to_sql(column, filters):
         return f"({generate_numerical_filter_sql(column, condition_1)} {operator} {generate_numerical_filter_sql(column, condition_2)})"
 
 
+def ag_grid_category_to_sql(column, filters):
+    conditions = []
+
+    for item in filters["filter"]:
+        if item == "" or item is None:
+            condition = f"{column} IS NULL"
+        else:
+            condition = f"{column} LIKE '%{item}%'"
+        conditions.append(condition)
+
+    ret = " OR ".join(conditions)
+
+    if len(ret) > 0:
+        return f"({ret})"
+    return ret
+
+
 def ag_grid_text_to_sql(column, filters):
     operator = filters.get("operator")
     if operator is None:
@@ -309,8 +326,10 @@ def ag_grid_filters_struct_to_sql(column, filters):
     if filter_type == "text":
         return ag_grid_text_to_sql(column, filters)
 
+    if filter_type == "category":
+        return ag_grid_category_to_sql(column, filters)
+
     if filter_type == "date":
-        print(ag_grid_date_to_sql(column, filters))
         return ag_grid_date_to_sql(column, filters)
 
     return None

@@ -99,6 +99,8 @@ async def route_get_project_dataset(
             sql_filters = ag_grid_filters_struct_to_sql(key, value)
             filters_arr.append(sql_filters)
 
+        print(filters_arr)
+
         project = ProjectQuery.retrieve_project(project_name, "name")
 
         if project is None:
