@@ -8,8 +8,7 @@ import { removeQueryParam } from "../../utils/location";
 import { ImportedFilesDrawer } from "../../components/ImportedFilesDrawer";
 import { DatasetDataGrid } from "../../components/project/DataGrid";
 import { usePathParams } from "../../hooks/usePathParams";
-import { CategoricalFilter } from "../../components/project/CategoricalFilter";
-import { getAgGridDtype, getAgGridFilterType } from "../../utils/dataset";
+import { getAgGridFilterType } from "../../utils/dataset";
 
 interface PageQueryParams {
   openFileSelection: string | undefined;

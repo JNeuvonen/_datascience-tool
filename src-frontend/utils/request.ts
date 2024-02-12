@@ -9,6 +9,7 @@ interface RequestProps {
   errorShouldNotifyUI?: boolean;
   onCatchErrorMsg?: string;
   errorDuration?: number;
+  signal?: AbortSignal | undefined | null;
 }
 
 export interface ApiResponse {
