@@ -9,6 +9,7 @@ import { ImportedFilesDrawer } from "../../components/ImportedFilesDrawer";
 import { DatasetDataGrid } from "../../components/project/DataGrid";
 import { usePathParams } from "../../hooks/usePathParams";
 import { getAgGridFilterType } from "../../utils/dataset";
+import { DataGridSkeleton } from "../../components/project/DataGridSkeleton";
 
 interface PageQueryParams {
   openFileSelection: string | undefined;
@@ -51,7 +52,7 @@ export const ProjectDatasetsPage = () => {
         <ImportedFilesDrawer {...importedFilesDrawer} />
       </ChakraDrawer>
 
-      {fileColumnsQuery.data && (
+      {fileColumnsQuery.data ? (
         <DatasetDataGrid
           columnDefs={fileColumnsQuery.data.map((item) => {
             return {
@@ -73,6 +74,8 @@ export const ProjectDatasetsPage = () => {
           columnLabels={fileColumnsQuery.data.map((item) => item.name)}
           projectName={project}
         />
+      ) : (
+        <DataGridSkeleton />
       )}
     </Box>
   );
