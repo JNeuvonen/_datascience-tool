@@ -79,7 +79,7 @@ export const ProjectMenuBar = () => {
             icon={<FaFileImport />}
             onClick={importedFilesDrawer.onOpen}
           >
-            View imported files
+            Select imported file
           </MenuItem>
           <MenuItem icon={<FaDownload />}>Export data</MenuItem>
           <MenuItem icon={<FaFileSignature />}>Create pivot dataframe</MenuItem>

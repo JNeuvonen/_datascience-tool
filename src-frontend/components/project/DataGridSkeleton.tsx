@@ -17,7 +17,7 @@ export const DataGridSkeleton = () => {
         paginationAutoPageSize={true}
         cacheBlockSize={100}
         overlayLoadingTemplate={
-          '<span class="ag-overlay-loading-center">No dataset selected...</span>'
+          '<span class="ag-overlay-loading-center">No file selected...</span>'
         }
       />
     </div>
