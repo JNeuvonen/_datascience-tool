@@ -1,10 +1,9 @@
 import multiprocessing
 import pytest
 import time
+from tests.import_helper import create_tables, db_delete_all_data
 
 from tests.utils import (
-    create_tables,
-    db_delete_all_data,
     del_db_files,
     init_server,
     kill_process_on_port,

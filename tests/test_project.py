@@ -1,7 +1,12 @@
 import pytest
 from tests.fixtures.project import PD_SIMPLE_1, Files
+from tests.import_helper import (
+    DatafileQuery,
+    ProjectQuery,
+    get_path_last_item,
+)
 
-from tests.utils import RestAPI, get_path_last_item
+from tests.utils import RestAPI
 
 
 @pytest.mark.acceptance
@@ -31,5 +36,9 @@ def test_set_join_col(cleanup_db, fixt_upload_datasets):
     project_name = fixt_upload_datasets["project_name"]
     organize_metadata = RestAPI.organize(project_name)
     join_col = organize_metadata["common_columns"][0]
-    res = RestAPI.set_join_col(project_name, join_col)
-    print(res)
+    RestAPI.set_join_col(project_name, join_col)
+    project = ProjectQuery.retrieve_project(project_name, "name")
+    datafiles = DatafileQuery.get_datafiles_by_project(project.id)
+
+    for item in datafiles:
+        assert item.join_column == join_col
