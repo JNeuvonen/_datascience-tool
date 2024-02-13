@@ -9,6 +9,7 @@ import {
 import { UseQueryResult } from "@tanstack/react-query";
 import { DataFile, ProjectData } from "../client/requests";
 import { GridApi } from "ag-grid-community";
+import { ProjectNotifications } from "../components/project/NotificationsHelper";
 
 type UseDisclosureReturn = ReturnType<typeof useDisclosure>;
 
@@ -60,6 +61,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         setGridApi,
       }}
     >
+      <ProjectNotifications />
       {children}
     </ProjectContext.Provider>
   );
