@@ -377,7 +377,7 @@ def update_join_col(project, datafiles, join_col):
         cols = get_columns(table_name)
 
         if join_col in cols:
-            if item.join_col is not None:
+            if item.join_column is None:
                 ids_pending_update.append(item.id)
             files_with_no_join.remove(item.file_name)
 
@@ -506,7 +506,7 @@ def get_join_col_actions(project_name):
     datafiles = DatafileQuery.get_datafiles_by_project(project.id)
 
     common_columns = None
-    files_with_no_join = None
+    files_with_no_join = "N/A"
     if project.join_column is None:
         common_columns = look_for_common_column(project, datafiles)
     else:
@@ -514,7 +514,7 @@ def get_join_col_actions(project_name):
             project, datafiles, project.join_column
         )
         for item in file_ids_pending_update:
-            DatafileQuery.update_join_column(item.id, project.join_column)
+            DatafileQuery.update_join_column(item, project.join_column)
 
     ret = {
         "common_columns": common_columns,

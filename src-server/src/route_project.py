@@ -21,8 +21,6 @@ from utils import (
     get_dataset_pagination,
     get_join_col_actions,
     get_sizes_of_files,
-    look_for_common_column,
-    update_join_col,
     upload_datasets,
 )
 from config import is_testing
@@ -175,6 +173,8 @@ async def route_set_join_col(project_name: str, join_col: str):
         for item in datafiles:
             if item.join_column is None:
                 DatafileQuery.update_join_column(item.id, join_col)
+
+        ProjectQuery.update_join_column(project.id, join_col)
 
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK

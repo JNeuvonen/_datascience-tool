@@ -7,7 +7,7 @@ from request_types import BodyCreateProject
 class Project(Base):
     __tablename__ = "project"
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=True, unique=True)
+    name = Column(String, unique=True)
     join_column = Column(String, nullable=True)
 
 
