@@ -10,10 +10,19 @@ from tests.constants import SERVER_SOURCE_DIR, Constants
 
 sys.path.append(SERVER_SOURCE_DIR)
 import main
-from orm import create_tables as ct, drop_tables as dt
+from orm import create_tables as ct, drop_tables as dt, db_delete_all_data as ddad
 from route_project import RoutePaths as ProjectRoutes
 from constants import APP_DB, DATASET_DB_PATH
 from config import append_app_data_path
+from utils import get_path_last_item as gpli
+
+
+def db_delete_all_data():
+    ddad()
+
+
+def get_path_last_item(path: str):
+    return gpli(path)
 
 
 def project_routes():
@@ -99,6 +108,12 @@ class URL:
             project_name=project_name
         )
 
+    @classmethod
+    def get_project_file(cls, project_name: str, file_name: str):
+        return cls.route_project() + project_routes().FILE_BY_NAME.format(
+            project_name=project_name, file_name=file_name
+        )
+
 
 class RestAPI:
     @staticmethod
@@ -114,4 +129,9 @@ class RestAPI:
     @staticmethod
     def get_project(project_name: str):
         with Req("get", URL.get_project(project_name)) as res:
+            return res.json()["data"]
+
+    @staticmethod
+    def get_project_file(project_name: str, file_name: str):
+        with Req("get", URL.get_project_file(project_name, file_name)) as res:
             return res.json()["data"]
