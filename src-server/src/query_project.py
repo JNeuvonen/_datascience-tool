@@ -1,5 +1,4 @@
-from enum import unique
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, Integer, String
 from decorators import LogException
 from orm import Base, Session
 from request_types import BodyCreateProject
@@ -29,3 +28,10 @@ class ProjectQuery:
                 query = session.query(Project)
                 train_job_data = query.filter(getattr(Project, field) == value).first()
                 return train_job_data
+
+    @staticmethod
+    def retrieve_all_projects():
+        with LogException():
+            with Session() as session:
+                query = session.query(Project)
+                return query.all()
