@@ -178,21 +178,24 @@ def run_in_thread(fn, *args, **kwargs):
 
 
 def get_sizes_of_files(file_paths: List[str]):
-    ret = []
-    for file_path in file_paths:
-        if file_path.endswith(".zip"):
-            try:
-                with zipfile.ZipFile(file_path, "r") as zip_ref:
-                    total_size = sum(
-                        file_info.file_size for file_info in zip_ref.infolist()
+    with LogException():
+        ret = []
+        for file_path in file_paths:
+            if file_path.endswith(".zip"):
+                try:
+                    with zipfile.ZipFile(file_path, "r") as zip_ref:
+                        total_size = sum(
+                            file_info.file_size for file_info in zip_ref.infolist()
+                        )
+                    ret.append(
+                        {"file_path": file_path, "uncompressed_size": total_size}
                     )
-                ret.append({"file_path": file_path, "uncompressed_size": total_size})
-            except zipfile.BadZipFile as e:
-                raise e
-        else:
-            pass
+                except zipfile.BadZipFile as e:
+                    raise e
+            else:
+                pass
 
-    return ret
+        return ret
 
 
 def generate_numerical_filter_sql(column, filters):
@@ -318,21 +321,22 @@ def ag_grid_date_to_sql(column, filters):
 
 
 def ag_grid_filters_struct_to_sql(column, filters):
-    filter_type = filters.get("filterType")
+    with LogException():
+        filter_type = filters.get("filterType")
 
-    if filter_type == "number":
-        return ag_grid_numerical_to_sql(column, filters)
+        if filter_type == "number":
+            return ag_grid_numerical_to_sql(column, filters)
 
-    if filter_type == "text":
-        return ag_grid_text_to_sql(column, filters)
+        if filter_type == "text":
+            return ag_grid_text_to_sql(column, filters)
 
-    if filter_type == "category":
-        return ag_grid_category_to_sql(column, filters)
+        if filter_type == "category":
+            return ag_grid_category_to_sql(column, filters)
 
-    if filter_type == "date":
-        return ag_grid_date_to_sql(column, filters)
+        if filter_type == "date":
+            return ag_grid_date_to_sql(column, filters)
 
-    return None
+        return None
 
 
 def look_for_common_column(project, datafiles):

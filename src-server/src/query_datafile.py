@@ -74,27 +74,29 @@ def datafile_to_sql(project_name, project_id, file_path: str):
 
 
 def count_rows(project_name: str, file_path: str, filters: List[str]):
-    where_conditions = "WHERE " + " AND ".join(filters) if filters else ""
+    with LogException():
+        where_conditions = "WHERE " + " AND ".join(filters) if filters else ""
 
-    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
-        cursor = conn.cursor()
-        query = f'SELECT COUNT(*) FROM "{get_datafile_table_name(project_name, file_path)}" {where_conditions};'
-        cursor.execute(query)
-        return cursor.fetchone()[0]
+        with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+            cursor = conn.cursor()
+            query = f'SELECT COUNT(*) FROM "{get_datafile_table_name(project_name, file_path)}" {where_conditions};'
+            cursor.execute(query)
+            return cursor.fetchone()[0]
 
 
 def get_dataset_pagination(
     project_name: str, file_path: str, page: int, page_size: int, filters: List[str]
 ):
-    offset = (page - 1) * page_size
+    with LogException():
+        offset = (page - 1) * page_size
 
-    where_conditions = "WHERE " + " AND ".join(filters) if len(filters) > 0 else ""
+        where_conditions = "WHERE " + " AND ".join(filters) if len(filters) > 0 else ""
 
-    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
-        cursor = conn.cursor()
-        query = f'SELECT * FROM "{get_datafile_table_name(project_name, file_path)}" {where_conditions} LIMIT {page_size} OFFSET {offset};'
-        cursor.execute(query)
-        return cursor.fetchall()
+        with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+            cursor = conn.cursor()
+            query = f'SELECT * FROM "{get_datafile_table_name(project_name, file_path)}" {where_conditions} LIMIT {page_size} OFFSET {offset};'
+            cursor.execute(query)
+            return cursor.fetchall()
 
 
 def process_file(project_name, project_id, file_path):
@@ -121,45 +123,47 @@ def process_file(project_name, project_id, file_path):
 
 
 async def upload_datasets(project, body: BodyUploadDatasets):
-    def non_blocking():
-        try:
-            logger = get_logger()
-            logger.log(
-                Messages.UPLOAD_FILES.format(
-                    FILES_DONE="0", FILES_MAX=len(body.dataset_paths)
-                ),
-                logging.INFO,
-                False,
-                False,
-            )
-            idx = 0
-            for item in body.dataset_paths:
-                datafile_to_sql(project.name, project.id, item)
+    with LogException():
+
+        def non_blocking():
+            try:
+                logger = get_logger()
                 logger.log(
                     Messages.UPLOAD_FILES.format(
-                        FILES_DONE=str(idx + 1), FILES_MAX=len(body.dataset_paths)
+                        FILES_DONE="0", FILES_MAX=len(body.dataset_paths)
                     ),
                     logging.INFO,
                     False,
                     False,
                 )
-                idx += 1
+                idx = 0
+                for item in body.dataset_paths:
+                    datafile_to_sql(project.name, project.id, item)
+                    logger.log(
+                        Messages.UPLOAD_FILES.format(
+                            FILES_DONE=str(idx + 1), FILES_MAX=len(body.dataset_paths)
+                        ),
+                        logging.INFO,
+                        False,
+                        False,
+                    )
+                    idx += 1
 
-            logger = get_logger()
-            logger.log(
-                Messages.FILE_UPLOAD_FINISH,
-                logging.INFO,
-                False,
-                False,
-            )
-        except Exception as e:
-            logger = get_logger()
-            logger.log(
-                Messages.FILE_UPLOAD_FINISH,
-                logging.INFO,
-                False,
-                False,
-            )
-            raise e
+                logger = get_logger()
+                logger.log(
+                    Messages.FILE_UPLOAD_FINISH,
+                    logging.INFO,
+                    False,
+                    False,
+                )
+            except Exception as e:
+                logger = get_logger()
+                logger.log(
+                    Messages.FILE_UPLOAD_FINISH,
+                    logging.INFO,
+                    False,
+                    False,
+                )
+                raise e
 
-    run_in_thread(non_blocking)
+        run_in_thread(non_blocking)
