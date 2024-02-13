@@ -85,7 +85,6 @@ def get_datafile_columns(project_name, file_path, datafile_metadata):
         cursor.execute(f'PRAGMA table_info("{table_name}")')
         distinct_counts = json.loads(datafile_metadata.distinct_counts)
         distinct_values = json.loads(datafile_metadata.distinct_values)
-        print(distinct_values)
         for row in cursor.fetchall():
             column_name = row[1]
             column_type = row[2]
