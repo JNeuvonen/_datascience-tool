@@ -71,6 +71,18 @@ async def route_upload_datasets(project_name: str, body: BodyUploadDatasets):
         )
 
 
+@router.get(RoutePaths.ROOT)
+async def route_get_projects():
+    with HttpResponseContext():
+        projects = ProjectQuery.retrieve_all_projects()
+        ret = []
+
+        for item in projects:
+            datafiles = DatafileQuery.get_datafiles_by_project(item.id)
+            ret.append({"datafiles": datafiles, "project": item})
+        return {"data": ret}
+
+
 @router.post(RoutePaths.ROOT)
 async def route_create_project(body: BodyCreateProject):
     with HttpResponseContext():
