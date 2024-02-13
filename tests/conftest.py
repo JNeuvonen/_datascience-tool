@@ -2,7 +2,20 @@ import multiprocessing
 import pytest
 import time
 
-from tests.utils import create_tables, del_db_files, init_server, kill_process_on_port
+from tests.utils import (
+    create_tables,
+    db_delete_all_data,
+    del_db_files,
+    init_server,
+    kill_process_on_port,
+)
+
+
+@pytest.fixture
+def cleanup_db():
+    db_delete_all_data()
+    yield
+    db_delete_all_data()
 
 
 @pytest.fixture(scope="session", autouse=True)
