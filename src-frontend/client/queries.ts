@@ -2,10 +2,12 @@ import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../utils/constants";
 import {
   FileMetadata,
+  Project,
   ProjectData,
   getDatafileColumns,
   getFileUploadMetadata,
   getProjectData,
+  getProjects,
 } from "./requests";
 import { UNNAMED_PROJECT_PLACEHOLDER } from "../pages";
 
@@ -52,5 +54,15 @@ export function useFileColumnsQuery(
     queryKey: [QUERY_KEYS.file_upload_metadata, projectName, fileName],
     queryFn: () => getDatafileColumns(projectName, fileName),
     enabled: projectName !== UNNAMED_PROJECT_PLACEHOLDER && !!fileName,
+  });
+}
+
+export function useProjectsQuery(): UseQueryResult<
+  ProjectData[] | null,
+  unknown
+> {
+  return useQuery<ProjectData[] | null, unknown>({
+    queryKey: [QUERY_KEYS.projects],
+    queryFn: () => getProjects(),
   });
 }

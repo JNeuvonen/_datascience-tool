@@ -137,3 +137,15 @@ export const getDatafileColumns = async (
   }
   return null;
 };
+
+export const getProjects = async () => {
+  const res = await httpReq({
+    url: REST_API_URL.project,
+    method: "GET",
+  });
+
+  if (res.status === 200) {
+    return res.res["data"];
+  }
+  return null;
+};
