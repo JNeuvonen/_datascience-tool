@@ -9,8 +9,6 @@ import {
   COLOR_BRAND_SECONDARY_HIGHLIGHT,
   COLOR_BRAND_SECONDARY_SHADE_ONE,
   COLOR_CONTENT_PRIMARY,
-  COLOR_CONTENT_SECONDARY,
-  COLOR_CONTENT_SECONDARY_SHADE_FOUR,
   COLOR_CONTENT_SECONDARY_SHADE_THREE,
 } from "./styles/colors";
 
@@ -23,6 +21,7 @@ export const BUTTON_VARIANTS = {
 
 export const TEXT_VARIANTS = {
   clickable: "clickable",
+  plain: "plain",
 };
 
 const buttonDefaultProps = {
@@ -87,11 +86,19 @@ const buttonTheme = {
 
 const textClickableVariant = () => ({
   cursor: "pointer",
+  color: COLOR_BRAND_SECONDARY_SHADE_ONE,
   _hover: {
     color: COLOR_BRAND_SECONDARY_HIGHLIGHT,
     textDecoration: "underline",
   },
 });
+
+const textPlain = () => {
+  return {
+    color: COLOR_CONTENT_PRIMARY,
+    fontWeight: 200,
+  };
+};
 
 const textTheme = {
   Text: {
@@ -100,6 +107,7 @@ const textTheme = {
     },
     variants: {
       clickable: () => textClickableVariant(),
+      plain: () => textPlain(),
     },
     defaultProps: {
       variant: "",
