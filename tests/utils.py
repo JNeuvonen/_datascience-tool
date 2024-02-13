@@ -1,32 +1,17 @@
 from contextlib import contextmanager
 import platform
-import sys
 import os
 import requests
 import subprocess
 
-from tests.constants import SERVER_SOURCE_DIR, Constants
-
-
-sys.path.append(SERVER_SOURCE_DIR)
-import main
-from orm import create_tables as ct, drop_tables as dt, db_delete_all_data as ddad
-from route_project import RoutePaths as ProjectRoutes
-from constants import APP_DB, DATASET_DB_PATH
-from config import append_app_data_path
-from utils import get_path_last_item as gpli
-
-
-def db_delete_all_data():
-    ddad()
-
-
-def get_path_last_item(path: str):
-    return gpli(path)
-
-
-def project_routes():
-    return ProjectRoutes
+from tests.constants import Constants
+from tests.import_helper import (
+    APP_DB,
+    DATASET_DB_PATH,
+    SERVER,
+    append_app_data_path,
+    project_routes,
+)
 
 
 def kill_process_on_port(port):
@@ -63,15 +48,7 @@ def del_db_files():
 
 def init_server():
     os.environ["APP_DATA_PATH"] = Constants.TESTS_FOLDER
-    main.run()
-
-
-def create_tables():
-    ct()
-
-
-def drop_tables():
-    dt()
+    SERVER.run()
 
 
 def get_abs_path(relative_path):
