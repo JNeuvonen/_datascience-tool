@@ -339,5 +339,34 @@ def ag_grid_filters_struct_to_sql(column, filters):
 
 
 def look_for_common_column(project, datafiles):
+    cols_by_file = []
     for item in datafiles:
-        pass
+        table_name = get_datafile_table_name(project.name, item.file_name)
+        cols = get_columns(table_name)
+        cols_by_file.append({"table_name": table_name, "cols": cols})
+
+    if not cols_by_file:
+        return None
+
+    common_cols = set(cols_by_file[0]["cols"])
+
+    for file in cols_by_file[1:]:
+        common_cols.intersection_update(file["cols"])
+
+    return list(common_cols)
+
+
+def update_join_col(project, datafiles, join_col):
+    files_with_no_join = [item.file_name for item in datafiles]
+    ids_pending_update = []
+
+    for item in datafiles:
+        table_name = get_datafile_table_name(project.name, item.file_name)
+        cols = get_columns(table_name)
+
+        if join_col in cols:
+            if item.join_col is not None:
+                ids_pending_update.append(item.id)
+            files_with_no_join.remove(item.file_name)
+
+    return files_with_no_join, ids_pending_update
