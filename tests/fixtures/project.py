@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 
 from tests.utils import RestAPI, get_abs_path
 
@@ -10,6 +11,19 @@ class ProjectFixture:
 class Files:
     SIMPLE_1 = "./tests/files/simple_dataset_1.csv"
     SIMPLE_2 = "./tests/files/simple_dataset_2.csv"
+
+    @classmethod
+    def count_data_attributes(cls):
+        return len(
+            [
+                attr
+                for attr in dir(cls)
+                if not callable(getattr(cls, attr)) and not attr.startswith("__")
+            ]
+        )
+
+
+PD_SIMPLE_1 = pd.read_csv(Files.SIMPLE_1)
 
 
 @pytest.fixture
