@@ -58,7 +58,7 @@ def route_get_root():
 
 def run():
     uvicorn.run(
-        "server:app",
+        "main:app",
         host="0.0.0.0",
         port=8000,
         log_level="info",
