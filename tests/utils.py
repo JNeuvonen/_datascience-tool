@@ -65,6 +65,10 @@ def drop_tables():
     dt()
 
 
+def get_abs_path(relative_path):
+    return os.path.abspath(relative_path)
+
+
 @contextmanager
 def Req(method, url, **kwargs):
     with requests.request(method, url, **kwargs) as response:
@@ -83,9 +87,20 @@ class URL:
     def create_project(cls):
         return cls.route_project() + project_routes().ROOT
 
+    @classmethod
+    def upload_datasets(cls, project_name):
+        return cls.route_project() + project_routes().DATASETS.format(
+            project_name=project_name
+        )
+
 
 class RestAPI:
     @staticmethod
     def create_project(body):
         with Req("post", URL.create_project(), json=body) as res:
             return res.json()
+
+    @staticmethod
+    def upload_datasets(project_name, body):
+        with Req("post", URL.upload_datasets(project_name), json=body) as res:
+            return res

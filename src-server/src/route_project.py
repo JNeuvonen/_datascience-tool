@@ -23,6 +23,7 @@ from utils import (
     get_datafile_metadata,
     get_sizes_of_files,
 )
+from config import is_testing
 
 
 router = APIRouter()
@@ -66,6 +67,13 @@ async def route_upload_datasets(project_name: str, body: BodyUploadDatasets):
         project = ProjectQuery.retrieve_project(project_name, "name")
         if project is None:
             raise HTTPException(status_code=400, detail="Incorrect project name")
+
+        if is_testing():
+            # blocking return if testing
+            await upload_datasets(project, body)
+            return Response(
+                content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
+            )
         asyncio.create_task(upload_datasets(project, body))
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK

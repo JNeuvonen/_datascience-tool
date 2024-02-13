@@ -33,3 +33,9 @@ downloaded
 *.njsproj
 *.sln
 *.sw?
+
+.mypy_cache
+.pytest_cache
+__pycache__
+**/build/
+
