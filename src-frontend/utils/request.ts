@@ -55,7 +55,9 @@ export const httpReq = async ({
     }
     const contentType = response.headers.get("content-type");
     const isJson = contentType?.includes("application/json");
-    const data = isJson ? await response.json() : await response.text();
+    const data = isJson
+      ? await response.clone().json()
+      : await response.clone().text();
     const statusCode = response.status;
     return { res: data, status: statusCode };
   } catch (error) {

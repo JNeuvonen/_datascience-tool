@@ -22,4 +22,6 @@ export const REST_API_URL = {
     `${BASE_URL}/${PROJECT}/${projectName}/row-pagination/${fileName}?page=${page}&page_size=${page_size}&filters=${filters}`,
   project_file_by_name: (projectName: string, fileName: string) =>
     `${BASE_URL}/${PROJECT}/${projectName}/file/${fileName}`,
+  set_join_col: (projectName: string, joinCol: string) =>
+    `${BASE_URL}/${PROJECT}/${projectName}/join-col?join_col=${joinCol}`,
 };

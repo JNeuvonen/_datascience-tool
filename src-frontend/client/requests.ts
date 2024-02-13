@@ -67,11 +67,22 @@ export interface DataFile {
 export interface Project {
   name: string;
   id: number;
+  join_column: string | null;
+}
+
+export interface ProjectMetadataJoinCol {
+  common_columns: string[];
+  files_with_no_join: "N/A" | string[];
+}
+
+export interface ProjectMetadata {
+  join_col: ProjectMetadataJoinCol;
 }
 
 export interface ProjectData {
   project: Project;
   datafiles: DataFile[];
+  metadata: ProjectMetadata;
 }
 
 export interface ResProject {
@@ -146,6 +157,18 @@ export const getProjects = async () => {
 
   if (res.status === 200) {
     return res.res["data"];
+  }
+  return null;
+};
+
+export const setJoinCol = async (projectName: string, joinCol: string) => {
+  const res = await httpReq({
+    url: REST_API_URL.set_join_col(projectName, joinCol),
+    method: "PUT",
+  });
+
+  if (res.status === 200) {
+    return res.res;
   }
   return null;
 };
