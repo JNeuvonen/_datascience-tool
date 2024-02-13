@@ -120,6 +120,14 @@ class URL:
             project_name=project_name
         )
 
+    @classmethod
+    def set_join_col(cls, project_name: str, join_col: str):
+        return (
+            cls.route_project()
+            + project_routes().JOIN_COL.format(project_name=project_name)
+            + f"?join_col={join_col}"
+        )
+
 
 class RestAPI:
     @staticmethod
@@ -146,3 +154,8 @@ class RestAPI:
     def organize(project_name: str):
         with Req("get", URL.organize(project_name)) as res:
             return res.json()["data"]
+
+    @staticmethod
+    def set_join_col(project_name: str, join_col: str):
+        with Req("put", URL.set_join_col(project_name, join_col)) as res:
+            return res

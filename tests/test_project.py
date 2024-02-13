@@ -20,8 +20,16 @@ def test_route_get_datafile(cleanup_db, fixt_upload_datasets):
 
 
 @pytest.mark.acceptance
-def test_route_run_optimization(cleanup_db, fixt_upload_datasets):
+def test_route_organize_happy_path(cleanup_db, fixt_upload_datasets):
     project_name = fixt_upload_datasets["project_name"]
-    file_name = get_path_last_item(Files.SIMPLE_1)
     organize_metadata = RestAPI.organize(project_name)
-    print(organize_metadata)
+    assert (organize_metadata["common_columns"][0]) == "id"
+
+
+@pytest.mark.acceptance
+def test_set_join_col(cleanup_db, fixt_upload_datasets):
+    project_name = fixt_upload_datasets["project_name"]
+    organize_metadata = RestAPI.organize(project_name)
+    join_col = organize_metadata["common_columns"][0]
+    res = RestAPI.set_join_col(project_name, join_col)
+    print(res)
