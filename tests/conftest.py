@@ -17,3 +17,8 @@ def setup_test_environment():
     process.terminate()
     process.join()
     del_db_files()
+
+
+pytest_plugins = [
+    "tests.fixtures.project",
+]
