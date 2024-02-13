@@ -2,16 +2,16 @@ import { extendTheme } from "@chakra-ui/react";
 import { menuAnatomy } from "@chakra-ui/anatomy";
 import {
   COLOR_BG_PRIMARY,
-  COLOR_BG_PRIMARY_SHADE_FOUR,
   COLOR_BG_PRIMARY_SHADE_ONE,
   COLOR_BG_PRIMARY_SHADE_THREE,
-  COLOR_BG_PRIMARY_SHADE_TWO,
   COLOR_BG_SECONDARY,
   COLOR_BG_TERTIARY,
   COLOR_BRAND_SECONDARY_HIGHLIGHT,
   COLOR_BRAND_SECONDARY_SHADE_ONE,
   COLOR_CONTENT_PRIMARY,
   COLOR_CONTENT_SECONDARY,
+  COLOR_CONTENT_SECONDARY_SHADE_FOUR,
+  COLOR_CONTENT_SECONDARY_SHADE_THREE,
 } from "./styles/colors";
 
 export const BUTTON_VARIANTS = {
@@ -172,6 +172,15 @@ const menuItemTheme = {
   },
 };
 
+const dividerTheme = {
+  Divider: {
+    baseStyle: {
+      borderColor: COLOR_CONTENT_SECONDARY_SHADE_THREE,
+      borderWidth: "1px",
+    },
+  },
+};
+
 export const customChakraTheme = extendTheme({
   styles: {
     global: {
@@ -186,6 +195,7 @@ export const customChakraTheme = extendTheme({
     ...textTheme,
     ...headingTheme,
     ...cardTheme,
+    ...dividerTheme,
     Card: cardTheme,
     Menu: menuItemTheme,
   },

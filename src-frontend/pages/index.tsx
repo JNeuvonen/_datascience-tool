@@ -1,11 +1,23 @@
 import { Heading } from "@chakra-ui/layout";
-import { Box, Button, Stack } from "@chakra-ui/react";
+import { Box, Button, Spinner, Stack, IconButton } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { useProjectsQuery } from "../client/queries";
+import { FaGear } from "react-icons/fa6";
+import { BUTTON_VARIANTS } from "../theme";
+import { BasicTable } from "../components/UnstyledTable";
+import { formatBytes } from "../utils/number";
 
 export const UNNAMED_PROJECT_PLACEHOLDER = "Unnamed project";
 
+const COLUMNS = ["Name", "Files", "Imported size", ""];
+
 export const IndexPage = () => {
   const navigate = useNavigate();
+  const projectsQuery = useProjectsQuery();
+
+  if (!projectsQuery.data) {
+    return <Spinner />;
+  }
   return (
     <Box maxWidth={"800px"} margin={"0 auto"}>
       <Stack
@@ -21,6 +33,30 @@ export const IndexPage = () => {
           + Add
         </Button>
       </Stack>
+      <Box marginTop={"16px"}>
+        <BasicTable
+          columns={COLUMNS}
+          rows={projectsQuery.data.map((item) => {
+            return [
+              item.project.name,
+              item.datafiles.length,
+              formatBytes(
+                item.datafiles.reduce((accumulator, currentValue) => {
+                  return accumulator + currentValue.size_bytes;
+                }, 0)
+              ),
+              <IconButton
+                icon={<FaGear />}
+                variant={BUTTON_VARIANTS.grey}
+                aria-label={`setting-button-${item.project.name}`}
+              />,
+            ];
+          })}
+          rowOnClickFunc={(item) => {
+            navigate("/project/" + item[0]);
+          }}
+        />
+      </Box>
     </Box>
   );
 };
