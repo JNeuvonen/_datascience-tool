@@ -25,7 +25,7 @@ export function useProjectQuery(
   projectName: string
 ): UseQueryResult<ProjectData | null, unknown> {
   return useQuery<ProjectData | null, unknown>({
-    queryKey: [QUERY_KEYS.file_upload_metadata, projectName],
+    queryKey: [QUERY_KEYS.project, projectName],
     queryFn: () => getProjectData(projectName),
     enabled: projectName !== UNNAMED_PROJECT_PLACEHOLDER,
   });

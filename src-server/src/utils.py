@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from fastapi import HTTPException
 import pandas as pd
 import threading
 import sqlite3
@@ -494,3 +495,29 @@ async def upload_datasets(project, body: BodyUploadDatasets):
         executor = ThreadPoolExecutor()
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(executor, lambda: asyncio.run(func_wrapper()))
+
+
+def get_join_col_actions(project_name):
+    project = ProjectQuery.retrieve_project(project_name, "name")
+
+    if project is None:
+        raise HTTPException(status_code=400, detail="Incorrect project name")
+
+    datafiles = DatafileQuery.get_datafiles_by_project(project.id)
+
+    common_columns = None
+    files_with_no_join = None
+    if project.join_column is None:
+        common_columns = look_for_common_column(project, datafiles)
+    else:
+        files_with_no_join, file_ids_pending_update = update_join_col(
+            project, datafiles, project.join_column
+        )
+        for item in file_ids_pending_update:
+            DatafileQuery.update_join_column(item.id, project.join_column)
+
+    ret = {
+        "common_columns": common_columns,
+        "files_with_no_join": files_with_no_join,
+    }
+    return ret

@@ -19,6 +19,7 @@ from utils import (
     get_datafile_columns,
     get_datafile_metadata,
     get_dataset_pagination,
+    get_join_col_actions,
     get_sizes_of_files,
     look_for_common_column,
     update_join_col,
@@ -105,8 +106,17 @@ async def route_create_project(body: BodyCreateProject):
 async def route_get_project(project_name: str):
     with HttpResponseContext():
         project = ProjectQuery.retrieve_project(project_name, "name")
+
+        if project is None:
+            raise HTTPException(status_code=400, detail="Incorrect project name")
+
         datafiles = DatafileQuery.get_datafiles_by_project(project.id)
-        ret = {"datafiles": datafiles, "project": project}
+        join_col_actions = get_join_col_actions(project.name)
+        ret = {
+            "datafiles": datafiles,
+            "project": project,
+            "metadata": {"join_col": join_col_actions},
+        }
         return {"data": ret}
 
 
@@ -149,29 +159,7 @@ async def route_file_by_name(project_name: str, file_name: str):
 @router.get(RoutePaths.ORGANIZE)
 async def route_organize_info(project_name: str):
     with HttpResponseContext():
-        project = ProjectQuery.retrieve_project(project_name, "name")
-
-        if project is None:
-            raise HTTPException(status_code=400, detail="Incorrect project name")
-
-        datafiles = DatafileQuery.get_datafiles_by_project(project.id)
-
-        common_columns = None
-        files_with_no_join = None
-        if project.join_column is None:
-            common_columns = look_for_common_column(project, datafiles)
-        else:
-            files_with_no_join, file_ids_pending_update = update_join_col(
-                project, datafiles, project.join_column
-            )
-            for item in file_ids_pending_update:
-                DatafileQuery.update_join_column(item.id, project.join_column)
-
-        ret = {
-            "common_columns": common_columns,
-            "files_with_no_join": files_with_no_join,
-        }
-        return {"data": ret}
+        return {"data": get_join_col_actions(project_name)}
 
 
 @router.put(RoutePaths.JOIN_COL)
