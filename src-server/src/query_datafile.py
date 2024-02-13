@@ -4,7 +4,7 @@ import sqlite3
 from typing import Dict, List
 
 from pandas.compat import os
-from config import append_app_data_path
+from config import append_app_data_path, is_testing
 from log import get_logger
 from request_types import BodyUploadDatasets
 from sqlalchemy import Column, ForeignKey, Integer, String
@@ -125,7 +125,7 @@ def process_file(project_name, project_id, file_path):
 async def upload_datasets(project, body: BodyUploadDatasets):
     with LogException():
 
-        def non_blocking():
+        def func_wrapper():
             try:
                 logger = get_logger()
                 logger.log(
@@ -166,4 +166,7 @@ async def upload_datasets(project, body: BodyUploadDatasets):
                 )
                 raise e
 
-        run_in_thread(non_blocking)
+        if is_testing():
+            func_wrapper()
+        else:
+            run_in_thread(func_wrapper())

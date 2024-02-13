@@ -93,6 +93,12 @@ class URL:
             project_name=project_name
         )
 
+    @classmethod
+    def get_project(cls, project_name: str):
+        return cls.route_project() + project_routes().PROJECT.format(
+            project_name=project_name
+        )
+
 
 class RestAPI:
     @staticmethod
@@ -104,3 +110,8 @@ class RestAPI:
     def upload_datasets(project_name, body):
         with Req("post", URL.upload_datasets(project_name), json=body) as res:
             return res
+
+    @staticmethod
+    def get_project(project_name: str):
+        with Req("get", URL.get_project(project_name)) as res:
+            return res.json()["data"]

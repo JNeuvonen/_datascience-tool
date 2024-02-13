@@ -13,14 +13,15 @@ class Files:
 
 
 @pytest.fixture
-def create_project():
+def fixt_create_project():
     RestAPI.create_project({"name": ProjectFixture.name})
     return ProjectFixture.name
 
 
 @pytest.fixture
-def upload_datasets(create_project):
-    project_name = create_project
+def fixt_upload_datasets(fixt_create_project):
+    project_name = fixt_create_project
     datasets = [get_abs_path(Files.SIMPLE_1), get_abs_path(Files.SIMPLE_2)]
     RestAPI.upload_datasets(project_name, {"dataset_paths": datasets})
-    return project_name
+
+    return {"project_name": project_name}
