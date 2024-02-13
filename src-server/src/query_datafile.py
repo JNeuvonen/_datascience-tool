@@ -24,11 +24,12 @@ class Datafile(Base):
     __tablename__ = "datafile"
 
     id = Column(Integer, primary_key=True)
-    file_name = Column(String, nullable=False)
+    file_name = Column(String, nullable=False, unique=True)
     size_bytes = Column(Integer)
     distinct_counts = Column(String, nullable=True)
     distinct_values = Column(String, nullable=True)
     was_import = Column(Integer)
+    join_column = Column(String, nullable=True)
     project_id = Column(Integer, ForeignKey("project.id"), nullable=False)
 
 
@@ -43,7 +44,7 @@ class DatafileQuery:
                 return entry.id
 
     @staticmethod
-    def get_datafiles_by_project(project_id: int) -> List[Datafile]:
+    def get_datafiles_by_project(project_id) -> List[Datafile]:
         with Session() as session:
             return (
                 session.query(Datafile).filter(Datafile.project_id == project_id).all()
@@ -55,6 +56,14 @@ class DatafileQuery:
             return (
                 session.query(Datafile).filter(Datafile.file_name == datafile).first()
             )
+
+    @staticmethod
+    def update_join_column(datafile_id: int, join_column: str):
+        with Session() as session:
+            session.query(Datafile).filter(Datafile.id == datafile_id).update(
+                {"join_column": join_column}
+            )
+            session.commit()
 
 
 def datafile_to_sql(project_name, project_id, file_path: str):

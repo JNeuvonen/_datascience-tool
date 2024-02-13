@@ -8,6 +8,7 @@ class Project(Base):
     __tablename__ = "project"
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=True, unique=True)
+    join_column = Column(String, nullable=True)
 
 
 class ProjectQuery:
@@ -35,3 +36,11 @@ class ProjectQuery:
             with Session() as session:
                 query = session.query(Project)
                 return query.all()
+
+    @staticmethod
+    def update_join_column(project_id: int, join_column: str):
+        with Session() as session:
+            session.query(Project).filter(Project.id == project_id).update(
+                {"join_column": join_column}
+            )
+            session.commit()

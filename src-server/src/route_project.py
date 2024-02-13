@@ -2,6 +2,9 @@ import asyncio
 import json
 from fastapi import APIRouter, HTTPException, Response, status
 import pandas as pd
+from pandas.core.generic import common
+from pandas.io.common import file_exists
+from sqlalchemy import update
 
 from decorators import HttpResponseContext
 from query_datafile import (
@@ -22,6 +25,8 @@ from utils import (
     get_datafile_columns,
     get_datafile_metadata,
     get_sizes_of_files,
+    look_for_common_column,
+    update_join_col,
 )
 from config import is_testing
 
@@ -38,6 +43,7 @@ class RoutePaths:
     GET_SIZE_OF_UPLOAD = "/size-of-uploads"
     PROJECT = "/{project_name}"
     ORGANIZE = "/{project_name}/organize"
+    JOIN_COL = "/{project_name}/join-col"
 
 
 @router.post(RoutePaths.GET_SIZE_OF_UPLOAD)
@@ -148,7 +154,44 @@ async def route_file_by_name(project_name: str, file_name: str):
 async def route_organize_info(project_name: str):
     with HttpResponseContext():
         project = ProjectQuery.retrieve_project(project_name, "name")
-        datafiles = DatafileQuery.get_datafiles_by_project(project.id)
-        cols = []
 
-        return {"data": "Test"}
+        if project is None:
+            raise HTTPException(status_code=400, detail="Incorrect project name")
+
+        datafiles = DatafileQuery.get_datafiles_by_project(project.id)
+
+        common_columns = None
+        files_with_no_join = None
+        if project.join_column is None:
+            common_columns = look_for_common_column(project, datafiles)
+        else:
+            files_with_no_join, file_ids_pending_update = update_join_col(
+                project, datafiles, project.join_column
+            )
+            for item in file_ids_pending_update:
+                DatafileQuery.update_join_column(item.id, project.join_column)
+
+        ret = {
+            "common_columns": common_columns,
+            "files_with_no_join": files_with_no_join,
+        }
+        return {"data": ret}
+
+
+@router.put(RoutePaths.JOIN_COL)
+async def route_set_join_col(project_name: str, join_col: str):
+    with HttpResponseContext():
+        project = ProjectQuery.retrieve_project(project_name, "name")
+
+        if project is None:
+            raise HTTPException(status_code=400, detail="Incorrect project name")
+
+        datafiles = DatafileQuery.get_datafiles_by_project(project.id)
+
+        for item in datafiles:
+            if item.join_column is None:
+                DatafileQuery.update_join_column(item.id, join_col)
+
+        return Response(
+            content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
+        )
