@@ -333,3 +333,8 @@ def ag_grid_filters_struct_to_sql(column, filters):
         return ag_grid_date_to_sql(column, filters)
 
     return None
+
+
+def look_for_common_column(project, datafiles):
+    for item in datafiles:
+        pass
