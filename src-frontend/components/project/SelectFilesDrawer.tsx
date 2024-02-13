@@ -67,6 +67,9 @@ export const SelectFilesDrawer = (props: SelectFilesDrawerProps) => {
         isClosable: true,
       });
       onClose();
+      setFilelist([]);
+    } else {
+      setFilelist([]);
     }
   };
 
