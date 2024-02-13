@@ -3,6 +3,7 @@ import os
 import uvicorn
 from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
+from config import is_testing
 from decorators import LogException
 from orm import create_tables
 from route_project import router as project_router
@@ -60,7 +61,7 @@ def run():
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=8000,
+        port=8001 if is_testing() else 8000,  # makes running integration tests easier
         log_level="info",
         timeout_keep_alive=600000,
     )
