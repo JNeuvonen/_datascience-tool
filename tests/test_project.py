@@ -17,3 +17,11 @@ def test_route_get_datafile(cleanup_db, fixt_upload_datasets):
     file_name = get_path_last_item(Files.SIMPLE_1)
     project_cols = RestAPI.get_project_file(project_name, file_name)
     assert len(project_cols) == len(PD_SIMPLE_1.columns)
+
+
+@pytest.mark.acceptance
+def test_route_run_optimization(cleanup_db, fixt_upload_datasets):
+    project_name = fixt_upload_datasets["project_name"]
+    file_name = get_path_last_item(Files.SIMPLE_1)
+    organize_metadata = RestAPI.organize(project_name)
+    print(organize_metadata)

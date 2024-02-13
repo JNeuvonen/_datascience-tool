@@ -114,6 +114,12 @@ class URL:
             project_name=project_name, file_name=file_name
         )
 
+    @classmethod
+    def organize(cls, project_name: str):
+        return cls.route_project() + project_routes().ORGANIZE.format(
+            project_name=project_name
+        )
+
 
 class RestAPI:
     @staticmethod
@@ -134,4 +140,9 @@ class RestAPI:
     @staticmethod
     def get_project_file(project_name: str, file_name: str):
         with Req("get", URL.get_project_file(project_name, file_name)) as res:
+            return res.json()["data"]
+
+    @staticmethod
+    def organize(project_name: str):
+        with Req("get", URL.organize(project_name)) as res:
             return res.json()["data"]

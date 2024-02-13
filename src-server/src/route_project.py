@@ -37,7 +37,7 @@ class RoutePaths:
     DATASETS = "/{project_name}/datasets"
     GET_SIZE_OF_UPLOAD = "/size-of-uploads"
     PROJECT = "/{project_name}"
-    OPTIMIZE = "/{project_name}/optimize"
+    ORGANIZE = "/{project_name}/organize"
 
 
 @router.post(RoutePaths.GET_SIZE_OF_UPLOAD)
@@ -144,9 +144,11 @@ async def route_file_by_name(project_name: str, file_name: str):
         }
 
 
-@router.get(RoutePaths.OPTIMIZE)
-async def route_probe_optimizations(project_name: str):
+@router.get(RoutePaths.ORGANIZE)
+async def route_organize_info(project_name: str):
     with HttpResponseContext():
         project = ProjectQuery.retrieve_project(project_name, "name")
         datafiles = DatafileQuery.get_datafiles_by_project(project.id)
         cols = []
+
+        return {"data": "Test"}
