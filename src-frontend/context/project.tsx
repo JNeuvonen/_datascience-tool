@@ -25,6 +25,8 @@ export interface ProjectContextType {
   setGridApi: React.Dispatch<React.SetStateAction<GridApi<any> | null>>;
   gridApi: GridApi | null;
   selectDatafile: (fileName: string) => void;
+  uiMode: UIModes;
+  setNewDataframeUIMode: () => void;
 }
 
 export const ProjectContext = createContext<ProjectContextType>(
@@ -35,9 +37,13 @@ interface ProjectProviderProps {
   children: ReactNode;
 }
 
+export type UIModes = "default" | "create-dataframe";
+
 export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   children,
 }) => {
+  const [uiMode, setUiMode] = useState<UIModes>("default");
+
   const [selectedFile, setSelectedFile] = useState<DataFile | null>(null);
   const { project } = usePathParams<{ project: string }>();
 
@@ -50,6 +56,11 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   const selectFilesDrawer = useDisclosure();
   const importedFilesDrawer = useDisclosure();
   const [gridApi, setGridApi] = useState<GridApi | null>(null);
+
+  const setNewDataframeUIMode = () => {
+    setSelectedFile(null);
+    setUiMode("create-dataframe");
+  };
 
   const selectDatafile = (fileName: string) => {
     projectQuery.data?.datafiles.forEach((item) => {
@@ -77,6 +88,8 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         gridApi,
         setGridApi,
         selectDatafile,
+        uiMode,
+        setNewDataframeUIMode,
       }}
     >
       <ProjectNotifications />
