@@ -9,7 +9,7 @@ class Datafile(Base):
     __tablename__ = "datafile"
 
     id = Column(Integer, primary_key=True)
-    file_name = Column(String, nullable=False, unique=True)
+    file_name = Column(String, nullable=False)
     size_bytes = Column(Integer)
     distinct_counts = Column(String, nullable=True)
     distinct_values = Column(String, nullable=True)
