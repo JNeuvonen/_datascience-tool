@@ -15,7 +15,7 @@ import { DOM_EVENT_CHANNELS } from "../utils/constants";
 
 type UseDisclosureReturn = ReturnType<typeof useDisclosure>;
 
-interface ProjectContextType {
+export interface ProjectContextType {
   selectFilesDrawer: UseDisclosureReturn;
   importedFilesDrawer: UseDisclosureReturn;
   projectQuery: UseQueryResult<ProjectData | null, unknown>;
