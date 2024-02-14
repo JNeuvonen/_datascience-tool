@@ -4,12 +4,7 @@ import { useEffect } from "react";
 import { useProjectContext } from "../../context/project";
 import { IoMdAdd } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { OverflopTooltip } from "../OverflowTooltip";
-import { FaCaretDown } from "react-icons/fa";
-import {
-  COLOR_BG_SECONDARY,
-  COLOR_CONTENT_TERTIARY,
-} from "../../styles/colors";
+import { COLOR_BG_SECONDARY } from "../../styles/colors";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Scrollbar } from "swiper/modules";
 
@@ -21,15 +16,18 @@ import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { ChakraPopover } from "../Popover";
 import { BUTTON_VARIANTS } from "../../theming";
 import { IoIosCheckmark } from "react-icons/io";
+import { BottomMenuFile } from "./BottomMenuFile";
 
 const HEIGHT = 55;
 const SLIDE_WIDTH = 200;
 
 export const BottomMenu = () => {
   const { setBottomMenuHeight } = useLayoutContext();
-  const { projectQuery, selectedFile, selectDatafile } = useProjectContext();
+  const { projectQuery, selectedFile, selectDatafile, setNewDataframeUIMode } =
+    useProjectContext();
   const { width } = useWindowDimensions();
   const selectFilePopover = useDisclosure();
+  const fileActionsPopover = useDisclosure();
 
   useEffect(() => {
     setBottomMenuHeight(HEIGHT);
@@ -54,6 +52,7 @@ export const BottomMenu = () => {
           icon={<IoMdAdd />}
           aria-label="add-icon"
           variant={BUTTON_VARIANTS.noFillDefaultColor}
+          onClick={setNewDataframeUIMode}
         />
       </Tooltip>
 
@@ -116,39 +115,11 @@ export const BottomMenu = () => {
       >
         {projectQuery.data.datafiles.map((item, idx) => {
           return (
-            <SwiperSlide key={idx}>
-              <Box
-                width={SLIDE_WIDTH}
-                id={item.file_name}
-                display={"flex"}
-                alignItems={"center"}
-                gap={"8px"}
-                _hover={{ bg: COLOR_CONTENT_TERTIARY }}
-                padding={"6px"}
-                paddingLeft={"14px"}
-                paddingRight={"14px"}
-                borderRadius={"10px"}
-                onClick={() => {
-                  selectDatafile(item.file_name as string);
-                  selectFilePopover.onClose();
-                }}
-                cursor={"pointer"}
-                background={
-                  selectedFile?.file_name === item.file_name
-                    ? COLOR_CONTENT_TERTIARY
-                    : undefined
-                }
-              >
-                <OverflopTooltip
-                  text={item.file_name}
-                  containerId={item.file_name}
-                >
-                  <Box display={"flex"} gap="6px">
-                    {item.file_name}
-                  </Box>
-                </OverflopTooltip>
-                <FaCaretDown />
-              </Box>
+            <SwiperSlide key={idx} onClick={fileActionsPopover.onOpen}>
+              <BottomMenuFile
+                datafile={item}
+                selectFilePopover={selectFilePopover}
+              />
             </SwiperSlide>
           );
         })}
