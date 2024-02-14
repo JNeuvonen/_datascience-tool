@@ -7,7 +7,7 @@ import { TooltipIcon } from "./TooltipIcon";
 import { ROUTES } from "../utils/constants";
 import { useLayoutContext } from "../context/layout";
 import { MdArrowForward } from "react-icons/md";
-import { BUTTON_VARIANTS } from "../theme";
+import { BUTTON_VARIANTS } from "../theming";
 
 export const TauriTitleBar = () => {
   const { titleBarHeight, titleBarContent, breadCrumbsContent } =

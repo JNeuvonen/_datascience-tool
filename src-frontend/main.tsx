@@ -4,10 +4,10 @@ import App from "./App";
 import "./styles/css/styles.css";
 import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { customChakraTheme } from "./theme";
 import { LogProvider } from "./context/log";
 import { AppProvider } from "./context/app";
 import { LayoutProvider } from "./context/layout";
+import { customChakraTheme } from "./theming";
 
 const queryClient = new QueryClient();
 

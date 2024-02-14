@@ -1,7 +1,7 @@
 import { Box, Text, useToast } from "@chakra-ui/react";
-import { TEXT_VARIANTS } from "../../theme";
 import { setJoinCol } from "../../client/requests";
 import { usePathParams } from "../../hooks/usePathParams";
+import { TEXT_VARIANTS } from "../../theming";
 
 interface Props {
   successCallback: () => void;

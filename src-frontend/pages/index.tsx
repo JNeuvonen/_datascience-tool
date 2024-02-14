@@ -3,9 +3,9 @@ import { Box, Button, Spinner, Stack, IconButton } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useProjectsQuery } from "../client/queries";
 import { FaGear } from "react-icons/fa6";
-import { BUTTON_VARIANTS } from "../theme";
 import { BasicTable } from "../components/UnstyledTable";
 import { formatBytes } from "../utils/number";
+import { BUTTON_VARIANTS } from "../theming";
 
 export const UNNAMED_PROJECT_PLACEHOLDER = "Unnamed project";
 

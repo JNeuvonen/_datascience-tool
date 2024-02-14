@@ -1,7 +1,7 @@
 import { Button } from "@chakra-ui/react";
 import { CSSProperties } from "react";
-import { BUTTON_VARIANTS } from "../theme";
 import { useKeyListener } from "../hooks/useKeyListener";
+import { BUTTON_VARIANTS } from "../theming";
 
 interface Props {
   cancelText?: string;
