@@ -1,9 +1,8 @@
-import { Box, IconButton, Tooltip } from "@chakra-ui/react";
+import { Box, IconButton, Tooltip, useDisclosure } from "@chakra-ui/react";
 import { useLayoutContext } from "../../context/layout";
 import { useEffect } from "react";
 import { useProjectContext } from "../../context/project";
 import { IoMdAdd } from "react-icons/io";
-import { BUTTON_VARIANTS } from "../../theme";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { OverflopTooltip } from "../OverflowTooltip";
 import { FaCaretDown } from "react-icons/fa";
@@ -16,6 +15,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
+import { ChakraPopover } from "../Popover";
+import { BUTTON_VARIANTS } from "../../theming";
 
 const HEIGHT = 55;
 const SLIDE_WIDTH = 200;
@@ -24,6 +25,7 @@ export const BottomMenu = () => {
   const { setBottomMenuHeight } = useLayoutContext();
   const { projectQuery, selectedFile, selectDatafile } = useProjectContext();
   const { width } = useWindowDimensions();
+  const selectFilePopover = useDisclosure();
 
   useEffect(() => {
     setBottomMenuHeight(HEIGHT);
@@ -50,13 +52,27 @@ export const BottomMenu = () => {
           variant={BUTTON_VARIANTS.noFillDefaultColor}
         />
       </Tooltip>
-      <Tooltip label="All files">
-        <IconButton
-          icon={<GiHamburgerMenu />}
-          aria-label="add-icon"
-          variant={BUTTON_VARIANTS.noFillDefaultColor}
-        />
-      </Tooltip>
+
+      <ChakraPopover
+        {...selectFilePopover}
+        body={
+          <Box maxHeight={"300px"} overflowY={"auto"}>
+            {projectQuery.data.datafiles.map((item, idx) => {
+              return <Box key={idx}>{item.file_name}</Box>;
+            })}
+          </Box>
+        }
+        headerText="Select a file"
+        setOpen={selectFilePopover.onOpen}
+      >
+        <Tooltip label="All files">
+          <IconButton
+            icon={<GiHamburgerMenu />}
+            aria-label="add-icon"
+            variant={BUTTON_VARIANTS.noFillDefaultColor}
+          />
+        </Tooltip>
+      </ChakraPopover>
 
       <Swiper
         direction="horizontal"
