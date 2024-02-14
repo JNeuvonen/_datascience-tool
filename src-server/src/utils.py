@@ -55,7 +55,6 @@ def get_datafile_table_name(project_name: str, file_path: str):
 def get_distinct_count(table_name: str, column_name: str):
     with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
         cursor = conn.cursor()
-        print(table_name, column_name)
         cursor.execute(f'SELECT COUNT(DISTINCT "{column_name}") FROM "{table_name}"')
         distinct_count = cursor.fetchone()[0]
         return distinct_count
