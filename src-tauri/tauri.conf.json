@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "visual-detect",
+    "productName": "DatascienceTool",
     "version": "0.0.0"
   },
   "tauri": {
