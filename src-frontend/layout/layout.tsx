@@ -18,6 +18,7 @@ export const Layout = ({ children }: Props) => {
         marginLeft={sideBarWidth}
         bg={COLOR_BG_PRIMARY_SHADE_TWO}
         padding={"16px"}
+        paddingBottom={"0px"}
         minHeight={`calc(100vh - ${titleBarHeight}px)`}
         marginTop={pageTabsheight}
         paddingTop={menuBarHeight + 16}
