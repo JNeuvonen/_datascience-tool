@@ -15,12 +15,15 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
+import useWindowDimensions from "../../hooks/useWindowDimensions";
 
 const HEIGHT = 55;
+const SLIDE_WIDTH = 200;
 
 export const BottomMenu = () => {
   const { setBottomMenuHeight } = useLayoutContext();
   const { projectQuery, selectedFile, selectDatafile } = useProjectContext();
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
     setBottomMenuHeight(HEIGHT);
@@ -29,6 +32,15 @@ export const BottomMenu = () => {
   if (!projectQuery.data || projectQuery.data.datafiles.length === 0) {
     return <Box height={HEIGHT}></Box>;
   }
+
+  const getSlidesCount = () => {
+    if (!projectQuery.data) return 0;
+
+    if (SLIDE_WIDTH * projectQuery.data.datafiles.length < width) {
+      return projectQuery.data.datafiles.length;
+    }
+    return Math.floor(width / SLIDE_WIDTH);
+  };
   return (
     <Box height={HEIGHT} display={"flex"} alignItems={"center"}>
       <Tooltip label="Create a new file">
@@ -49,17 +61,16 @@ export const BottomMenu = () => {
       <Swiper
         direction="horizontal"
         spaceBetween={"16px"}
-        slidesPerView={6}
+        slidesPerView={getSlidesCount()}
         scrollbar={{ draggable: true }}
         modules={[Scrollbar]}
         style={{ marginTop: "10px" }}
       >
         {projectQuery.data.datafiles.map((item, idx) => {
           return (
-            <SwiperSlide>
+            <SwiperSlide key={idx}>
               <Box
-                key={idx}
-                width={"200px"}
+                width={SLIDE_WIDTH}
                 id={item.file_name}
                 display={"flex"}
                 alignItems={"center"}
