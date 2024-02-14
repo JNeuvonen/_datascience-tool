@@ -11,20 +11,11 @@ const COLUMNS = ["File", "Size"];
 
 export const ImportedFilesDrawer = (props: SelectFilesDrawerProps) => {
   const { onClose } = props;
-  const { projectQuery, setSelectedFile } = useProjectContext();
+  const { projectQuery, selectDatafile } = useProjectContext();
 
   if (!projectQuery.data) {
     return null;
   }
-
-  const selectDatafile = (fileName: string) => {
-    projectQuery.data?.datafiles.forEach((item) => {
-      if (item.file_name === fileName) {
-        setSelectedFile(item);
-        onClose();
-      }
-    });
-  };
 
   return (
     <Box>
@@ -35,6 +26,7 @@ export const ImportedFilesDrawer = (props: SelectFilesDrawerProps) => {
         })}
         rowOnClickFunc={(item) => {
           selectDatafile(item[0] as string);
+          onClose();
         }}
       />
     </Box>

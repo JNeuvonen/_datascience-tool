@@ -22,6 +22,7 @@ interface ProjectContextType {
   setSelectedFile: React.Dispatch<React.SetStateAction<DataFile | null>>;
   setGridApi: React.Dispatch<React.SetStateAction<GridApi<any> | null>>;
   gridApi: GridApi | null;
+  selectDatafile: (fileName: string) => void;
 }
 
 export const ProjectContext = createContext<ProjectContextType>(
@@ -48,6 +49,14 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   const importedFilesDrawer = useDisclosure();
   const [gridApi, setGridApi] = useState<GridApi | null>(null);
 
+  const selectDatafile = (fileName: string) => {
+    projectQuery.data?.datafiles.forEach((item) => {
+      if (item.file_name === fileName) {
+        setSelectedFile(item);
+      }
+    });
+  };
+
   return (
     <ProjectContext.Provider
       value={{
@@ -59,6 +68,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         fileColumnsQuery,
         gridApi,
         setGridApi,
+        selectDatafile,
       }}
     >
       <ProjectNotifications />
