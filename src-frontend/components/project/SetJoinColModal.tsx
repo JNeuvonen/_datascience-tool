@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const SetJoinColModal = (props: Props) => {
-  const { successCallback, onClose, commonColumns } = props;
+  const { onClose, commonColumns } = props;
   const { project } = usePathParams<{ project: string }>();
   const toast = useToast();
   const onSubmit = async (selectedColumn: string) => {
@@ -23,6 +23,7 @@ export const SetJoinColModal = (props: Props) => {
         duration: 5000,
         isClosable: true,
       });
+      onClose();
     }
   };
   return (
