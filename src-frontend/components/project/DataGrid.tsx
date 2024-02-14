@@ -32,7 +32,8 @@ export const DatasetDataGrid = ({
 }: Props) => {
   const abortControllerRef = useRef<AbortController>();
   const { selectedFile, gridApi, setGridApi } = useProjectContext();
-  const { titleBarHeight, menuBarHeight } = useLayoutContext();
+  const { titleBarHeight, menuBarHeight, bottomMenuHeight } =
+    useLayoutContext();
 
   useEffect(() => {
     if (gridApi && selectedFile) {
@@ -84,7 +85,7 @@ export const DatasetDataGrid = ({
       className="ag-theme-alpine-dark"
       style={{
         width: "100%",
-        height: `calc(100vh - ${titleBarHeight}px - ${menuBarHeight}px - 48px)`,
+        height: `calc(100vh - ${titleBarHeight}px - ${menuBarHeight}px - ${bottomMenuHeight}px - 32px)`,
       }}
     >
       <AgGridReact
