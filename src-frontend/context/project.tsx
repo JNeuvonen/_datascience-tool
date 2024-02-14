@@ -10,6 +10,8 @@ import { UseQueryResult } from "@tanstack/react-query";
 import { DataFile, ProjectData } from "../client/requests";
 import { GridApi } from "ag-grid-community";
 import { ProjectNotifications } from "../components/project/NotificationsHelper";
+import { useMessageListener } from "../hooks/useMessageListener";
+import { DOM_EVENT_CHANNELS } from "../utils/constants";
 
 type UseDisclosureReturn = ReturnType<typeof useDisclosure>;
 
@@ -57,6 +59,12 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     });
   };
 
+  useMessageListener({
+    messageName: DOM_EVENT_CHANNELS.refetch_component,
+    messageCallback: () => {
+      projectQuery.refetch();
+    },
+  });
   return (
     <ProjectContext.Provider
       value={{
