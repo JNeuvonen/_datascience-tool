@@ -5,9 +5,11 @@ interface LayoutContextType {
   sideBarWidth: number;
   menuBarHeight: number;
   pageTabsheight: number;
+  bottomMenuHeight: number;
   setSideBarWidth: React.Dispatch<React.SetStateAction<number>>;
   setPageTabsHeight: React.Dispatch<React.SetStateAction<number>>;
   setMenuBarHeight: React.Dispatch<React.SetStateAction<number>>;
+  setBottomMenuHeight: React.Dispatch<React.SetStateAction<number>>;
   titleBarContent: JSX.Element | null;
   sideBarContent: JSX.Element | null;
   breadCrumbsContent: JSX.Element | null;
@@ -35,6 +37,7 @@ export const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
   const [sideBarContent, setSideBarContent] = useState<JSX.Element | null>(
     null
   );
+  const [bottomMenuHeight, setBottomMenuHeight] = useState(0);
   const [breadCrumbsContent, setBreadCrumbsContent] =
     useState<JSX.Element | null>(null);
 
@@ -66,6 +69,8 @@ export const LayoutProvider: React.FC<LayoutProviderProps> = ({ children }) => {
         breadCrumbsContent,
         menuBarHeight,
         setMenuBarHeight,
+        bottomMenuHeight,
+        setBottomMenuHeight,
       }}
     >
       {children}
