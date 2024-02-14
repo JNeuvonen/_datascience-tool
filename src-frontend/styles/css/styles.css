@@ -191,4 +191,17 @@ code {
   word-wrap: break-word;
 }
 
+.swiper-scrollbar-drag {
+  background-color: #f0f0f0; /* Blue draggable element */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.swiper-slide {
+  margin-bottom: 14px; /* Adjust this value as needed */
+}
+
+.swiper-container {
+  padding-bottom: 10px; /* Adjust to fit the new slide layout */
+}
+
 /*# sourceMappingURL=styles.css.map */

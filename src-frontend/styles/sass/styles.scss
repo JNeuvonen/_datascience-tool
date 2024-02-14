@@ -54,3 +54,16 @@ code {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+
+.swiper-scrollbar-drag {
+  background-color: $content-primary; /* Blue draggable element */
+  border-radius: 4px; /* Rounded corners */
+}
+
+.swiper-slide {
+  margin-bottom: 14px; /* Adjust this value as needed */
+}
+
+.swiper-container {
+  padding-bottom: 10px; /* Adjust to fit the new slide layout */
+}
