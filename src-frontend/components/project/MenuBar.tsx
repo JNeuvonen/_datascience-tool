@@ -20,7 +20,7 @@ import { MdClearAll } from "react-icons/md";
 
 export const ProjectMenuBar = () => {
   const { project } = usePathParams<{ project: string }>();
-  const { selectFilesDrawer, importedFilesDrawer, gridApi } =
+  const { selectFilesDrawer, importedFilesDrawer, gridApi, selectedFile } =
     useProjectContext();
   const { setMenuBarHeight, titleBarHeight } = useLayoutContext();
 
@@ -65,9 +65,9 @@ export const ProjectMenuBar = () => {
       width={"100%"}
     >
       <EditableHeader
-        defaultValue={project}
+        defaultValue={selectedFile?.file_name || UNNAMED_PROJECT_PLACEHOLDER}
         setValue={setProjectNameInput}
-        value={projectNameInput}
+        value={selectedFile?.file_name || UNNAMED_PROJECT_PLACEHOLDER}
         onInputBlur={updateProjectName}
       />
       <Box gap={"4px"} display={"flex"} marginLeft={"-6px"} marginTop={"2px"}>
