@@ -6,7 +6,10 @@ import { IoMdAdd } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { OverflopTooltip } from "../OverflowTooltip";
 import { FaCaretDown } from "react-icons/fa";
-import { COLOR_CONTENT_TERTIARY } from "../../styles/colors";
+import {
+  COLOR_BG_SECONDARY,
+  COLOR_CONTENT_TERTIARY,
+} from "../../styles/colors";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Scrollbar } from "swiper/modules";
 
@@ -17,6 +20,7 @@ import "swiper/css/scrollbar";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { ChakraPopover } from "../Popover";
 import { BUTTON_VARIANTS } from "../../theming";
+import { IoIosCheckmark } from "react-icons/io";
 
 const HEIGHT = 55;
 const SLIDE_WIDTH = 200;
@@ -58,7 +62,35 @@ export const BottomMenu = () => {
         body={
           <Box maxHeight={"300px"} overflowY={"auto"}>
             {projectQuery.data.datafiles.map((item, idx) => {
-              return <Box key={idx}>{item.file_name}</Box>;
+              return (
+                <Box
+                  key={idx}
+                  borderRadius={"10px"}
+                  cursor={"pointer"}
+                  _hover={{ bg: COLOR_BG_SECONDARY }}
+                  display={"flex"}
+                  alignItems={"center"}
+                  marginTop={"8px"}
+                  paddingTop={"6px"}
+                  paddingBottom={"6px"}
+                  onClick={() => {
+                    selectDatafile(item.file_name as string);
+                    selectFilePopover.onClose();
+                  }}
+                >
+                  {selectedFile?.file_name === item.file_name && (
+                    <IoIosCheckmark size={25} />
+                  )}
+
+                  <Box
+                    marginLeft={
+                      selectedFile?.file_name !== item.file_name ? "25px" : 0
+                    }
+                  >
+                    {item.file_name}
+                  </Box>
+                </Box>
+              );
             })}
           </Box>
         }
@@ -98,6 +130,7 @@ export const BottomMenu = () => {
                 borderRadius={"10px"}
                 onClick={() => {
                   selectDatafile(item.file_name as string);
+                  selectFilePopover.onClose();
                 }}
                 cursor={"pointer"}
                 background={
