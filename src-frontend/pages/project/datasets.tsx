@@ -10,6 +10,7 @@ import { DatasetDataGrid } from "../../components/project/DataGrid";
 import { usePathParams } from "../../hooks/usePathParams";
 import { getAgGridFilterType } from "../../utils/dataset";
 import { DataGridSkeleton } from "../../components/project/DataGridSkeleton";
+import { BottomMenu } from "../../components/project/BottomMenu";
 
 interface PageQueryParams {
   openFileSelection: string | undefined;
@@ -77,6 +78,7 @@ export const ProjectDatasetsPage = () => {
       ) : (
         <DataGridSkeleton />
       )}
+      <BottomMenu />
     </Box>
   );
 };
