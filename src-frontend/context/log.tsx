@@ -89,6 +89,10 @@ export const LogProvider: React.FC<LogProviderProps> = ({ children }) => {
         channel: DOM_EVENT_CHANNELS.upload_file,
         data: domMessage,
       });
+      dispatchDomEvent({
+        channel: DOM_EVENT_CHANNELS.refetch_component,
+        data: domMessage,
+      });
       updateTitleBarContent(
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <Spinner size={"xs"} /> Added {filesDone}/{filesMax} files
