@@ -49,7 +49,7 @@ export const BottomMenu = () => {
   };
   return (
     <Box height={HEIGHT} display={"flex"} alignItems={"center"}>
-      <Tooltip label="Create a new file">
+      <Tooltip label="Create a new dataframe">
         <IconButton
           icon={<IoMdAdd />}
           aria-label="add-icon"

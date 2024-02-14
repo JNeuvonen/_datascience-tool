@@ -65,9 +65,9 @@ export const ProjectMenuBar = () => {
       width={"100%"}
     >
       <EditableHeader
-        defaultValue={selectedFile?.file_name || UNNAMED_PROJECT_PLACEHOLDER}
+        defaultValue={project || UNNAMED_PROJECT_PLACEHOLDER}
         setValue={setProjectNameInput}
-        value={selectedFile?.file_name || UNNAMED_PROJECT_PLACEHOLDER}
+        value={project || UNNAMED_PROJECT_PLACEHOLDER}
         onInputBlur={updateProjectName}
       />
       <Box gap={"4px"} display={"flex"} marginLeft={"-6px"} marginTop={"2px"}>
@@ -82,7 +82,7 @@ export const ProjectMenuBar = () => {
             Select imported file
           </MenuItem>
           <MenuItem icon={<FaDownload />}>Export data</MenuItem>
-          <MenuItem icon={<FaFileSignature />}>Create pivot dataframe</MenuItem>
+          <MenuItem icon={<FaFileSignature />}>Create a new dataframe</MenuItem>
           <MenuItem icon={<FaFileExcel />}>Save project</MenuItem>
         </ChakraMenu>
         <ChakraMenu menuButton={<MenuButton>Edit</MenuButton>}>
