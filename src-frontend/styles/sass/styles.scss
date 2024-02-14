@@ -61,9 +61,29 @@ code {
 }
 
 .swiper-slide {
-  margin-bottom: 14px; /* Adjust this value as needed */
+  margin-bottom: 14px;
 }
 
 .swiper-container {
-  padding-bottom: 10px; /* Adjust to fit the new slide layout */
+  padding-bottom: 10px;
+}
+
+.ag-overlay-loading-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: $content-primary;
+  gap: 25px;
+  width: 200px;
+  height: 100px;
+  font-size: 18px;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.ag-overlay-loading-center:hover {
+  background-color: $bg-primary;
+  color: $content-primary;
+  pointer-events: auto;
 }
