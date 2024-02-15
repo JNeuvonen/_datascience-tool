@@ -9,7 +9,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { usePathParams } from "../../hooks/usePathParams";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useUploadMetadataQuery } from "../../client/queries";
 import { UNNAMED_PROJECT_PLACEHOLDER } from "../../pages";
@@ -19,23 +18,20 @@ import { ChakraCard } from "../Card";
 import { getPathLastItem } from "../../utils/content";
 import { formatToGigaBytes } from "../../utils/number";
 import { COLOR_BG_PRIMARY_SHADE_FOUR } from "../../styles/colors";
-import { ChakraModal } from "../Modal";
-import { NameProjectModal } from "./NameProjectModal";
-import { ROUTES, ROUTE_KEYS } from "../../utils/constants";
 import { Label } from "../Label";
 import { FormSubmitBar } from "../SubmitBar";
 import { FaFileExport } from "react-icons/fa6";
+import { useProjectContext } from "../../context/project";
 
 interface SelectFilesDrawerProps {
   onClose: () => void;
 }
 
 export const SelectFilesDrawer = (props: SelectFilesDrawerProps) => {
+  const { renameProjectModal } = useProjectContext();
   const { onClose } = props;
   const { project } = usePathParams<{ project: string }>();
   const toast = useToast();
-  const navigate = useNavigate();
-  const renameProjectModal = useDisclosure();
   const [fileList, setFilelist] = useState<string[]>([]);
   const fileUploadMetadata = useUploadMetadataQuery(fileList);
 
@@ -114,29 +110,6 @@ export const SelectFilesDrawer = (props: SelectFilesDrawerProps) => {
 
   return (
     <Box>
-      <ChakraModal
-        {...renameProjectModal}
-        title={"Let's name your project first"}
-      >
-        <NameProjectModal
-          onClose={renameProjectModal.onClose}
-          successCallback={(projectName) => {
-            toast({
-              title: "Created project",
-              position: "bottom-left",
-              status: "info",
-              duration: 5000,
-              isClosable: true,
-            });
-            navigate(
-              ROUTES.project.replace(ROUTE_KEYS.project, projectName) +
-                `?defaultTab=1&openFileSelection=1`
-            );
-            renameProjectModal.onClose();
-          }}
-        />
-      </ChakraModal>
-
       <Button leftIcon={<FaFileExport />} onClick={handleFileSelection}>
         Select files
       </Button>

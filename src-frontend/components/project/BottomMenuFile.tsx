@@ -19,7 +19,8 @@ interface Props {
   };
 }
 export const BottomMenuFile = ({ datafile, selectFilePopover }: Props) => {
-  const { selectDatafile, selectedFile } = useProjectContext();
+  const { selectDatafile, selectedFile, setSelectedFileContext } =
+    useProjectContext();
   return (
     <Box
       width={SLIDE_WIDTH}
@@ -34,6 +35,7 @@ export const BottomMenuFile = ({ datafile, selectFilePopover }: Props) => {
       borderRadius={"10px"}
       onContextMenu={(e) => {
         e.preventDefault();
+        setSelectedFileContext(datafile);
       }}
       onClick={() => {
         selectDatafile(datafile.file_name as string);

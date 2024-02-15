@@ -1,14 +1,9 @@
 import {
   Box,
-  Heading,
   IconButton,
   Menu,
   MenuItem,
   MenuList,
-  Popover,
-  PopoverArrow,
-  PopoverContent,
-  PopoverHeader,
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -17,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { useProjectContext } from "../../context/project";
 import { IoMdAdd } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { COLOR_BG_SECONDARY, COLOR_BG_TERTIARY } from "../../styles/colors";
+import { COLOR_BG_TERTIARY } from "../../styles/colors";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Scrollbar } from "swiper/modules";
 
@@ -37,8 +32,13 @@ const SLIDE_WIDTH = 200;
 
 export const BottomMenu = () => {
   const { setBottomMenuHeight } = useLayoutContext();
-  const { projectQuery, selectedFile, selectDatafile, setNewDataframeUIMode } =
-    useProjectContext();
+  const {
+    projectQuery,
+    selectedFile,
+    selectDatafile,
+    setNewDataframeUIMode,
+    renameDatafileModal,
+  } = useProjectContext();
   const { width } = useWindowDimensions();
   const selectFilePopover = useDisclosure();
   const fileActionsPopover = useDisclosure();
@@ -146,7 +146,7 @@ export const BottomMenu = () => {
         >
           <Menu isOpen={true}>
             <MenuList style={{ height: 175 }}>
-              <MenuItem>Rename</MenuItem>
+              <MenuItem onClick={renameDatafileModal.onOpen}>Rename</MenuItem>
               <MenuItem>Delete</MenuItem>
               <MenuItem>Merge to current dataframe</MenuItem>
               <MenuItem>Clone</MenuItem>

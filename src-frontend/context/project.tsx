@@ -1,6 +1,5 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext } from "react";
 import { useDisclosure } from "@chakra-ui/react";
-import { usePathParams } from "../hooks/usePathParams";
 import {
   ColumnInfo,
   useFileColumnsQuery,
@@ -9,24 +8,30 @@ import {
 import { UseQueryResult } from "@tanstack/react-query";
 import { DataFile, ProjectData } from "../client/requests";
 import { GridApi } from "ag-grid-community";
-import { ProjectUXHelper } from "../components/project/NotificationsHelper";
 import { useMessageListener } from "../hooks/useMessageListener";
 import { DOM_EVENT_CHANNELS } from "../utils/constants";
+import { ProjectUXHelper, useProjectState } from "../components/project";
 
 type UseDisclosureReturn = ReturnType<typeof useDisclosure>;
 
 export interface ProjectContextType {
   selectFilesDrawer: UseDisclosureReturn;
   importedFilesDrawer: UseDisclosureReturn;
+  setJoinColModal: UseDisclosureReturn;
+  renameDatafileModal: UseDisclosureReturn;
+  renameProjectModal: UseDisclosureReturn;
   projectQuery: UseQueryResult<ProjectData | null, unknown>;
   fileColumnsQuery: UseQueryResult<ColumnInfo[] | null, unknown>;
   selectedFile: DataFile | null;
   setSelectedFile: React.Dispatch<React.SetStateAction<DataFile | null>>;
+  selectedFileContext: DataFile | null;
+  setSelectedFileContext: React.Dispatch<React.SetStateAction<DataFile | null>>;
   setGridApi: React.Dispatch<React.SetStateAction<GridApi<any> | null>>;
   gridApi: GridApi | null;
   selectDatafile: (fileName: string) => void;
   uiMode: UIModes;
   setNewDataframeUIMode: () => void;
+  getDatafileByName: (fileName: string) => DataFile | null;
 }
 
 export const ProjectContext = createContext<ProjectContextType>(
@@ -42,10 +47,22 @@ export type UIModes = "default" | "create-dataframe";
 export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   children,
 }) => {
-  const [uiMode, setUiMode] = useState<UIModes>("default");
-
-  const [selectedFile, setSelectedFile] = useState<DataFile | null>(null);
-  const { project } = usePathParams<{ project: string }>();
+  const {
+    uiMode,
+    setUiMode,
+    selectFilesDrawer,
+    importedFilesDrawer,
+    selectedFile,
+    setSelectedFile,
+    selectedFileContext,
+    setSelectedFileContext,
+    gridApi,
+    setGridApi,
+    project,
+    setJoinColModal,
+    renameDatafileModal,
+    renameProjectModal,
+  } = useProjectState();
 
   const projectQuery = useProjectQuery(project);
   const fileColumnsQuery = useFileColumnsQuery(
@@ -53,21 +70,24 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     selectedFile?.file_name || ""
   );
 
-  const selectFilesDrawer = useDisclosure();
-  const importedFilesDrawer = useDisclosure();
-  const [gridApi, setGridApi] = useState<GridApi | null>(null);
-
   const setNewDataframeUIMode = () => {
     setSelectedFile(null);
     setUiMode("create-dataframe");
   };
 
-  const selectDatafile = (fileName: string) => {
+  const getDatafileByName = (fileName: string) => {
+    let ret = null;
     projectQuery.data?.datafiles.forEach((item) => {
       if (item.file_name === fileName) {
-        setSelectedFile(item);
+        ret = item;
       }
     });
+    return ret;
+  };
+
+  const selectDatafile = (fileName: string) => {
+    const datafile = getDatafileByName(fileName);
+    setSelectedFile(datafile);
   };
 
   useMessageListener({
@@ -90,6 +110,12 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         selectDatafile,
         uiMode,
         setNewDataframeUIMode,
+        setJoinColModal,
+        renameDatafileModal,
+        renameProjectModal,
+        selectedFileContext,
+        setSelectedFileContext,
+        getDatafileByName,
       }}
     >
       <ProjectUXHelper />
