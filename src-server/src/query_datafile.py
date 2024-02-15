@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional
+from fastapi import HTTPException
 from pydantic import BaseModel
 
 from sqlalchemy import Column, ForeignKey, Integer, String
@@ -28,9 +29,6 @@ class DatafileSchema(BaseModel):
     was_import: Optional[int]
     join_column: Optional[str]
     project_id: int
-
-    class Config:
-        orm_mode = True
 
 
 class DatafileQuery:
@@ -64,3 +62,25 @@ class DatafileQuery:
                 {"join_column": join_column}
             )
             session.commit()
+
+    @staticmethod
+    def retrieve(value, field="id"):
+        with LogException():
+            with Session() as session:
+                query = session.query(Datafile)
+                train_job_data = query.filter(getattr(Datafile, field) == value).first()
+                return train_job_data
+
+    @staticmethod
+    def update_datafile(datafile_schema: DatafileSchema):
+        datafile_info = datafile_schema.model_dump(exclude_unset=True)
+        with Session() as session:
+            datafile_id = datafile_info.pop("id", None)
+            if datafile_id:
+                session.query(Datafile).filter(Datafile.id == datafile_id).update(
+                    {
+                        Datafile.__table__.c[key]: value
+                        for key, value in datafile_info.items()
+                    }
+                )
+                session.commit()
