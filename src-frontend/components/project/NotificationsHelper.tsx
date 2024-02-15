@@ -4,7 +4,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import { ChakraModal } from "../Modal";
 import { SetJoinColModal } from "./SetJoinColModal";
 
-export const ProjectNotifications = () => {
+export const ProjectUXHelper = () => {
   const { projectQuery } = useProjectContext();
   const setJoinColModal = useDisclosure();
 

@@ -9,7 +9,7 @@ import {
 import { UseQueryResult } from "@tanstack/react-query";
 import { DataFile, ProjectData } from "../client/requests";
 import { GridApi } from "ag-grid-community";
-import { ProjectNotifications } from "../components/project/NotificationsHelper";
+import { ProjectUXHelper } from "../components/project/NotificationsHelper";
 import { useMessageListener } from "../hooks/useMessageListener";
 import { DOM_EVENT_CHANNELS } from "../utils/constants";
 
@@ -92,7 +92,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         setNewDataframeUIMode,
       }}
     >
-      <ProjectNotifications />
+      <ProjectUXHelper />
       {children}
     </ProjectContext.Provider>
   );
