@@ -172,3 +172,16 @@ export const setJoinCol = async (projectName: string, joinCol: string) => {
   }
   return null;
 };
+
+export const putOnDatafile = async (datafile: DataFile) => {
+  const res = await httpReq({
+    url: REST_API_URL.datafile(),
+    method: "PUT",
+    payload: datafile,
+  });
+
+  if (res.status === 200) {
+    return res;
+  }
+  return null;
+};
