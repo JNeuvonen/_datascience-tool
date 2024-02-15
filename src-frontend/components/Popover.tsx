@@ -10,7 +10,10 @@ import {
   PopoverFooter,
   PlacementWithLogical,
 } from "@chakra-ui/react";
-import { COLOR_BG_TERTIARY } from "../styles/colors";
+import {
+  COLOR_BG_PRIMARY_SHADE_ONE,
+  COLOR_BG_TERTIARY,
+} from "../styles/colors";
 
 interface Props {
   children?: React.ReactNode;
@@ -55,11 +58,14 @@ export const ChakraPopover = ({
           {children}
         </span>
       </PopoverTrigger>
-      <PopoverContent bg={COLOR_BG_TERTIARY} borderColor={COLOR_BG_TERTIARY}>
+      <PopoverContent
+        bg={COLOR_BG_PRIMARY_SHADE_ONE}
+        borderColor={COLOR_BG_PRIMARY_SHADE_ONE}
+      >
         <PopoverHeader pt={4} fontWeight="bold" border="0">
           {headerText}
         </PopoverHeader>
-        {useArrow && <PopoverArrow bg={COLOR_BG_TERTIARY} />}
+        {useArrow && <PopoverArrow bg={COLOR_BG_PRIMARY_SHADE_ONE} />}
         <PopoverCloseButton />
         <PopoverBody>{isOpen && body}</PopoverBody>
         {footer && <PopoverFooter>{footer}</PopoverFooter>}
