@@ -70,6 +70,10 @@ class URL:
         return cls.BASE_URL + "/project"
 
     @classmethod
+    def route_datafile(cls):
+        return cls.BASE_URL + "/datafile"
+
+    @classmethod
     def create_project(cls):
         return cls.route_project() + project_routes().ROOT
 
@@ -105,6 +109,14 @@ class URL:
             + f"?join_col={join_col}"
         )
 
+    @classmethod
+    def put_datafile(cls):
+        return cls.route_datafile()
+
+    @classmethod
+    def get_datafile(cls, id: int):
+        return cls.route_datafile() + f"/{id}"
+
 
 class RestAPI:
     @staticmethod
@@ -136,3 +148,13 @@ class RestAPI:
     def set_join_col(project_name: str, join_col: str):
         with Req("put", URL.set_join_col(project_name, join_col)) as res:
             return res
+
+    @staticmethod
+    def put_datafile(datafile):
+        with Req("put", URL.put_datafile(), json=datafile) as res:
+            return res
+
+    @staticmethod
+    def get_datafile(id: int):
+        with Req("get", URL.get_datafile(id)) as res:
+            return res.json()["data"]

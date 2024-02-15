@@ -48,6 +48,14 @@ def is_sqlite_text_date(column_type, value):
     return False
 
 
+def rename_table(db_path, old_name, new_name):
+    with LogException():
+        with sqlite3.connect(db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(f'ALTER TABLE "{old_name}" RENAME TO "{new_name}"')
+            conn.commit()
+
+
 def get_datafile_table_name(project_name: str, file_path: str):
     return project_name + "_" + file_path
 
@@ -135,7 +143,7 @@ def get_datafile_columns(project_name, file_path, datafile_metadata):
 
 def get_datafile_metadata(path: str, project_id, was_import=True):
     with LogException():
-        project = ProjectQuery.retrieve_project(project_id)
+        project = ProjectQuery.retrieve(project_id)
         file_size_bytes = os.path.getsize(path)
         file_name = get_path_last_item(path)
         distinct_counts = {}
@@ -497,7 +505,7 @@ async def upload_datasets(project, body: BodyUploadDatasets):
 
 
 def get_join_col_actions(project_name):
-    project = ProjectQuery.retrieve_project(project_name, "name")
+    project = ProjectQuery.retrieve(project_name, "name")
 
     if project is None:
         raise HTTPException(status_code=400, detail="Incorrect project name")

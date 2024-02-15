@@ -37,8 +37,21 @@ def test_set_join_col(cleanup_db, fixt_upload_datasets):
     organize_metadata = RestAPI.organize(project_name)
     join_col = organize_metadata["common_columns"][0]
     RestAPI.set_join_col(project_name, join_col)
-    project = ProjectQuery.retrieve_project(project_name, "name")
+    project = ProjectQuery.retrieve(project_name, "name")
     datafiles = DatafileQuery.get_datafiles_by_project(project.id)
 
     for item in datafiles:
         assert item.join_column == join_col
+
+
+@pytest.mark.acceptance
+def test_route_datafile_put(cleanup_db, fixt_upload_datasets):
+    project_name = fixt_upload_datasets["project_name"]
+    project = RestAPI.get_project(project_name)
+    datafiles = project["datafiles"]
+    datafile = datafiles[0]
+    RENAMED_FILENAME = "renamed_file.csv"
+    datafile["file_name"] = RENAMED_FILENAME
+    RestAPI.put_datafile(datafile)
+    datafile_after_update = RestAPI.get_datafile(datafile["id"])
+    assert datafile_after_update["file_name"] == RENAMED_FILENAME
