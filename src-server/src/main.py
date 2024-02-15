@@ -8,6 +8,7 @@ from decorators import LogException
 from orm import create_tables
 from route_project import router as project_router
 from route_websocket import router as websocket_router
+from route_datafile import router as datafile_router
 
 from log import get_logger
 
@@ -37,9 +38,11 @@ app.add_middleware(
 class Routers:
     PROJECT = "/project"
     STREAMS = "/streams"
+    DATAFILE = "/datafile"
 
 
 app.include_router(project_router, prefix=Routers.PROJECT)
+app.include_router(datafile_router, prefix=Routers.DATAFILE)
 app.include_router(websocket_router, prefix=Routers.STREAMS)
 
 

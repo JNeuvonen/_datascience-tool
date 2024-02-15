@@ -1,10 +1,11 @@
 import asyncio
 import json
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, Body, HTTPException, Response, status
 import pandas as pd
 from decorators import HttpResponseContext
 from query_datafile import (
     DatafileQuery,
+    DatafileSchema,
 )
 from query_project import ProjectQuery
 from request_types import (
