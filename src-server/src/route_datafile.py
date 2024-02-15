@@ -25,6 +25,11 @@ async def route_put_file_by_name(datafile: DatafileSchema = Body(...)):
                 status_code=400, detail=f"Datafile was not found for id {datafile.id}"
             )
 
+        if datafile_from_db.id is not datafile.id:
+            raise HTTPException(
+                status_code=400, detail="Changing of primary key is not possible"
+            )
+
         if datafile_from_db.file_name is not datafile.file_name:
             project = ProjectQuery.retrieve(datafile.project_id)
             rename_table(
