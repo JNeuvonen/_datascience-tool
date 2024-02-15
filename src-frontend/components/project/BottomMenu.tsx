@@ -1,10 +1,23 @@
-import { Box, IconButton, Tooltip, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  IconButton,
+  Menu,
+  MenuItem,
+  MenuList,
+  Popover,
+  PopoverArrow,
+  PopoverContent,
+  PopoverHeader,
+  Tooltip,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { useLayoutContext } from "../../context/layout";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useProjectContext } from "../../context/project";
 import { IoMdAdd } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { COLOR_BG_SECONDARY } from "../../styles/colors";
+import { COLOR_BG_SECONDARY, COLOR_BG_TERTIARY } from "../../styles/colors";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Scrollbar } from "swiper/modules";
 
@@ -17,6 +30,7 @@ import { ChakraPopover } from "../Popover";
 import { BUTTON_VARIANTS } from "../../theming";
 import { IoIosCheckmark } from "react-icons/io";
 import { BottomMenuFile } from "./BottomMenuFile";
+import { CustomPopover } from "../CustomPopover";
 
 const HEIGHT = 55;
 const SLIDE_WIDTH = 200;
@@ -28,6 +42,8 @@ export const BottomMenu = () => {
   const { width } = useWindowDimensions();
   const selectFilePopover = useDisclosure();
   const fileActionsPopover = useDisclosure();
+  const bottomMenuRefs = useRef<HTMLDivElement[]>([]);
+  const [filePopoverLeftOffset, setFilePopoverLeftOffset] = useState<number>(0);
 
   useEffect(() => {
     setBottomMenuHeight(HEIGHT);
@@ -45,6 +61,15 @@ export const BottomMenu = () => {
     }
     return Math.floor(width / SLIDE_WIDTH);
   };
+
+  const handleFileRightClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setFilePopoverLeftOffset(rect.left);
+    fileActionsPopover.onOpen();
+  };
+
   return (
     <Box height={HEIGHT} display={"flex"} alignItems={"center"}>
       <Tooltip label="Create a new dataframe">
@@ -66,10 +91,15 @@ export const BottomMenu = () => {
                   key={idx}
                   borderRadius={"10px"}
                   cursor={"pointer"}
-                  _hover={{ bg: COLOR_BG_SECONDARY }}
+                  _hover={{ bg: COLOR_BG_TERTIARY }}
                   display={"flex"}
                   alignItems={"center"}
                   marginTop={"8px"}
+                  background={
+                    item.file_name === selectedFile?.file_name
+                      ? COLOR_BG_TERTIARY
+                      : undefined
+                  }
                   paddingTop={"6px"}
                   paddingBottom={"6px"}
                   onClick={() => {
@@ -105,6 +135,26 @@ export const BottomMenu = () => {
         </Tooltip>
       </ChakraPopover>
 
+      {fileActionsPopover.isOpen && (
+        <CustomPopover
+          width={200}
+          height={175}
+          bottom={60}
+          left={filePopoverLeftOffset - 10}
+          isOpen={fileActionsPopover.isOpen}
+          onClose={fileActionsPopover.onClose}
+        >
+          <Menu isOpen={true}>
+            <MenuList style={{ height: 175 }}>
+              <MenuItem>Rename</MenuItem>
+              <MenuItem>Delete</MenuItem>
+              <MenuItem>Merge to current dataframe</MenuItem>
+              <MenuItem>Clone</MenuItem>
+            </MenuList>
+          </Menu>
+        </CustomPopover>
+      )}
+
       <Swiper
         direction="horizontal"
         spaceBetween={"16px"}
@@ -115,11 +165,18 @@ export const BottomMenu = () => {
       >
         {projectQuery.data.datafiles.map((item, idx) => {
           return (
-            <SwiperSlide key={idx} onClick={fileActionsPopover.onOpen}>
-              <BottomMenuFile
-                datafile={item}
-                selectFilePopover={selectFilePopover}
-              />
+            <SwiperSlide key={idx}>
+              <div
+                ref={(el) => {
+                  if (el) bottomMenuRefs.current[idx] = el;
+                }}
+                onContextMenu={handleFileRightClick}
+              >
+                <BottomMenuFile
+                  datafile={item}
+                  selectFilePopover={selectFilePopover}
+                />
+              </div>
             </SwiperSlide>
           );
         })}
