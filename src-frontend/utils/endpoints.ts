@@ -24,4 +24,5 @@ export const REST_API_URL = {
     `${BASE_URL}/${PROJECT}/${projectName}/file/${fileName}`,
   set_join_col: (projectName: string, joinCol: string) =>
     `${BASE_URL}/${PROJECT}/${projectName}/join-col?join_col=${joinCol}`,
+  datafile: () => `${BASE_URL}/datafile/`,
 };
