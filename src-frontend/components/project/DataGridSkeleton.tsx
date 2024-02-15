@@ -72,7 +72,7 @@ export const DataGridSkeleton = () => {
       className="ag-theme-alpine-dark"
       style={{
         width: "100%",
-        height: `calc(100vh - ${titleBarHeight}px - ${menuBarHeight}px - ${bottomMenuHeight}px - 32px)`,
+        height: `calc(100vh - ${titleBarHeight}px - ${menuBarHeight}px - ${bottomMenuHeight}px - 42px)`,
       }}
     >
       <AgGridReact
