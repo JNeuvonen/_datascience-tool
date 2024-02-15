@@ -1,11 +1,10 @@
 import asyncio
 import json
-from fastapi import APIRouter, Body, HTTPException, Response, status
+from fastapi import APIRouter, HTTPException, Response, status
 import pandas as pd
 from decorators import HttpResponseContext
 from query_datafile import (
     DatafileQuery,
-    DatafileSchema,
 )
 from query_project import ProjectQuery
 from request_types import (
@@ -52,7 +51,7 @@ async def route_get_uploads_size(body: BodyGetUploadsSize):
 @router.post(RoutePaths.DATASET)
 async def route_upload_dataset(project_name: str, body: BodyUploadDataset):
     with HttpResponseContext():
-        project = ProjectQuery.retrieve_project(project_name, "name")
+        project = ProjectQuery.retrieve(project_name, "name")
         if project is None:
             raise HTTPException(status_code=400, detail="Incorrect project ID")
 
@@ -66,7 +65,7 @@ async def route_upload_dataset(project_name: str, body: BodyUploadDataset):
 @router.post(RoutePaths.DATASETS)
 async def route_upload_datasets(project_name: str, body: BodyUploadDatasets):
     with HttpResponseContext():
-        project = ProjectQuery.retrieve_project(project_name, "name")
+        project = ProjectQuery.retrieve(project_name, "name")
         if project is None:
             raise HTTPException(status_code=400, detail="Incorrect project name")
 
@@ -104,7 +103,7 @@ async def route_create_project(body: BodyCreateProject):
 @router.get(RoutePaths.PROJECT)
 async def route_get_project(project_name: str):
     with HttpResponseContext():
-        project = ProjectQuery.retrieve_project(project_name, "name")
+        project = ProjectQuery.retrieve(project_name, "name")
 
         if project is None:
             raise HTTPException(status_code=400, detail="Incorrect project name")
@@ -131,7 +130,7 @@ async def route_get_project_dataset(
             sql_filters = ag_grid_filters_struct_to_sql(key, value)
             filters_arr.append(sql_filters)
 
-        project = ProjectQuery.retrieve_project(project_name, "name")
+        project = ProjectQuery.retrieve(project_name, "name")
 
         if project is None:
             raise HTTPException(status_code=400, detail="Incorrect project name")
@@ -164,7 +163,7 @@ async def route_organize_info(project_name: str):
 @router.put(RoutePaths.JOIN_COL)
 async def route_set_join_col(project_name: str, join_col: str):
     with HttpResponseContext():
-        project = ProjectQuery.retrieve_project(project_name, "name")
+        project = ProjectQuery.retrieve(project_name, "name")
 
         if project is None:
             raise HTTPException(status_code=400, detail="Incorrect project name")

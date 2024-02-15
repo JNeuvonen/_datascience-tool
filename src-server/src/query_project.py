@@ -23,7 +23,7 @@ class ProjectQuery:
                 return project.id
 
     @staticmethod
-    def retrieve_project(value, field="id"):
+    def retrieve(value, field="id"):
         with LogException():
             with Session() as session:
                 query = session.query(Project)

@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Body, HTTPException, Response, status
+from constants import AppConstants
 from decorators import HttpResponseContext
 
 from query_datafile import DatafileQuery, DatafileSchema
-from utils import rename_project_file
+from query_project import ProjectQuery
+from utils import get_datafile_table_name, rename_table
 
 
 class RoutePaths:
@@ -24,7 +26,12 @@ async def route_put_file_by_name(datafile: DatafileSchema = Body(...)):
             )
 
         if datafile_from_db.file_name is not datafile.file_name:
-            rename_project_file(datafile.id, datafile.file_name)
+            project = ProjectQuery.retrieve(datafile.project_id)
+            rename_table(
+                AppConstants.DB_DATASETS,
+                get_datafile_table_name(project.name, datafile_from_db.file_name),
+                get_datafile_table_name(project.name, datafile.file_name),
+            )
 
         DatafileQuery.update_datafile(datafile)
         return Response(
