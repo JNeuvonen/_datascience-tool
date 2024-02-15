@@ -4,8 +4,6 @@ import { DataFile } from "../../client/requests";
 import { useProjectContext } from "../../context/project";
 import { OverflopTooltip } from "../OverflowTooltip";
 import { FaCaretDown } from "react-icons/fa6";
-import { Menu, MenuItem, MenuList } from "@chakra-ui/menu";
-import { ChakraMenu } from "../Menu";
 
 const SLIDE_WIDTH = 200;
 interface Props {
