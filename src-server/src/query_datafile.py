@@ -1,4 +1,5 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
+from pydantic import BaseModel
 
 from sqlalchemy import Column, ForeignKey, Integer, String
 from decorators import LogException
@@ -16,6 +17,20 @@ class Datafile(Base):
     was_import = Column(Integer)
     join_column = Column(String, nullable=True)
     project_id = Column(Integer, ForeignKey("project.id"), nullable=False)
+
+
+class DatafileSchema(BaseModel):
+    id: int
+    file_name: str
+    size_bytes: Optional[int]
+    distinct_counts: Optional[str]
+    distinct_values: Optional[str]
+    was_import: Optional[int]
+    join_column: Optional[str]
+    project_id: int
+
+    class Config:
+        orm_mode = True
 
 
 class DatafileQuery:
