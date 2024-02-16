@@ -97,60 +97,65 @@ def get_columns(table_name: str):
 
 
 def get_datafile_columns(project_name, file_path, datafile_metadata):
-    columns = []
-    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
-        cursor = conn.cursor()
-        table_name = get_datafile_table_name(project_name, file_path)
-        cursor.execute(f'PRAGMA table_info("{table_name}")')
-        distinct_counts = (
-            json.loads(datafile_metadata.distinct_counts)
-            if datafile_metadata.distinct_counts
-            else None
-        )
-        distinct_values = (
-            json.loads(datafile_metadata.distinct_values)
-            if datafile_metadata.distinct_values
-            else None
-        )
-        for row in cursor.fetchall():
-            column_name = row[1]
-            column_type = row[2]
-
-            distinct_count = (
-                distinct_counts.get(column_name) if distinct_counts is not None else 0
+    with LogException():
+        columns = []
+        with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+            cursor = conn.cursor()
+            table_name = get_datafile_table_name(project_name, file_path)
+            cursor.execute(f'PRAGMA table_info("{table_name}")')
+            distinct_counts = (
+                json.loads(datafile_metadata.distinct_counts)
+                if datafile_metadata.distinct_counts
+                else None
             )
-            categorical_values = (
-                distinct_values.get(column_name) if distinct_values is not None else 0
+            distinct_values = (
+                json.loads(datafile_metadata.distinct_values)
+                if datafile_metadata.distinct_values
+                else None
             )
-            first_row_value = get_first_nonnull(table_name, column_name)
+            for row in cursor.fetchall():
+                column_name = row[1]
+                column_type = row[2]
 
-            if distinct_count < 15:
-                columns.append(
-                    {
-                        "name": column_name,
-                        "type": "CATEGORY",
-                        "categorical_values": categorical_values,
-                    }
+                distinct_count = (
+                    distinct_counts.get(column_name)
+                    if distinct_counts is not None
+                    else 0
                 )
-            elif first_row_value and is_sqlite_text_date(
-                column_type, first_row_value[0]
-            ):
-                columns.append(
-                    {
-                        "name": column_name,
-                        "type": "DATE",
-                        "categorical_values": None,
-                    }
+                categorical_values = (
+                    distinct_values.get(column_name)
+                    if distinct_values is not None
+                    else 0
                 )
-            else:
-                columns.append(
-                    {
-                        "name": column_name,
-                        "type": column_type,
-                        "categorical_values": None,
-                    }
-                )
-    return columns
+                first_row_value = get_first_nonnull(table_name, column_name)
+
+                if distinct_count < 15:
+                    columns.append(
+                        {
+                            "name": column_name,
+                            "type": "CATEGORY",
+                            "categorical_values": categorical_values,
+                        }
+                    )
+                elif first_row_value and is_sqlite_text_date(
+                    column_type, first_row_value[0]
+                ):
+                    columns.append(
+                        {
+                            "name": column_name,
+                            "type": "DATE",
+                            "categorical_values": None,
+                        }
+                    )
+                else:
+                    columns.append(
+                        {
+                            "name": column_name,
+                            "type": column_type,
+                            "categorical_values": None,
+                        }
+                    )
+        return columns
 
 
 def get_datafile_metadata(path: str, project_id, was_import=True):
