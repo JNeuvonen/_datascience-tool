@@ -52,15 +52,7 @@ export const createDatafile = async (
   successCallback?: () => void
 ) => {
   const res = await postOnDatafile(body);
-
   if (res?.status === 200) {
-    toast({
-      title: "Deleted a datafile",
-      position: "bottom-left",
-      status: "info",
-      duration: 5000,
-      isClosable: true,
-    });
     if (successCallback) successCallback();
   }
 };
