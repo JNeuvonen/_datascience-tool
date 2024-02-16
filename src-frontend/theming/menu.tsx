@@ -34,6 +34,10 @@ export const menuItemTheme = {
         color: "white",
         backgroundColor: COLOR_BG_PRIMARY_SHADE_ONE,
       },
+      _disabled: {
+        opacity: 0.4,
+        cursor: "not-allowed",
+      },
     },
     command: {},
     divider: {

@@ -1,4 +1,4 @@
-import { Box, MenuButton, MenuItem, useToast } from "@chakra-ui/react";
+import { Box, MenuButton, MenuItem, Tooltip, useToast } from "@chakra-ui/react";
 import { ChakraMenu } from "../Menu";
 import { useProjectContext } from "../../context/project";
 import {
@@ -24,7 +24,6 @@ export const ProjectMenuBar = () => {
     useProjectContext();
   const { setMenuBarHeight, titleBarHeight } = useLayoutContext();
 
-  const [isUnnamed] = useState(project === UNNAMED_PROJECT_PLACEHOLDER);
   const toast = useToast();
 
   const [projectNameInput, setProjectNameInput] = useState(project);
@@ -40,7 +39,7 @@ export const ProjectMenuBar = () => {
   }, []);
 
   const updateProjectName = async () => {
-    if (isUnnamed) {
+    if (project === UNNAMED_PROJECT_PLACEHOLDER) {
       const res = await createProject({ name: projectNameInput });
       if (res.status === 200) {
         toast({
@@ -86,6 +85,51 @@ export const ProjectMenuBar = () => {
           <MenuItem icon={<FaFileExcel />}>Save project</MenuItem>
         </ChakraMenu>
         <ChakraMenu menuButton={<MenuButton>Edit</MenuButton>}>
+          <MenuItem
+            icon={<MdClearAll />}
+            onClick={() => {
+              gridApi?.setFilterModel(null);
+            }}
+          >
+            Clear filters
+          </MenuItem>
+          <MenuItem
+            icon={<MdClearAll />}
+            onClick={() => {
+              gridApi?.setFilterModel(null);
+            }}
+          >
+            Drop columns
+          </MenuItem>
+          <MenuItem
+            icon={<MdClearAll />}
+            onClick={() => {
+              gridApi?.setFilterModel(null);
+            }}
+          >
+            Clone current file
+          </MenuItem>
+          <MenuItem
+            icon={<MdClearAll />}
+            onClick={() => {
+              gridApi?.setFilterModel(null);
+            }}
+          >
+            Filter columns
+          </MenuItem>
+        </ChakraMenu>
+        <ChakraMenu
+          menuButton={
+            <Tooltip
+              label="Select a file first"
+              isDisabled={selectedFile !== null}
+            >
+              <MenuButton disabled={selectedFile === null}>
+                Dataframe
+              </MenuButton>
+            </Tooltip>
+          }
+        >
           <MenuItem
             icon={<MdClearAll />}
             onClick={() => {
