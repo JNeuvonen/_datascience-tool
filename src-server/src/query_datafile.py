@@ -17,6 +17,7 @@ class Datafile(Base):
     distinct_values = Column(String, nullable=True)
     was_import = Column(Integer)
     join_column = Column(String, nullable=True)
+    merged_dataframes = Column(String, nullable=True)
     project_id = Column(Integer, ForeignKey("project.id"), nullable=False)
 
 
