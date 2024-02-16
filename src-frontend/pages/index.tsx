@@ -8,6 +8,7 @@ import { formatBytes } from "../utils/number";
 import { BUTTON_VARIANTS } from "../theming";
 
 export const UNNAMED_PROJECT_PLACEHOLDER = "Unnamed project";
+export const UNNAMED_FILE_PLACEHOLDER = "Unnamed dataframe";
 
 const COLUMNS = ["Name", "Files", "Imported size", ""];
 
