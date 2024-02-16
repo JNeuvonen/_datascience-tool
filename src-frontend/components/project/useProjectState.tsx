@@ -13,7 +13,6 @@ export const useProjectState = () => {
   const deleteFileModal = useDisclosure();
   const importedFilesDrawer = useDisclosure();
   const renameProjectModal = useDisclosure();
-  const [uiMode, setUiMode] = useState<UIModes>("default");
   const [selectedFile, setSelectedFile] = useState<DataFile | null>(null);
   const [selectedFileContext, setSelectedFileContext] =
     useState<DataFile | null>(null);
@@ -25,8 +24,6 @@ export const useProjectState = () => {
     renameDatafileModal,
     selectFilesDrawer,
     importedFilesDrawer,
-    uiMode,
-    setUiMode,
     selectedFile,
     setSelectedFile,
     gridApi,

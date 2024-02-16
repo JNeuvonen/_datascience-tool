@@ -11,6 +11,8 @@ import { GridApi } from "ag-grid-community";
 import { useMessageListener } from "../hooks/useMessageListener";
 import { DOM_EVENT_CHANNELS } from "../utils/constants";
 import { ProjectUXHelper, useProjectState } from "../components/project";
+import { createDatafile } from "../components/project/useProjectSubmits";
+import { UNNAMED_FILE_PLACEHOLDER } from "../pages";
 
 type UseDisclosureReturn = ReturnType<typeof useDisclosure>;
 
@@ -30,7 +32,6 @@ export interface ProjectContextType {
   setGridApi: React.Dispatch<React.SetStateAction<GridApi<any> | null>>;
   gridApi: GridApi | null;
   selectDatafile: (fileName: string) => void;
-  uiMode: UIModes;
   setNewDataframeUIMode: () => void;
   getDatafileByName: (fileName: string) => DataFile | null;
 }
@@ -43,14 +44,10 @@ interface ProjectProviderProps {
   children: ReactNode;
 }
 
-export type UIModes = "default" | "create-dataframe";
-
 export const ProjectProvider: React.FC<ProjectProviderProps> = ({
   children,
 }) => {
   const {
-    uiMode,
-    setUiMode,
     selectFilesDrawer,
     importedFilesDrawer,
     selectedFile,
@@ -74,7 +71,17 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
 
   const setNewDataframeUIMode = () => {
     setSelectedFile(null);
-    setUiMode("create-dataframe");
+
+    if (!projectQuery.data) return;
+    createDatafile(
+      {
+        project_id: projectQuery.data.project.id,
+        file_name: UNNAMED_FILE_PLACEHOLDER,
+      },
+      () => {
+        projectQuery.refetch();
+      }
+    );
   };
 
   const getDatafileByName = (fileName: string) => {
@@ -110,7 +117,6 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         gridApi,
         setGridApi,
         selectDatafile,
-        uiMode,
         setNewDataframeUIMode,
         setJoinColModal,
         renameDatafileModal,
