@@ -1,3 +1,4 @@
+import { CreateDatafile } from "../components/project/useProjectSubmits";
 import { REST_API_URL } from "../utils/endpoints";
 import { httpReq } from "../utils/request";
 
@@ -195,5 +196,19 @@ export const delOnDatafile = async (id: number) => {
   if (res.status === 200) {
     return res;
   }
+  return null;
+};
+
+export const postOnDatafile = async (body: CreateDatafile) => {
+  const res = await httpReq({
+    url: REST_API_URL.datafile(),
+    method: "POST",
+    payload: body,
+  });
+
+  if (res.status === 200) {
+    return res;
+  }
+
   return null;
 };

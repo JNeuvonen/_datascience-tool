@@ -1,4 +1,9 @@
-import { DataFile, delOnDatafile, putOnDatafile } from "../../client/requests";
+import {
+  DataFile,
+  delOnDatafile,
+  postOnDatafile,
+  putOnDatafile,
+} from "../../client/requests";
 import { createStandaloneToast } from "@chakra-ui/react";
 const { toast } = createStandaloneToast();
 
@@ -25,6 +30,28 @@ export const deleteDatafile = async (
   successCallback?: () => void
 ) => {
   const res = await delOnDatafile(id);
+
+  if (res?.status === 200) {
+    toast({
+      title: "Deleted a datafile",
+      position: "bottom-left",
+      status: "info",
+      duration: 5000,
+      isClosable: true,
+    });
+    if (successCallback) successCallback();
+  }
+};
+
+export interface CreateDatafile {
+  project_id: number;
+  file_name: string;
+}
+export const createDatafile = async (
+  body: CreateDatafile,
+  successCallback?: () => void
+) => {
+  const res = await postOnDatafile(body);
 
   if (res?.status === 200) {
     toast({
