@@ -375,6 +375,17 @@ def look_for_common_column(project, datafiles):
     return list(common_cols)
 
 
+def create_empty_table(project_name, file_path: str):
+    with LogException():
+        table_name = get_datafile_table_name(project_name, file_path)
+        with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+            cursor = conn.cursor()
+            query = (
+                f"CREATE TABLE IF NOT EXISTS '{table_name}' (id INTEGER PRIMARY KEY);"
+            )
+            cursor.execute(query)
+
+
 def update_join_col(project, datafiles, join_col):
     files_with_no_join = [item.file_name for item in datafiles]
     ids_pending_update = []

@@ -5,7 +5,7 @@ from decorators import HttpResponseContext
 from query_datafile import DatafileQuery, DatafileSchema
 from query_project import ProjectQuery
 from request_types import BodyCreateDatafile
-from utils import get_datafile_table_name, rename_table
+from utils import create_empty_table, get_datafile_table_name, rename_table
 
 
 class RoutePaths:
@@ -80,7 +80,6 @@ async def route_create_file(body: BodyCreateDatafile):
                 detail=f"Project was not found for id {body.project_id}",
             )
 
-        DatafileQuery.create_datafile_entry(body.model_dump())
-        return Response(
-            content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
-        )
+        create_empty_table(project.name, body.file_name)
+        id = DatafileQuery.create_datafile_entry(body.model_dump())
+        return {"id": id}
