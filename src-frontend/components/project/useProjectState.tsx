@@ -10,6 +10,7 @@ export const useProjectState = () => {
   const setJoinColModal = useDisclosure();
   const renameDatafileModal = useDisclosure();
   const selectFilesDrawer = useDisclosure();
+  const deleteFileModal = useDisclosure();
   const importedFilesDrawer = useDisclosure();
   const renameProjectModal = useDisclosure();
   const [uiMode, setUiMode] = useState<UIModes>("default");
@@ -34,5 +35,6 @@ export const useProjectState = () => {
     renameProjectModal,
     selectedFileContext,
     setSelectedFileContext,
+    deleteFileModal,
   };
 };

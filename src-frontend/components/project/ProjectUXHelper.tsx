@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useProjectContext } from "../../context/project";
-import { useToast } from "@chakra-ui/react";
+import { Box, useToast } from "@chakra-ui/react";
 import { ChakraModal } from "../Modal";
 import { SetJoinColModal } from "./SetJoinColModal";
 import { NameProjectModal } from ".";
@@ -9,6 +9,8 @@ import { ROUTES, ROUTE_KEYS } from "../../utils/constants";
 import { TextInputModal } from "../PromptTextInputModal";
 import cloneDeep from "lodash/cloneDeep";
 import { updateDatafile } from ".";
+import { ConfirmModal } from "../ConfirmModal";
+import { deleteDatafile } from "./useProjectSubmits";
 
 export const ProjectUXHelper = () => {
   const {
@@ -17,6 +19,7 @@ export const ProjectUXHelper = () => {
     renameDatafileModal,
     renameProjectModal,
     selectedFileContext,
+    deleteFileModal,
   } = useProjectContext();
 
   const navigate = useNavigate();
@@ -86,6 +89,24 @@ export const ProjectUXHelper = () => {
           }}
         />
       </ChakraModal>
+
+      <ConfirmModal
+        {...deleteFileModal}
+        onConfirm={() => {
+          if (!selectedFileContext) return;
+          deleteDatafile(selectedFileContext.id, () => {
+            projectQuery.refetch();
+            deleteFileModal.onClose();
+          });
+        }}
+        cancelCallback={deleteFileModal.onClose}
+        message={
+          <>
+            Are you sure you want to delete file{" "}
+            <strong>{selectedFileContext?.file_name}</strong>?
+          </>
+        }
+      />
     </div>
   );
 };

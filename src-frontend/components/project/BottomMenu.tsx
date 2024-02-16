@@ -38,6 +38,7 @@ export const BottomMenu = () => {
     selectDatafile,
     setNewDataframeUIMode,
     renameDatafileModal,
+    deleteFileModal,
   } = useProjectContext();
   const { width } = useWindowDimensions();
   const selectFilePopover = useDisclosure();
@@ -147,7 +148,7 @@ export const BottomMenu = () => {
           <Menu isOpen={true}>
             <MenuList style={{ height: 175 }}>
               <MenuItem onClick={renameDatafileModal.onOpen}>Rename</MenuItem>
-              <MenuItem>Delete</MenuItem>
+              <MenuItem onClick={deleteFileModal.onOpen}>Delete</MenuItem>
               <MenuItem>Merge to current dataframe</MenuItem>
               <MenuItem>Clone</MenuItem>
             </MenuList>

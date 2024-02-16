@@ -25,4 +25,5 @@ export const REST_API_URL = {
   set_join_col: (projectName: string, joinCol: string) =>
     `${BASE_URL}/${PROJECT}/${projectName}/join-col?join_col=${joinCol}`,
   datafile: () => `${BASE_URL}/datafile/`,
+  datafile_id: (id: number) => `${BASE_URL}/datafile/${id}`,
 };

@@ -16,6 +16,7 @@ type UseDisclosureReturn = ReturnType<typeof useDisclosure>;
 
 export interface ProjectContextType {
   selectFilesDrawer: UseDisclosureReturn;
+  deleteFileModal: UseDisclosureReturn;
   importedFilesDrawer: UseDisclosureReturn;
   setJoinColModal: UseDisclosureReturn;
   renameDatafileModal: UseDisclosureReturn;
@@ -62,6 +63,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     setJoinColModal,
     renameDatafileModal,
     renameProjectModal,
+    deleteFileModal,
   } = useProjectState();
 
   const projectQuery = useProjectQuery(project);
@@ -116,6 +118,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         selectedFileContext,
         setSelectedFileContext,
         getDatafileByName,
+        deleteFileModal,
       }}
     >
       <ProjectUXHelper />
