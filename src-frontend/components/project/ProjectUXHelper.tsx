@@ -103,7 +103,7 @@ export const ProjectUXHelper = () => {
         {...mergeDataframesModal}
         title={"Merge dataframes"}
         modalContentStyle={{
-          marginTop: "25%",
+          marginTop: "15%",
         }}
       >
         <MergeDataframes />
