@@ -10,6 +10,7 @@ from utils import get_datafile_table_name, rename_table
 class RoutePaths:
     PUT = "/"
     GET = "/{id}"
+    DEL = "/{id}"
 
 
 router = APIRouter()
@@ -49,3 +50,18 @@ async def route_get_file(id: int):
     with HttpResponseContext():
         datafile = DatafileQuery.retrieve(id)
         return {"data": datafile}
+
+
+@router.delete(RoutePaths.DEL)
+async def route_delete_datafile(id: int):
+    with HttpResponseContext():
+        was_success = DatafileQuery.delete(id)
+
+        if was_success is not True:
+            raise HTTPException(
+                status_code=400, detail=f"Datafile was not found for id {id}"
+            )
+
+        return Response(
+            content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
+        )

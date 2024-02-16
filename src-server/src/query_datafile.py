@@ -84,3 +84,11 @@ class DatafileQuery:
                     }
                 )
                 session.commit()
+
+    @staticmethod
+    def delete(datafile_id: int) -> bool:
+        with Session() as session:
+            if session.query(Datafile).filter(Datafile.id == datafile_id).delete():
+                session.commit()
+                return True
+            return False
