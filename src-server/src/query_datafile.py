@@ -1,3 +1,4 @@
+import json
 from typing import Dict, List, Optional
 from fastapi import HTTPException
 from pydantic import BaseModel
@@ -19,6 +20,10 @@ class Datafile(Base):
     join_column = Column(String, nullable=True)
     merged_dataframes = Column(String, nullable=True)
     project_id = Column(Integer, ForeignKey("project.id"), nullable=False)
+
+    def deserialize(self):
+        if self.merged_dataframes:
+            self.merged_dataframes = json.loads(self.merged_dataframes)
 
 
 class DatafileSchema(BaseModel):
@@ -45,9 +50,14 @@ class DatafileQuery:
     @staticmethod
     def get_datafiles_by_project(project_id) -> List[Datafile]:
         with Session() as session:
-            return (
+            datafiles = (
                 session.query(Datafile).filter(Datafile.project_id == project_id).all()
             )
+
+            for item in datafiles:
+                item.deserialize()
+
+            return datafiles
 
     @staticmethod
     def get_datafile_by_name(datafile: str) -> Datafile:
