@@ -11,8 +11,4 @@ export { SelectFilesDrawer } from "./SelectFilesDrawer.tsx";
 export { SetJoinColModal } from "./SetJoinColModal.tsx";
 export { MergeDataframes } from "./MergeDataframes.tsx";
 export { useProjectState } from "./useProjectState";
-export {
-  updateDatafile,
-  deleteDatafile,
-  createDatafile,
-} from "./useProjectSubmits.tsx";
+export * from "./useProjectSubmits.tsx";
