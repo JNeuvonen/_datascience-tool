@@ -60,6 +60,7 @@ export const getFileUploadMetadata = async (files: string[]) => {
 
 export interface DataFile {
   file_name: string;
+  df_table_name: string;
   id: number;
   size_bytes: number;
   project_id: number;

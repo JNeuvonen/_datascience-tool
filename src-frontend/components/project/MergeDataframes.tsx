@@ -38,11 +38,17 @@ export const MergeDataframes = () => {
   });
 
   const submit = () => {
+    if (!projectQuery.data?.datafiles.length) return;
+
     const dataframes: string[] = [];
     for (const [key, value] of Object.entries(selectedFiles.current)) {
-      console.log(key, value);
       if (value) {
-        dataframes.push(key);
+        for (let i = 0; i < projectQuery.data?.datafiles.length; ++i) {
+          const item = projectQuery.data.datafiles[i];
+          if (item.file_name === key) {
+            dataframes.push(item.df_table_name);
+          }
+        }
       }
     }
 
