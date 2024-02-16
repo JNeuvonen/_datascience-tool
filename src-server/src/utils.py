@@ -540,6 +540,9 @@ def get_join_col_actions(project_name):
 
     datafiles = DatafileQuery.get_datafiles_by_project(project.id)
 
+    if len(datafiles) < 2:
+        return {"common_columns": None, "files_with_no_join": None}
+
     common_columns = None
     files_with_no_join = "N/A"
     if project.join_column is None:
