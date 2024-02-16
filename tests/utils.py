@@ -122,6 +122,10 @@ class URL:
     def post_datafile(cls):
         return cls.route_datafile()
 
+    @classmethod
+    def merge_dataframes(cls, id):
+        return cls.route_datafile() + f"/merge/{id}"
+
 
 class RestAPI:
     @staticmethod
@@ -167,4 +171,9 @@ class RestAPI:
     @staticmethod
     def create_empty_datafile(body: Dict):
         with Req("post", URL.post_datafile(), json=body) as res:
+            return res
+
+    @staticmethod
+    def merge_dataframes(id, body):
+        with Req("post", URL.merge_dataframes(id), json=body) as res:
             return res

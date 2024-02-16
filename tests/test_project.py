@@ -72,3 +72,15 @@ def test_create_empty_datafile(cleanup_db, fixt_upload_datasets):
 
     project_after = RestAPI.get_project(project_name)
     assert len(project["datafiles"]) + 1 == len(project_after["datafiles"])
+
+
+@pytest.mark.acceptance
+def test_merge_dataframes(cleanup_db, fixt_set_common_join_col):
+    project_name = fixt_set_common_join_col["project_name"]
+    project = RestAPI.get_project(project_name)
+    base_datafile = project["datafiles"][0]
+    merging_datafile = project["datafiles"][1]
+
+    RestAPI.merge_dataframes(
+        base_datafile["id"], {"dataframes": [merging_datafile["df_table_name"]]}
+    )

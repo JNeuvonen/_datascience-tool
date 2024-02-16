@@ -1,5 +1,5 @@
-from typing import List
-from pydantic import BaseModel
+from typing import List, Optional
+from pydantic import BaseModel, Field
 
 
 class BodyGetUploadsSize(BaseModel):
@@ -25,3 +25,4 @@ class BodyCreateDatafile(BaseModel):
 
 class BodyMergeDataframes(BaseModel):
     dataframes: List[str]
+    join_prefix: Optional[str] = Field(default=None)

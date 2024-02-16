@@ -11,6 +11,8 @@ from typing import List
 import zipfile
 import os
 import shutil
+
+from sqlalchemy.engine import base
 from config import append_app_data_path, is_testing
 from constants import (
     TEMP_EXTRACTED_FILES,
@@ -564,10 +566,46 @@ def get_join_col_actions(project_name):
 
 def read_dataset_to_mem(dataset_name: str):
     with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
-        query = f"SELECT * FROM {dataset_name}"
+        query = f'SELECT * FROM "{dataset_name}"'
         df = pd.read_sql_query(query, conn)
         return df
 
 
-def merge_dataframes(base_df_path: str, list_of_df_paths: List[str]):
-    pass
+def combine_two_datasets(
+    base_df, secondary_df, base_join_col, secondary_join_col, join_prefix
+):
+    if join_prefix is not None:
+        pass
+
+    merged_df = pd.merge(
+        base_df,
+        secondary_df,
+        left_on=base_join_col,
+        right_on=secondary_join_col,
+        how="left",
+    )
+
+    return merged_df
+
+
+def merge_dataframes(
+    base_df_table_name: str, list_of_df_table_names: List[str], join_prefix
+):
+    base_df = read_dataset_to_mem(base_df_table_name)
+
+    base_df_metadata = DatafileQuery.retrieve(base_df_table_name, "df_table_name")
+
+    for item in list_of_df_table_names:
+        df = read_dataset_to_mem(item)
+        datafile = DatafileQuery.retrieve(item, "df_table_name")
+        base_df = combine_two_datasets(
+            base_df, df, base_df_metadata.join_column, datafile.join_column, join_prefix
+        )
+
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        base_df.to_sql(
+            base_df_metadata.df_table_name,
+            conn,
+            if_exists="replace",
+            index=False,
+        )

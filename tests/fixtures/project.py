@@ -39,3 +39,12 @@ def fixt_upload_datasets(fixt_create_project):
     RestAPI.upload_datasets(project_name, {"dataset_paths": datasets})
 
     return {"project_name": project_name}
+
+
+@pytest.fixture
+def fixt_set_common_join_col(fixt_upload_datasets):
+    project_name = fixt_upload_datasets["project_name"]
+    organize_metadata = RestAPI.organize(project_name)
+    join_col = organize_metadata["common_columns"][0]
+    RestAPI.set_join_col(project_name, join_col)
+    return {"project_name": fixt_upload_datasets["project_name"]}

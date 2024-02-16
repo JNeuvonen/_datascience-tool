@@ -109,9 +109,10 @@ async def route_create_file(body: BodyCreateDatafile):
 @router.post(RoutePaths.MERGE)
 async def route_merge_dataframes(id: int, body: BodyMergeDataframes):
     with HttpResponseContext():
-        file = Datafile.retrieve(id)
-        merge_dataframes(file.file_name, body.dataframes)
-
+        file = DatafileQuery.retrieve(id)
+        merge_dataframes(
+            file.df_table_name, body.dataframes, join_prefix=body.join_prefix
+        )
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
         )

@@ -13,7 +13,7 @@ class Datafile(Base):
 
     id = Column(Integer, primary_key=True)
     file_name = Column(String, nullable=False)
-    df_table_name = Column(String, nullable=False)
+    df_table_name = Column(String, nullable=False, unique=True)
     size_bytes = Column(Integer)
     distinct_counts = Column(String, nullable=True)
     distinct_values = Column(String, nullable=True)
