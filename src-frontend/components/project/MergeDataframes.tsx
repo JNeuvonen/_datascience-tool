@@ -1,11 +1,15 @@
-import { Box, Checkbox, Heading } from "@chakra-ui/react";
+import { Box, Button, Checkbox, Heading } from "@chakra-ui/react";
 import { useProjectContext } from "../../context/project";
 import { FormSubmitBar } from "../SubmitBar";
 import { useEffect, useRef } from "react";
 import { isDictEmpty } from "../../utils";
 import { mergeDataframes } from ".";
+import { BasicTable } from "../UnstyledTable";
+import { BUTTON_VARIANTS } from "../../theming";
 
 export type SelectedDataframe = { [key: string]: boolean };
+
+const TABLE_COLS = ["File name", "Join column"];
 
 export const MergeDataframes = () => {
   const { projectQuery, selectedFile, mergeDataframesModal } =
@@ -59,28 +63,36 @@ export const MergeDataframes = () => {
   return (
     <Box>
       <Heading size={"s"}>Select dataframes for merge</Heading>
-      {datafiles.map((item) => {
-        if (item.id === selectedFile.id) return null;
-        return (
-          <Box
-            key={item.id}
-            display={"flex"}
-            alignItems={"center"}
-            gap={"6px"}
-            marginTop={"8px"}
-          >
-            <Checkbox
-              isChecked={selectedFiles.current[item.file_name]}
-              onChange={() => {
-                selectedFiles.current[item.file_name] =
-                  !selectedFiles.current[item.file_name];
-              }}
-            />
-            {item.file_name}
-          </Box>
-        );
-      })}
-
+      <BasicTable
+        columns={TABLE_COLS}
+        containerStyles={{ marginTop: "16px" }}
+        rows={datafiles.map((item) => {
+          return [
+            <Box display={"flex"} alignItems={"center"} gap={"6px"}>
+              <Checkbox
+                isChecked={selectedFiles.current[item.file_name]}
+                isDisabled={!item.join_column}
+                onChange={() => {
+                  selectedFiles.current[item.file_name] =
+                    !selectedFiles.current[item.file_name];
+                }}
+              />
+              <span>{item.file_name}</span>
+            </Box>,
+            item.join_column ? (
+              item.join_column
+            ) : (
+              <Button
+                height={"20px"}
+                variant={BUTTON_VARIANTS.nofill}
+                fontSize={"14px"}
+              >
+                Set join column
+              </Button>
+            ),
+          ];
+        })}
+      />
       <FormSubmitBar style={{ marginTop: "16px" }} submitCallback={submit} />
     </Box>
   );

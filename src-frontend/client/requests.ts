@@ -62,6 +62,7 @@ export interface DataFile {
   file_name: string;
   df_table_name: string;
   id: number;
+  join_column: string;
   size_bytes: number;
   project_id: number;
   was_import: boolean;
