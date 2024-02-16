@@ -56,7 +56,7 @@ def rename_table(db_path, old_name, new_name):
             conn.commit()
 
 
-def get_datafile_table_name(project_name: str, file_path: str):
+def get_datafile_table_name(project_name, file_path):
     return project_name + "_" + file_path
 
 
@@ -186,6 +186,7 @@ def get_datafile_metadata(path: str, project_id, was_import=True):
             "was_import": was_import,
             "distinct_counts": json.dumps(distinct_counts),
             "distinct_values": json.dumps(distinct_values),
+            "df_table_name": get_datafile_table_name(project.name, file_name),
         }
 
 
@@ -559,3 +560,14 @@ def get_join_col_actions(project_name):
         "files_with_no_join": files_with_no_join,
     }
     return ret
+
+
+def read_dataset_to_mem(dataset_name: str):
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        query = f"SELECT * FROM {dataset_name}"
+        df = pd.read_sql_query(query, conn)
+        return df
+
+
+def merge_dataframes(base_df_path: str, list_of_df_paths: List[str]):
+    pass

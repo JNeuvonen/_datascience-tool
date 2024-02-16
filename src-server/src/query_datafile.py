@@ -13,6 +13,7 @@ class Datafile(Base):
 
     id = Column(Integer, primary_key=True)
     file_name = Column(String, nullable=False)
+    df_table_name = Column(String, nullable=False)
     size_bytes = Column(Integer)
     distinct_counts = Column(String, nullable=True)
     distinct_values = Column(String, nullable=True)
@@ -29,11 +30,13 @@ class Datafile(Base):
 class DatafileSchema(BaseModel):
     id: int
     file_name: str
+    df_table_name: Optional[str]
     size_bytes: Optional[int]
     distinct_counts: Optional[str]
     distinct_values: Optional[str]
     was_import: Optional[int]
     join_column: Optional[str]
+    merged_dataframes: Optional[List[str]]
     project_id: int
 
 
@@ -103,3 +106,11 @@ class DatafileQuery:
                 session.commit()
                 return True
             return False
+
+    @staticmethod
+    def set_df_table_name(id: int, df_table_name):
+        with Session() as session:
+            session.query(Datafile).filter(Datafile.id == id).update(
+                {"df_table_name": df_table_name}
+            )
+            session.commit()

@@ -2,10 +2,15 @@ from fastapi import APIRouter, Body, HTTPException, Response, status
 from constants import AppConstants
 from decorators import HttpResponseContext
 
-from query_datafile import DatafileQuery, DatafileSchema
-from query_project import ProjectQuery
+from query_datafile import Datafile, DatafileQuery, DatafileSchema
+from query_project import Project, ProjectQuery
 from request_types import BodyCreateDatafile, BodyMergeDataframes
-from utils import create_empty_table, get_datafile_table_name, rename_table
+from utils import (
+    create_empty_table,
+    get_datafile_table_name,
+    merge_dataframes,
+    rename_table,
+)
 
 
 class RoutePaths:
@@ -34,15 +39,26 @@ async def route_put_file_by_name(datafile: DatafileSchema = Body(...)):
                 status_code=400, detail="Changing of primary key is not possible"
             )
 
+        DatafileQuery.update_datafile(datafile)
         if datafile_from_db.file_name is not datafile.file_name:
             project = ProjectQuery.retrieve(datafile.project_id)
+
+            if project is None:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Project was not found for id {datafile.project_id}",
+                )
+
             rename_table(
                 AppConstants.DB_DATASETS,
                 get_datafile_table_name(project.name, datafile_from_db.file_name),
                 get_datafile_table_name(project.name, datafile.file_name),
             )
+            DatafileQuery.set_df_table_name(
+                datafile.id,
+                get_datafile_table_name(project.name, datafile.file_name),
+            )
 
-        DatafileQuery.update_datafile(datafile)
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
         )
@@ -82,14 +98,19 @@ async def route_create_file(body: BodyCreateDatafile):
             )
 
         create_empty_table(project.name, body.file_name)
-        id = DatafileQuery.create_datafile_entry(body.model_dump())
+        body_json = body.model_dump()
+        body_json["df_table_name"] = get_datafile_table_name(
+            project.name, body.file_name
+        )
+        id = DatafileQuery.create_datafile_entry(body_json)
         return {"id": id}
 
 
 @router.post(RoutePaths.MERGE)
 async def route_merge_dataframes(id: int, body: BodyMergeDataframes):
     with HttpResponseContext():
-        print(id, body.dataframes)
+        file = Datafile.retrieve(id)
+        merge_dataframes(file.file_name, body.dataframes)
 
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK

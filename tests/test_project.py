@@ -50,11 +50,15 @@ def test_route_datafile_put(cleanup_db, fixt_upload_datasets):
     project = RestAPI.get_project(project_name)
     datafiles = project["datafiles"]
     datafile = datafiles[0]
+    datafile_old_df_table_name = datafile["df_table_name"]
+
     RENAMED_FILENAME = "renamed_file.csv"
     datafile["file_name"] = RENAMED_FILENAME
     RestAPI.put_datafile(datafile)
     datafile_after_update = RestAPI.get_datafile(datafile["id"])
     assert datafile_after_update["file_name"] == RENAMED_FILENAME
+    assert datafile_after_update["df_table_name"] != datafile_old_df_table_name
+    assert RENAMED_FILENAME in datafile_after_update["df_table_name"]
 
 
 @pytest.mark.acceptance
