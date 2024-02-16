@@ -47,9 +47,9 @@ export const DataGridSkeleton = () => {
                 !projectContext.projectQuery.data ||
                 projectContext.projectQuery.data?.datafiles.length === 0
               ) {
-                projectContext.importedFilesDrawer.onOpen();
-              } else {
                 projectContext.selectFilesDrawer.onOpen();
+              } else {
+                projectContext.importedFilesDrawer.onOpen();
               }
             };
             overlayElement.addEventListener("click", handleClick);
