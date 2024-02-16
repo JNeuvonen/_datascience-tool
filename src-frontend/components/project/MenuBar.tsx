@@ -94,6 +94,30 @@ export const ProjectMenuBar = () => {
           >
             Clear filters
           </MenuItem>
+          <MenuItem
+            icon={<MdClearAll />}
+            onClick={() => {
+              gridApi?.setFilterModel(null);
+            }}
+          >
+            Drop columns
+          </MenuItem>
+          <MenuItem
+            icon={<MdClearAll />}
+            onClick={() => {
+              gridApi?.setFilterModel(null);
+            }}
+          >
+            Clone current file
+          </MenuItem>
+          <MenuItem
+            icon={<MdClearAll />}
+            onClick={() => {
+              gridApi?.setFilterModel(null);
+            }}
+          >
+            Filter columns
+          </MenuItem>
         </ChakraMenu>
         <ChakraMenu menuButton={<MenuButton>Visualize</MenuButton>}>
           <MenuItem icon={<FaFileImport />}>Import data</MenuItem>
