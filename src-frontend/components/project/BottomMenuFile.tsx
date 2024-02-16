@@ -43,9 +43,7 @@ export const BottomMenuFile = ({ datafile, selectFilePopover }: Props) => {
       }}
       cursor={"pointer"}
       background={
-        selectedFile?.file_name === datafile.file_name
-          ? COLOR_CONTENT_TERTIARY
-          : undefined
+        selectedFile?.id === datafile.id ? COLOR_CONTENT_TERTIARY : undefined
       }
     >
       <OverflopTooltip

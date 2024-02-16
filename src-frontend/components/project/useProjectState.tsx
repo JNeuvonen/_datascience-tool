@@ -1,8 +1,9 @@
 import { useDisclosure } from "@chakra-ui/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { DataFile } from "../../client/requests";
 import { GridApi } from "ag-grid-community";
 import { usePathParams } from "../../hooks/usePathParams";
+import { SwiperRef } from "swiper/react";
 
 export type UIModes = "default" | "create-dataframe";
 
@@ -18,6 +19,8 @@ export const useProjectState = () => {
     useState<DataFile | null>(null);
   const [gridApi, setGridApi] = useState<GridApi | null>(null);
   const { project } = usePathParams<{ project: string }>();
+  const fileSwiperRef = useRef<SwiperRef | null>(null);
+  const [swipeToLast, setSwipeToLast] = useState(false);
 
   return {
     setJoinColModal,
@@ -33,5 +36,8 @@ export const useProjectState = () => {
     selectedFileContext,
     setSelectedFileContext,
     deleteFileModal,
+    fileSwiperRef,
+    swipeToLast,
+    setSwipeToLast,
   };
 };

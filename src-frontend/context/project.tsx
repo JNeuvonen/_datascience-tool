@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext } from "react";
+import React, { createContext, ReactNode, useContext, useEffect } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import {
   ColumnInfo,
@@ -13,6 +13,7 @@ import { DOM_EVENT_CHANNELS } from "../utils/constants";
 import { ProjectUXHelper, useProjectState } from "../components/project";
 import { createDatafile } from "../components/project/useProjectSubmits";
 import { UNNAMED_FILE_PLACEHOLDER } from "../pages";
+import { SwiperRef } from "swiper/react";
 
 type UseDisclosureReturn = ReturnType<typeof useDisclosure>;
 
@@ -26,6 +27,7 @@ export interface ProjectContextType {
   projectQuery: UseQueryResult<ProjectData | null, unknown>;
   fileColumnsQuery: UseQueryResult<ColumnInfo[] | null, unknown>;
   selectedFile: DataFile | null;
+  fileSwiperRef: SwiperRef | null;
   setSelectedFile: React.Dispatch<React.SetStateAction<DataFile | null>>;
   selectedFileContext: DataFile | null;
   setSelectedFileContext: React.Dispatch<React.SetStateAction<DataFile | null>>;
@@ -61,6 +63,9 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     renameDatafileModal,
     renameProjectModal,
     deleteFileModal,
+    fileSwiperRef,
+    swipeToLast,
+    setSwipeToLast,
   } = useProjectState();
 
   const projectQuery = useProjectQuery(project);
@@ -80,8 +85,17 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
       },
       () => {
         projectQuery.refetch();
+        setSwipeToLast(true);
       }
     );
+  };
+
+  const scrollToLastSlide = () => {
+    if (!projectQuery.data) return;
+    const lastIndex = projectQuery.data.datafiles.length - 1;
+    fileSwiperRef.current?.swiper.slideTo(lastIndex);
+    const file = projectQuery.data.datafiles[lastIndex];
+    setSelectedFile(file);
   };
 
   const getDatafileByName = (fileName: string) => {
@@ -98,6 +112,13 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     const datafile = getDatafileByName(fileName);
     setSelectedFile(datafile);
   };
+
+  useEffect(() => {
+    if (swipeToLast) {
+      scrollToLastSlide();
+      setSwipeToLast(false);
+    }
+  }, [projectQuery.data, setSwipeToLast]);
 
   useMessageListener({
     messageName: DOM_EVENT_CHANNELS.refetch_component,
@@ -125,6 +146,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         setSelectedFileContext,
         getDatafileByName,
         deleteFileModal,
+        fileSwiperRef,
       }}
     >
       <ProjectUXHelper />

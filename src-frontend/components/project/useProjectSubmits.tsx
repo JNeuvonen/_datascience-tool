@@ -55,4 +55,5 @@ export const createDatafile = async (
   if (res?.status === 200) {
     if (successCallback) successCallback();
   }
+  return res;
 };

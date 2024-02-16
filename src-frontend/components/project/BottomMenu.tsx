@@ -39,6 +39,7 @@ export const BottomMenu = () => {
     setNewDataframeUIMode,
     renameDatafileModal,
     deleteFileModal,
+    fileSwiperRef,
   } = useProjectContext();
   const { width } = useWindowDimensions();
   const selectFilePopover = useDisclosure();
@@ -163,6 +164,7 @@ export const BottomMenu = () => {
         scrollbar={{ draggable: true }}
         modules={[Scrollbar]}
         style={{ marginTop: "10px" }}
+        ref={fileSwiperRef}
       >
         {projectQuery.data.datafiles.map((item, idx) => {
           return (
