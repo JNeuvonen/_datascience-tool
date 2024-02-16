@@ -3,7 +3,7 @@ import { useProjectContext } from "../../context/project";
 import { Box, useToast } from "@chakra-ui/react";
 import { ChakraModal } from "../Modal";
 import { SetJoinColModal } from "./SetJoinColModal";
-import { NameProjectModal } from ".";
+import { MergeDataframes, NameProjectModal } from ".";
 import { useNavigate } from "react-router-dom";
 import { ROUTES, ROUTE_KEYS } from "../../utils/constants";
 import { TextInputModal } from "../PromptTextInputModal";
@@ -20,6 +20,7 @@ export const ProjectUXHelper = () => {
     renameProjectModal,
     selectedFileContext,
     deleteFileModal,
+    combineDataframesModal,
   } = useProjectContext();
 
   const navigate = useNavigate();
@@ -89,7 +90,9 @@ export const ProjectUXHelper = () => {
           }}
         />
       </ChakraModal>
-
+      <ChakraModal {...combineDataframesModal} title={"Merge dataframes"}>
+        <MergeDataframes />
+      </ChakraModal>
       <ConfirmModal
         {...deleteFileModal}
         onConfirm={() => {
