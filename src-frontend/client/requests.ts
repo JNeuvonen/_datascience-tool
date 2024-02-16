@@ -64,6 +64,7 @@ export interface DataFile {
   size_bytes: number;
   project_id: number;
   was_import: boolean;
+  merged_dataframes: string[] | null;
 }
 export interface Project {
   name: string;
