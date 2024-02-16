@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 import platform
 import os
+from typing import Dict
 import requests
 import subprocess
 
@@ -117,6 +118,10 @@ class URL:
     def get_datafile(cls, id: int):
         return cls.route_datafile() + f"/{id}"
 
+    @classmethod
+    def post_datafile(cls):
+        return cls.route_datafile()
+
 
 class RestAPI:
     @staticmethod
@@ -158,3 +163,8 @@ class RestAPI:
     def get_datafile(id: int):
         with Req("get", URL.get_datafile(id)) as res:
             return res.json()["data"]
+
+    @staticmethod
+    def create_empty_datafile(body: Dict):
+        with Req("post", URL.post_datafile(), json=body) as res:
+            return res

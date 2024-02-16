@@ -55,3 +55,16 @@ def test_route_datafile_put(cleanup_db, fixt_upload_datasets):
     RestAPI.put_datafile(datafile)
     datafile_after_update = RestAPI.get_datafile(datafile["id"])
     assert datafile_after_update["file_name"] == RENAMED_FILENAME
+
+
+@pytest.mark.acceptance
+def test_create_empty_datafile(cleanup_db, fixt_upload_datasets):
+    project_name = fixt_upload_datasets["project_name"]
+    project = RestAPI.get_project(project_name)
+
+    RestAPI.create_empty_datafile(
+        {"project_id": project["project"]["id"], "file_name": "empty_datafile.csv"}
+    )
+
+    project_after = RestAPI.get_project(project_name)
+    assert len(project["datafiles"]) + 1 == len(project_after["datafiles"])

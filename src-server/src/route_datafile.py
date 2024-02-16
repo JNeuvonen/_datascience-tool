@@ -81,7 +81,6 @@ async def route_create_file(body: BodyCreateDatafile):
             )
 
         DatafileQuery.create_datafile_entry(body.model_dump())
-
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
         )
