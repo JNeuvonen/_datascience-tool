@@ -27,7 +27,6 @@ export interface ProjectContextType {
   projectQuery: UseQueryResult<ProjectData | null, unknown>;
   fileColumnsQuery: UseQueryResult<ColumnInfo[] | null, unknown>;
   selectedFile: DataFile | null;
-  fileSwiperRef: SwiperRef | null;
   setSelectedFile: React.Dispatch<React.SetStateAction<DataFile | null>>;
   selectedFileContext: DataFile | null;
   setSelectedFileContext: React.Dispatch<React.SetStateAction<DataFile | null>>;
@@ -36,6 +35,7 @@ export interface ProjectContextType {
   selectDatafile: (fileName: string) => void;
   setNewDataframeUIMode: () => void;
   getDatafileByName: (fileName: string) => DataFile | null;
+  fileSwiperRef: React.MutableRefObject<SwiperRef | null>;
 }
 
 export const ProjectContext = createContext<ProjectContextType>(
