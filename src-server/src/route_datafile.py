@@ -4,7 +4,7 @@ from decorators import HttpResponseContext
 
 from query_datafile import DatafileQuery, DatafileSchema
 from query_project import ProjectQuery
-from request_types import BodyCreateDatafile
+from request_types import BodyCreateDatafile, BodyMergeDataframes
 from utils import create_empty_table, get_datafile_table_name, rename_table
 
 
@@ -13,6 +13,7 @@ class RoutePaths:
     GET = "/{id}"
     DEL = "/{id}"
     POST = "/"
+    MERGE = "/merge/{id}"
 
 
 router = APIRouter()
@@ -83,3 +84,13 @@ async def route_create_file(body: BodyCreateDatafile):
         create_empty_table(project.name, body.file_name)
         id = DatafileQuery.create_datafile_entry(body.model_dump())
         return {"id": id}
+
+
+@router.post(RoutePaths.MERGE)
+async def route_merge_dataframes(id: int, body: BodyMergeDataframes):
+    with HttpResponseContext():
+        print(id, body.dataframes)
+
+        return Response(
+            content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
+        )

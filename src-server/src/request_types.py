@@ -21,3 +21,7 @@ class BodyCreateProject(BaseModel):
 class BodyCreateDatafile(BaseModel):
     file_name: str
     project_id: int
+
+
+class BodyMergeDataframes(BaseModel):
+    dataframes: List[str]
