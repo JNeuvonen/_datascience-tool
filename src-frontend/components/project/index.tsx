@@ -10,4 +10,8 @@ export { ProjectUXHelper } from "./ProjectUXHelper.tsx";
 export { SelectFilesDrawer } from "./SelectFilesDrawer.tsx";
 export { SetJoinColModal } from "./SetJoinColModal.tsx";
 export { useProjectState } from "./useProjectState";
-export { updateDatafile } from "./useProjectSubmits.tsx";
+export {
+  updateDatafile,
+  deleteDatafile,
+  createDatafile,
+} from "./useProjectSubmits.tsx";
