@@ -20,7 +20,7 @@ export const ProjectUXHelper = () => {
     renameProjectModal,
     selectedFileContext,
     deleteFileModal,
-    combineDataframesModal,
+    mergeDataframesModal,
   } = useProjectContext();
 
   const navigate = useNavigate();
@@ -42,6 +42,9 @@ export const ProjectUXHelper = () => {
       <ChakraModal
         {...renameProjectModal}
         title={"Let's name your project first"}
+        modalContentStyle={{
+          marginTop: "25%",
+        }}
       >
         <NameProjectModal
           onClose={renameProjectModal.onClose}
@@ -64,6 +67,9 @@ export const ProjectUXHelper = () => {
       <ChakraModal
         {...setJoinColModal}
         title={"Set a join column for the project files"}
+        modalContentStyle={{
+          marginTop: "25%",
+        }}
       >
         <SetJoinColModal
           successCallback={setJoinColModal.onClose}
@@ -76,6 +82,9 @@ export const ProjectUXHelper = () => {
       <ChakraModal
         {...renameDatafileModal}
         title={"Set a new name for the file"}
+        modalContentStyle={{
+          marginTop: "25%",
+        }}
       >
         <TextInputModal
           {...renameDatafileModal}
@@ -90,7 +99,13 @@ export const ProjectUXHelper = () => {
           }}
         />
       </ChakraModal>
-      <ChakraModal {...combineDataframesModal} title={"Merge dataframes"}>
+      <ChakraModal
+        {...mergeDataframesModal}
+        title={"Merge dataframes"}
+        modalContentStyle={{
+          marginTop: "25%",
+        }}
+      >
         <MergeDataframes />
       </ChakraModal>
       <ConfirmModal

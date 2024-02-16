@@ -20,8 +20,13 @@ import { MdClearAll } from "react-icons/md";
 
 export const ProjectMenuBar = () => {
   const { project } = usePathParams<{ project: string }>();
-  const { selectFilesDrawer, importedFilesDrawer, gridApi, selectedFile } =
-    useProjectContext();
+  const {
+    selectFilesDrawer,
+    importedFilesDrawer,
+    gridApi,
+    selectedFile,
+    mergeDataframesModal,
+  } = useProjectContext();
   const { setMenuBarHeight, titleBarHeight } = useLayoutContext();
 
   const toast = useToast();
@@ -137,6 +142,9 @@ export const ProjectMenuBar = () => {
             }}
           >
             Clear filters
+          </MenuItem>
+          <MenuItem icon={<MdClearAll />} onClick={mergeDataframesModal.onOpen}>
+            Merge dataframes
           </MenuItem>
           <MenuItem
             icon={<MdClearAll />}
