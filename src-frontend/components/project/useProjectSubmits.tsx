@@ -3,6 +3,7 @@ import {
   delOnDatafile,
   postOnDatafile,
   putOnDatafile,
+  reqMergeDataframes,
 } from "../../client/requests";
 import { createStandaloneToast } from "@chakra-ui/react";
 const { toast } = createStandaloneToast();
@@ -56,4 +57,16 @@ export const createDatafile = async (
     if (successCallback) successCallback();
   }
   return res;
+};
+
+export const mergeDataframes = async (
+  fileId: number,
+  dataframes: string[],
+  successCallback?: () => void
+) => {
+  const res = await reqMergeDataframes(fileId, dataframes);
+
+  if (res.status === 200) {
+    if (successCallback) successCallback();
+  }
 };

@@ -213,3 +213,14 @@ export const postOnDatafile = async (body: CreateDatafile) => {
 
   return null;
 };
+
+export const reqMergeDataframes = async (id: number, dataframes: string[]) => {
+  const res = await httpReq({
+    url: REST_API_URL.merge_datafames(id),
+    method: "POST",
+    payload: {
+      dataframes: dataframes,
+    },
+  });
+  return res;
+};
