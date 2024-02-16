@@ -185,3 +185,15 @@ export const putOnDatafile = async (datafile: DataFile) => {
   }
   return null;
 };
+
+export const delOnDatafile = async (id: number) => {
+  const res = await httpReq({
+    url: REST_API_URL.datafile_id(id),
+    method: "DELETE",
+  });
+
+  if (res.status === 200) {
+    return res;
+  }
+  return null;
+};
