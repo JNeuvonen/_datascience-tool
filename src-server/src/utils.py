@@ -102,14 +102,26 @@ def get_datafile_columns(project_name, file_path, datafile_metadata):
         cursor = conn.cursor()
         table_name = get_datafile_table_name(project_name, file_path)
         cursor.execute(f'PRAGMA table_info("{table_name}")')
-        distinct_counts = json.loads(datafile_metadata.distinct_counts)
-        distinct_values = json.loads(datafile_metadata.distinct_values)
+        distinct_counts = (
+            json.loads(datafile_metadata.distinct_counts)
+            if datafile_metadata.distinct_counts
+            else None
+        )
+        distinct_values = (
+            json.loads(datafile_metadata.distinct_values)
+            if datafile_metadata.distinct_values
+            else None
+        )
         for row in cursor.fetchall():
             column_name = row[1]
             column_type = row[2]
 
-            distinct_count = distinct_counts.get(column_name)
-            categorical_values = distinct_values.get(column_name)
+            distinct_count = (
+                distinct_counts.get(column_name) if distinct_counts is not None else 0
+            )
+            categorical_values = (
+                distinct_values.get(column_name) if distinct_values is not None else 0
+            )
             first_row_value = get_first_nonnull(table_name, column_name)
 
             if distinct_count < 15:
