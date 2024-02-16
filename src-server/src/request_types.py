@@ -16,3 +16,8 @@ class BodyUploadDatasets(BaseModel):
 
 class BodyCreateProject(BaseModel):
     name: str
+
+
+class BodyCreateDatafile(BaseModel):
+    file_name: str
+    project_id: int

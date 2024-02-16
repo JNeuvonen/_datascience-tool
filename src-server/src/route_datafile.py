@@ -4,6 +4,7 @@ from decorators import HttpResponseContext
 
 from query_datafile import DatafileQuery, DatafileSchema
 from query_project import ProjectQuery
+from request_types import BodyCreateDatafile
 from utils import get_datafile_table_name, rename_table
 
 
@@ -11,6 +12,7 @@ class RoutePaths:
     PUT = "/"
     GET = "/{id}"
     DEL = "/{id}"
+    POST = "/"
 
 
 router = APIRouter()
@@ -61,6 +63,24 @@ async def route_delete_datafile(id: int):
             raise HTTPException(
                 status_code=400, detail=f"Datafile was not found for id {id}"
             )
+
+        return Response(
+            content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
+        )
+
+
+@router.post(RoutePaths.POST)
+async def route_create_file(body: BodyCreateDatafile):
+    with HttpResponseContext():
+        project = ProjectQuery.retrieve(body.project_id)
+
+        if project is None:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Project was not found for id {body.project_id}",
+            )
+
+        DatafileQuery.create_datafile_entry(body.model_dump())
 
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
