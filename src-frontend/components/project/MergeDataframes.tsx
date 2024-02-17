@@ -126,18 +126,32 @@ export const MergeDataframes = () => {
         {...setJoinColModal}
         title={"Set join column"}
         modalContentStyle={{
-          marginTop: "25%",
+          marginTop: "10%",
+          width: "700px",
         }}
       >
         {joinColModalFile && joinColModalFile.columns ? (
-          <Box marginTop={"16px"}>
-            {joinColModalFile.columns.map((item, idx) => {
-              return (
-                <Text key={idx} variant={TEXT_VARIANTS.clickable}>
-                  {item}
-                </Text>
-              );
-            })}
+          <Box>
+            <Text size={"xs"} variant={TEXT_VARIANTS.plain}>
+              Setting a join column is necessary in order to merge or aggregrate
+              dataframes. The join column values should be the same across the
+              project.
+            </Text>
+
+            <Text size={"xs"} variant={TEXT_VARIANTS.plain} marginTop={"6px"}>
+              <strong>{joinColModalFile.file_name}</strong> does not have the
+              same join column as the other dataframes in this project:{" "}
+              <strong>{projectQuery.data.project.join_column}</strong>
+            </Text>
+            <Box marginTop={"16px"}>
+              {joinColModalFile.columns.map((item, idx) => {
+                return (
+                  <Text key={idx} variant={TEXT_VARIANTS.clickable}>
+                    {item}
+                  </Text>
+                );
+              })}
+            </Box>
           </Box>
         ) : null}
       </ChakraModal>
