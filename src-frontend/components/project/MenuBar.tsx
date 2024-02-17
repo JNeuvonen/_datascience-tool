@@ -17,6 +17,7 @@ import { ROUTES, ROUTE_KEYS } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
 import { COLOR_BG_PRIMARY_SHADE_TWO } from "../../styles/colors";
 import { MdClearAll } from "react-icons/md";
+import { useMenuBarHelper } from ".";
 
 export const ProjectMenuBar = () => {
   const { project } = usePathParams<{ project: string }>();
@@ -27,6 +28,8 @@ export const ProjectMenuBar = () => {
     selectedFile,
     mergeDataframesModal,
   } = useProjectContext();
+  const { mergeDataframesIsDisabled } = useMenuBarHelper();
+
   const { setMenuBarHeight, titleBarHeight } = useLayoutContext();
 
   const toast = useToast();
@@ -143,9 +146,19 @@ export const ProjectMenuBar = () => {
           >
             Clear filters
           </MenuItem>
-          <MenuItem icon={<MdClearAll />} onClick={mergeDataframesModal.onOpen}>
-            Merge dataframes
-          </MenuItem>
+
+          <Tooltip
+            label="Project has fewer than two files currently"
+            isDisabled={!mergeDataframesIsDisabled()}
+          >
+            <MenuItem
+              icon={<MdClearAll />}
+              onClick={mergeDataframesModal.onOpen}
+              isDisabled={mergeDataframesIsDisabled()}
+            >
+              Merge dataframes
+            </MenuItem>
+          </Tooltip>
           <MenuItem
             icon={<MdClearAll />}
             onClick={() => {
