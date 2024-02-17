@@ -1,6 +1,5 @@
 import json
 from typing import Dict, List, Optional
-from fastapi import HTTPException
 from pydantic import BaseModel
 
 from sqlalchemy import Column, ForeignKey, Integer, String
@@ -15,16 +14,21 @@ class Datafile(Base):
     file_name = Column(String, nullable=False)
     df_table_name = Column(String, nullable=False, unique=True)
     size_bytes = Column(Integer)
+    row_count = Column(Integer)
     distinct_counts = Column(String, nullable=True)
     distinct_values = Column(String, nullable=True)
     was_import = Column(Integer)
     join_column = Column(String, nullable=True)
     merged_dataframes = Column(String, nullable=True)
+    columns = Column(String, nullable=True)
     project_id = Column(Integer, ForeignKey("project.id"), nullable=False)
 
     def deserialize(self):
         if self.merged_dataframes:
             self.merged_dataframes = json.loads(self.merged_dataframes)
+
+        if self.columns:
+            self.columns = json.loads(self.columns)
 
 
 class DatafileSchema(BaseModel):
@@ -32,11 +36,13 @@ class DatafileSchema(BaseModel):
     file_name: str
     df_table_name: Optional[str]
     size_bytes: Optional[int]
+    row_count: Optional[int]
     distinct_counts: Optional[str]
     distinct_values: Optional[str]
     was_import: Optional[int]
     join_column: Optional[str]
     merged_dataframes: Optional[List[str]]
+    columns: Optional[List[str]]
     project_id: int
 
 
@@ -88,6 +94,9 @@ class DatafileQuery:
     @staticmethod
     def update_datafile(datafile_schema: DatafileSchema):
         datafile_info = datafile_schema.model_dump(exclude_unset=True)
+        columns = datafile_info.get("columns")
+        if columns is not None:
+            datafile_info["columns"] = json.dumps(columns)
         with Session() as session:
             datafile_id = datafile_info.pop("id", None)
             if datafile_id:
