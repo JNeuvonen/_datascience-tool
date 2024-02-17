@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   Heading,
+  IconButton,
   Text,
   Tooltip,
   useDisclosure,
@@ -16,6 +17,8 @@ import { BasicTable } from "../UnstyledTable";
 import { BUTTON_VARIANTS, TEXT_VARIANTS } from "../../theming";
 import { ChakraModal } from "../Modal";
 import { DataFile } from "../../client/requests";
+import { FaInfoCircle } from "react-icons/fa";
+import { useForceUpdate } from "../../hooks/useForceUpdate";
 
 export type SelectedDataframe = { [key: string]: boolean };
 
@@ -28,6 +31,8 @@ export const MergeDataframes = () => {
   const [joinColModalFile, setJoinColModalFile] = useState<DataFile | null>(
     null
   );
+
+  const forceUpdate = useForceUpdate();
 
   const selectedFiles = useRef<SelectedDataframe>({});
 
@@ -92,6 +97,7 @@ export const MergeDataframes = () => {
                   onChange={() => {
                     selectedFiles.current[item.file_name] =
                       !selectedFiles.current[item.file_name];
+                    forceUpdate();
                   }}
                 />
                 <span>{item.file_name}</span>
@@ -100,7 +106,7 @@ export const MergeDataframes = () => {
                 item.join_column
               ) : (
                 <Tooltip
-                  label="Dataframe has less than one column"
+                  label="Dataframe has one or less column(s)"
                   isDisabled={item.columns !== null && item.columns.length > 1}
                 >
                   <Button
@@ -113,7 +119,7 @@ export const MergeDataframes = () => {
                       setJoinColModal.onOpen();
                     }}
                   >
-                    Set join column
+                    Missing join column
                   </Button>
                 </Tooltip>
               ),
@@ -132,17 +138,32 @@ export const MergeDataframes = () => {
       >
         {joinColModalFile && joinColModalFile.columns ? (
           <Box>
-            <Text size={"xs"} variant={TEXT_VARIANTS.plain}>
-              Setting a join column is necessary in order to merge or aggregrate
-              dataframes. The join column values should be the same across the
-              project.
-            </Text>
+            <Tooltip
+              label={
+                <Box>
+                  <Text size={"xs"} variant={TEXT_VARIANTS.plain}>
+                    Setting a join column is necessary in order to merge or
+                    aggregrate dataframes. The join column values should be the
+                    same across the project.
+                  </Text>
 
-            <Text size={"xs"} variant={TEXT_VARIANTS.plain} marginTop={"6px"}>
-              <strong>{joinColModalFile.file_name}</strong> does not have the
-              same join column as the other dataframes in this project:{" "}
-              <strong>{projectQuery.data.project.join_column}</strong>
-            </Text>
+                  <Text
+                    size={"xs"}
+                    variant={TEXT_VARIANTS.plain}
+                    marginTop={"6px"}
+                  >
+                    <strong>{joinColModalFile.file_name}</strong> does not have
+                    the same join column as the other dataframes in this
+                    project:{" "}
+                    <strong>{projectQuery.data.project.join_column}</strong>
+                  </Text>
+                </Box>
+              }
+            >
+              <Box display={"flex"} alignItems={"center"} gap={"6px"}>
+                Info <FaInfoCircle />
+              </Box>
+            </Tooltip>
             <Box marginTop={"16px"}>
               {joinColModalFile.columns.map((item, idx) => {
                 return (
