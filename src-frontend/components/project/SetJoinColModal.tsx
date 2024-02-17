@@ -2,6 +2,7 @@ import { Box, Text, useToast } from "@chakra-ui/react";
 import { setJoinCol } from "../../client/requests";
 import { usePathParams } from "../../hooks/usePathParams";
 import { TEXT_VARIANTS } from "../../theming";
+import { useProjectContext } from "../../context/project";
 
 interface Props {
   successCallback: () => void;
@@ -12,6 +13,8 @@ interface Props {
 export const SetJoinColModal = (props: Props) => {
   const { onClose, commonColumns } = props;
   const { project } = usePathParams<{ project: string }>();
+  const { projectQuery } = useProjectContext();
+
   const toast = useToast();
   const onSubmit = async (selectedColumn: string) => {
     const res = await setJoinCol(project, selectedColumn);
@@ -24,6 +27,7 @@ export const SetJoinColModal = (props: Props) => {
         isClosable: true,
       });
       onClose();
+      projectQuery.refetch();
     }
   };
   return (

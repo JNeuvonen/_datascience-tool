@@ -189,6 +189,10 @@ def get_datafile_metadata(path: str, project_id, was_import=True):
             "distinct_counts": json.dumps(distinct_counts),
             "distinct_values": json.dumps(distinct_values),
             "df_table_name": get_datafile_table_name(project.name, file_name),
+            "columns": json.dumps(
+                get_columns(get_datafile_table_name(project.name, file_name))
+            ),
+            "row_count": count_rows(project.name, file_name, []),
         }
 
 
