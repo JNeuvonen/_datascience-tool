@@ -162,7 +162,7 @@ export const MergeDataframes = () => {
                 Info <FaInfoCircle />
               </Box>
             </Tooltip>
-            <Box marginTop={"16px"}>
+            <Box marginTop={"16px"} maxHeight={"500px"} overflowY={"auto"}>
               {joinColModalFile.columns.map((item, idx) => {
                 return (
                   <Text
