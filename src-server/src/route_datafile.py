@@ -18,6 +18,7 @@ class RoutePaths:
     GET = "/{id}"
     DEL = "/{id}"
     POST = "/"
+    SET_JOIN_COL = "/set-join-col/{id}"
     MERGE = "/merge/{id}"
 
 
@@ -113,6 +114,15 @@ async def route_merge_dataframes(id: int, body: BodyMergeDataframes):
         merge_dataframes(
             file.df_table_name, body.dataframes, join_prefix=body.join_prefix
         )
+        return Response(
+            content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
+        )
+
+
+@router.put(RoutePaths.SET_JOIN_COL)
+async def route_set_join_col(id: int, join_col: str):
+    with HttpResponseContext():
+        DatafileQuery.update_join_column(id, join_col)
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
         )
