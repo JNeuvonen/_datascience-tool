@@ -3,6 +3,7 @@ import {
   delOnDatafile,
   postOnDatafile,
   putOnDatafile,
+  putUpdateDfJoinCol,
   reqMergeDataframes,
 } from "../../client/requests";
 import { createStandaloneToast } from "@chakra-ui/react";
@@ -67,6 +68,25 @@ export const mergeDataframes = async (
   const res = await reqMergeDataframes(fileId, dataframes);
 
   if (res.status === 200) {
+    if (successCallback) successCallback();
+  }
+};
+
+export const dfUpdateJoinCol = async (
+  id: number,
+  joinCol: string,
+  successCallback?: () => void
+) => {
+  const res = await putUpdateDfJoinCol(id, joinCol);
+
+  if (res.status === 200) {
+    toast({
+      title: "Updated join column",
+      position: "bottom-left",
+      status: "info",
+      duration: 5000,
+      isClosable: true,
+    });
     if (successCallback) successCallback();
   }
 };

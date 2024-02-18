@@ -19,10 +19,11 @@ import { ChakraModal } from "../Modal";
 import { DataFile } from "../../client/requests";
 import { FaInfoCircle } from "react-icons/fa";
 import { useForceUpdate } from "../../hooks/useForceUpdate";
+import { dfUpdateJoinCol } from ".";
 
 export type SelectedDataframe = { [key: string]: boolean };
 
-const TABLE_COLS = ["File name", "Join column"];
+const TABLE_COLS = ["File name", "Rows", "Join column"];
 
 export const MergeDataframes = () => {
   const { projectQuery, selectedFile, mergeDataframesModal } =
@@ -102,27 +103,24 @@ export const MergeDataframes = () => {
                 />
                 <span>{item.file_name}</span>
               </Box>,
-              item.join_column ? (
-                item.join_column
-              ) : (
-                <Tooltip
-                  label="Dataframe has one or less column(s)"
-                  isDisabled={item.columns !== null && item.columns.length > 1}
+              item.row_count,
+              <Tooltip
+                label="Dataframe has one or less column(s)"
+                isDisabled={item.columns !== null && item.columns.length > 1}
+              >
+                <Button
+                  height={"20px"}
+                  variant={BUTTON_VARIANTS.nofill}
+                  fontSize={"14px"}
+                  isDisabled={!item.columns}
+                  onClick={() => {
+                    setJoinColModalFile(item);
+                    setJoinColModal.onOpen();
+                  }}
                 >
-                  <Button
-                    height={"20px"}
-                    variant={BUTTON_VARIANTS.nofill}
-                    fontSize={"14px"}
-                    isDisabled={!item.columns}
-                    onClick={() => {
-                      setJoinColModalFile(item);
-                      setJoinColModal.onOpen();
-                    }}
-                  >
-                    Missing join column
-                  </Button>
-                </Tooltip>
-              ),
+                  {item.join_column ? item.join_column : "Missing"}
+                </Button>
+              </Tooltip>,
             ];
           })}
       />
@@ -167,7 +165,16 @@ export const MergeDataframes = () => {
             <Box marginTop={"16px"}>
               {joinColModalFile.columns.map((item, idx) => {
                 return (
-                  <Text key={idx} variant={TEXT_VARIANTS.clickable}>
+                  <Text
+                    key={idx}
+                    variant={TEXT_VARIANTS.clickable}
+                    onClick={() =>
+                      dfUpdateJoinCol(joinColModalFile.id, item, () => {
+                        projectQuery.refetch();
+                        setJoinColModal.onClose();
+                      })
+                    }
+                  >
                     {item}
                   </Text>
                 );
