@@ -228,3 +228,11 @@ export const reqMergeDataframes = async (id: number, dataframes: string[]) => {
   });
   return res;
 };
+
+export const putUpdateDfJoinCol = async (id: number, joinCol: string) => {
+  const res = await httpReq({
+    url: REST_API_URL.df_set_join_col(id, joinCol),
+    method: "PUT",
+  });
+  return res;
+};
