@@ -125,3 +125,10 @@ class DatafileQuery:
                 {"df_table_name": df_table_name}
             )
             session.commit()
+
+    @staticmethod
+    def update_row_metadata(id: int, metadata: Dict):
+        with LogException():
+            with Session() as session:
+                session.query(Datafile).filter(Datafile.id == id).update(metadata)
+                session.commit()
