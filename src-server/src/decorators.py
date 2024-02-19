@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from functools import wraps
 import inspect
+import time
 from fastapi import HTTPException
 import logging
 from config import is_debug
@@ -81,3 +82,12 @@ def HttpResponseContext(endpoint_call_success_msg=""):
             )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@contextmanager
+def Time():
+    start_time = time.time()
+    yield
+    end_time = time.time()
+    elapsed_time_ms = (end_time - start_time) * 1000  # Convert seconds to milliseconds
+    print(f"Time: {elapsed_time_ms:.2f} milliseconds")
