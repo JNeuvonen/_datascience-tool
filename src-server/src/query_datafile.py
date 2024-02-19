@@ -17,6 +17,7 @@ class Datafile(Base):
     row_count = Column(Integer)
     distinct_counts = Column(String, nullable=True)
     distinct_values = Column(String, nullable=True)
+    first_non_null_values = Column(String, nullable=True)
     was_import = Column(Integer)
     join_column = Column(String, nullable=True)
     merged_dataframes = Column(String, nullable=True)
@@ -39,6 +40,7 @@ class DatafileSchema(BaseModel):
     row_count: Optional[int]
     distinct_counts: Optional[str]
     distinct_values: Optional[str]
+    first_non_null_values: Optional[str]
     was_import: Optional[int]
     join_column: Optional[str]
     merged_dataframes: Optional[List[str]]
