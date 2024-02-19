@@ -14,10 +14,10 @@
 ### Currently supported features (project is still being developed)
 
 - Import & export datasets
-- Quickly inspect the rows of very large datasets using pagination (tested to be quick on +20m rows).
+- Quickly inspect the rows of very large datasets using pagination (tested to be quick on +20m rows)
 - Advanced filtering options based on the column type (categorical, date, number etc.)
-- Combine datasets, create row-wise aggregations, and remove nulls.
-- Create new datasets based on the existing ones.
+- Combine datasets, create row-wise aggregations, and remove nulls
+- Create new datasets based on the existing ones
 - Visualize data
 
 <img width="1722" alt="image" src="https://github.com/JNeuvonen/_datascience-tool/assets/74303261/219e1370-c3bc-4887-8f90-9d62cb23fc7c">
