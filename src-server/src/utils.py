@@ -23,7 +23,7 @@ from constants import (
     TextFilterTypes,
 )
 
-from decorators import LogException
+from decorators import LogException, Time
 from log import get_logger
 from query_datafile import DatafileQuery
 from query_project import ProjectQuery
@@ -68,6 +68,14 @@ def get_distinct_count(table_name: str, column_name: str):
         cursor.execute(f'SELECT COUNT(DISTINCT "{column_name}") FROM "{table_name}"')
         distinct_count = cursor.fetchone()[0]
         return distinct_count
+
+
+def get_table_size_in_bytes(table_name: str):
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT SUM(pgsize) FROM dbstat WHERE name='{table_name}'")
+        size = cursor.fetchone()[0]
+        return size
 
 
 def get_distinct_values(table_name: str, column_name: str):
@@ -115,6 +123,13 @@ def get_datafile_columns(project_name, file_path, datafile_metadata):
                 if datafile_metadata.distinct_values
                 else None
             )
+
+            first_non_null_values = (
+                json.loads(datafile_metadata.first_non_null_values)
+                if datafile_metadata.first_non_null_values
+                else None
+            )
+
             for row in cursor.fetchall():
                 column_name = row[1]
                 column_type = row[2]
@@ -129,9 +144,14 @@ def get_datafile_columns(project_name, file_path, datafile_metadata):
                     if distinct_values is not None
                     else 0
                 )
-                first_row_value = get_first_nonnull(table_name, column_name)
 
-                if distinct_count < 15:
+                first_row_value = (
+                    first_non_null_values.get(column_name)
+                    if first_non_null_values
+                    else None
+                )
+
+                if distinct_count is not None and distinct_count < 15:
                     columns.append(
                         {
                             "name": column_name,
@@ -160,18 +180,50 @@ def get_datafile_columns(project_name, file_path, datafile_metadata):
         return columns
 
 
-def get_datafile_metadata(path: str, project_id, was_import=True):
+def get_datafile_metadata(path: str):
+    with LogException():
+        table_size_bytes = get_table_size_in_bytes(path)
+        distinct_counts = {}
+        distinct_values = {}
+        first_non_null_values = {}
+
+        for item in get_columns(path):
+            count = get_distinct_count(path, item)
+            first_non_null_value = get_first_nonnull(path, item)
+
+            first_non_null_values[item] = first_non_null_value
+            distinct_counts[item] = count
+
+            if count and count < 15:
+                values = get_distinct_values(path, item)
+                distinct_values[item] = values
+            else:
+                distinct_values[item] = None
+
+        return {
+            "size_bytes": table_size_bytes,
+            "distinct_counts": json.dumps(distinct_counts),
+            "distinct_values": json.dumps(distinct_values),
+            "first_non_null_values": json.dumps(first_non_null_values),
+        }
+
+
+def get_datafile_init_metadata(path: str, project_id, was_import=True):
     with LogException():
         project = ProjectQuery.retrieve(project_id)
         file_size_bytes = os.path.getsize(path)
         file_name = get_path_last_item(path)
         distinct_counts = {}
         distinct_values = {}
+        first_non_null_values = {}
         for item in get_columns(get_datafile_table_name(project.name, file_name)):
             count = get_distinct_count(
                 get_datafile_table_name(project.name, file_name), item
             )
             distinct_counts[item] = count
+            first_non_null_values[item] = get_first_nonnull(
+                get_datafile_table_name(project.name, file_name), item
+            )
 
             if count < 15:
                 values = get_distinct_values(
@@ -188,6 +240,7 @@ def get_datafile_metadata(path: str, project_id, was_import=True):
             "was_import": was_import,
             "distinct_counts": json.dumps(distinct_counts),
             "distinct_values": json.dumps(distinct_values),
+            "first_non_null_values": json.dumps(first_non_null_values),
             "df_table_name": get_datafile_table_name(project.name, file_name),
             "columns": json.dumps(
                 get_columns(get_datafile_table_name(project.name, file_name))
@@ -487,7 +540,7 @@ def process_file(project_name, project_id, file_path):
                 first_chunk = False
 
         DatafileQuery.create_datafile_entry(
-            get_datafile_metadata(file_path, project_id)
+            get_datafile_init_metadata(file_path, project_id)
         )
 
 
@@ -578,8 +631,12 @@ def read_dataset_to_mem(dataset_name: str):
 def combine_two_datasets(
     base_df, secondary_df, base_join_col, secondary_join_col, join_prefix
 ):
-    if join_prefix is not None:
-        pass
+    secondary_df = secondary_df.drop(
+        secondary_df.columns.intersection(base_df.columns).difference(
+            [secondary_join_col]
+        ),
+        axis=1,
+    )
 
     merged_df = pd.merge(
         base_df,
@@ -592,24 +649,54 @@ def combine_two_datasets(
     return merged_df
 
 
-def merge_dataframes(
+async def merge_dataframes(
     base_df_table_name: str, list_of_df_table_names: List[str], join_prefix
 ):
-    base_df = read_dataset_to_mem(base_df_table_name)
+    async def func_wrapper():
+        base_df = read_dataset_to_mem(base_df_table_name)
 
-    base_df_metadata = DatafileQuery.retrieve(base_df_table_name, "df_table_name")
+        base_df_metadata = DatafileQuery.retrieve(base_df_table_name, "df_table_name")
 
-    for item in list_of_df_table_names:
-        df = read_dataset_to_mem(item)
-        datafile = DatafileQuery.retrieve(item, "df_table_name")
-        base_df = combine_two_datasets(
-            base_df, df, base_df_metadata.join_column, datafile.join_column, join_prefix
-        )
+        for item in list_of_df_table_names:
+            df = read_dataset_to_mem(item)
 
-    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
-        base_df.to_sql(
-            base_df_metadata.df_table_name,
-            conn,
-            if_exists="replace",
-            index=False,
-        )
+            if base_df.shape[0] == 0:
+                base_df = df
+                join_df_metadata = DatafileQuery.retrieve(item, "df_table_name")
+                DatafileQuery.update_join_column(
+                    base_df_metadata.id, join_df_metadata.join_column
+                )
+                base_df_metadata = DatafileQuery.retrieve(
+                    base_df_table_name, "df_table_name"
+                )
+                continue
+
+            datafile = DatafileQuery.retrieve(item, "df_table_name")
+            base_df = combine_two_datasets(
+                base_df,
+                df,
+                base_df_metadata.join_column,
+                datafile.join_column,
+                join_prefix,
+            )
+
+        with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+            base_df.to_sql(
+                base_df_metadata.df_table_name,
+                conn,
+                if_exists="replace",
+                index=False,
+            )
+
+        if base_df_metadata is None:
+            return
+
+        updated_df_metadata = get_datafile_metadata(base_df_metadata.df_table_name)
+        DatafileQuery.update_row_metadata(base_df_metadata.id, updated_df_metadata)
+
+    if is_testing():
+        await func_wrapper()
+    else:
+        executor = ThreadPoolExecutor()
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(executor, lambda: asyncio.run(func_wrapper()))
