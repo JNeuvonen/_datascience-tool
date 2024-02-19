@@ -9,7 +9,7 @@
 - Embedding that Python binary into a [tauri](https://github.com/tauri-apps/tauri) desktop application
 - Running the Python binary (FastAPI web server) from within Tauri's rust backend ([main.rs](https://github.com/JNeuvonen/backtest-engine/blob/master/src-tauri/src/main.rs#L64-L69)).
 - Now the [frontend](https://github.com/JNeuvonen/backtest-engine/tree/master/client) (Chromium powered) can call the Python server running locally without being dependent on or interfering with the system's Python.
-- This allows for creating a GUI for all the common data manipulation and visualization tasks done in the Python ecosystem while making the application easy-to-use and well-contained.
+- This allows for creating a GUI for the common data manipulation and visualization tasks done in the Python ecosystem while making the application easy-to-use and well-contained.
 
 ### Currently supported features (project is still being developed)
 
