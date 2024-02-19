@@ -1,9 +1,11 @@
+import asyncio
 from fastapi import APIRouter, Body, HTTPException, Response, status
+from config import is_testing
 from constants import AppConstants
 from decorators import HttpResponseContext
 
-from query_datafile import Datafile, DatafileQuery, DatafileSchema
-from query_project import Project, ProjectQuery
+from query_datafile import DatafileQuery, DatafileSchema
+from query_project import ProjectQuery
 from request_types import BodyCreateDatafile, BodyMergeDataframes
 from utils import (
     create_empty_table,
@@ -111,8 +113,18 @@ async def route_create_file(body: BodyCreateDatafile):
 async def route_merge_dataframes(id: int, body: BodyMergeDataframes):
     with HttpResponseContext():
         file = DatafileQuery.retrieve(id)
-        merge_dataframes(
-            file.df_table_name, body.dataframes, join_prefix=body.join_prefix
+
+        if is_testing():
+            # blocking control flow if testing
+            await merge_dataframes(
+                file.df_table_name, body.dataframes, body.join_prefix
+            )
+            return Response(
+                content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
+            )
+
+        asyncio.create_task(
+            merge_dataframes(file.df_table_name, body.dataframes, body.join_prefix)
         )
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
