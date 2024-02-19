@@ -17,7 +17,7 @@ from utils import (
     ag_grid_filters_struct_to_sql,
     count_rows,
     get_datafile_columns,
-    get_datafile_metadata,
+    get_datafile_init_metadata,
     get_dataset_pagination,
     get_join_col_actions,
     get_sizes_of_files,
@@ -56,7 +56,7 @@ async def route_upload_dataset(project_name: str, body: BodyUploadDataset):
             raise HTTPException(status_code=400, detail="Incorrect project ID")
 
         id = DatafileQuery.create_datafile_entry(
-            get_datafile_metadata(body.datasetPath, project.id)
+            get_datafile_init_metadata(body.datasetPath, project.id)
         )
         df = pd.read_csv(body.datasetPath)
         return {"id": id}
