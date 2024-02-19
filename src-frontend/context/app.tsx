@@ -39,7 +39,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           return response.json();
         })
         .catch();
-    }, 100);
+    }, 500);
 
     return () => clearInterval(interval);
   }, []);
