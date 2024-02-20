@@ -25,6 +25,7 @@ export interface ProjectContextType {
   renameDatafileModal: UseDisclosureReturn;
   mergeDataframesModal: UseDisclosureReturn;
   renameProjectModal: UseDisclosureReturn;
+  exportDataModal: UseDisclosureReturn;
   projectQuery: UseQueryResult<ProjectData | null, unknown>;
   fileColumnsQuery: UseQueryResult<ColumnInfo[] | null, unknown>;
   selectedFile: DataFile | null;
@@ -68,6 +69,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     swipeToLast,
     setSwipeToLast,
     mergeDataframesModal,
+    exportDataModal,
   } = useProjectState();
 
   const projectQuery = useProjectQuery(project);
@@ -150,6 +152,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
         deleteFileModal,
         fileSwiperRef,
         mergeDataframesModal,
+        exportDataModal,
       }}
     >
       <ProjectUXHelper />

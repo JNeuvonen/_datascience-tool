@@ -27,6 +27,7 @@ export const ProjectMenuBar = () => {
     gridApi,
     selectedFile,
     mergeDataframesModal,
+    exportDataModal,
   } = useProjectContext();
   const { mergeDataframesIsDisabled } = useMenuBarHelper();
 
@@ -88,7 +89,9 @@ export const ProjectMenuBar = () => {
           >
             Select imported file
           </MenuItem>
-          <MenuItem icon={<FaDownload />}>Export data</MenuItem>
+          <MenuItem icon={<FaDownload />} onClick={exportDataModal.onOpen}>
+            Export data
+          </MenuItem>
           <MenuItem icon={<FaFileSignature />}>Create a new dataframe</MenuItem>
           <MenuItem icon={<FaFileExcel />}>Save project</MenuItem>
         </ChakraMenu>

@@ -11,6 +11,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { updateDatafile } from ".";
 import { ConfirmModal } from "../ConfirmModal";
 import { deleteDatafile } from "./useProjectSubmits";
+import { ExportDataModal } from "./ExportDataModal";
 
 export const ProjectUXHelper = () => {
   const {
@@ -21,6 +22,7 @@ export const ProjectUXHelper = () => {
     selectedFileContext,
     deleteFileModal,
     mergeDataframesModal,
+    exportDataModal,
   } = useProjectContext();
 
   const navigate = useNavigate();
@@ -108,6 +110,16 @@ export const ProjectUXHelper = () => {
         }}
       >
         <MergeDataframes />
+      </ChakraModal>
+
+      <ChakraModal
+        {...exportDataModal}
+        title={"Export data"}
+        modalContentStyle={{
+          marginTop: "15%",
+        }}
+      >
+        <ExportDataModal />
       </ChakraModal>
       <ConfirmModal
         {...deleteFileModal}

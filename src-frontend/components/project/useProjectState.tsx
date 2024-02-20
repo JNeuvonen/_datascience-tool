@@ -15,6 +15,7 @@ export const useProjectState = () => {
   const importedFilesDrawer = useDisclosure();
   const renameProjectModal = useDisclosure();
   const mergeDataframesModal = useDisclosure();
+  const exportDataModal = useDisclosure();
 
   const [selectedFile, setSelectedFile] = useState<DataFile | null>(null);
   const [selectedFileContext, setSelectedFileContext] =
@@ -42,5 +43,6 @@ export const useProjectState = () => {
     swipeToLast,
     setSwipeToLast,
     mergeDataframesModal,
+    exportDataModal,
   };
 };
