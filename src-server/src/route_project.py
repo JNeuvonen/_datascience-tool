@@ -18,6 +18,7 @@ from utils import (
     count_rows,
     get_datafile_columns,
     get_datafile_init_metadata,
+    get_datafile_table_name,
     get_dataset_pagination,
     get_join_col_actions,
     get_sizes_of_files,
@@ -136,7 +137,10 @@ async def route_get_project_dataset(
             raise HTTPException(status_code=400, detail="Incorrect project name")
 
         pagination_data = get_dataset_pagination(
-            project.name, file_name, page, page_size, filters_arr
+            get_datafile_table_name(project.name, file_name),
+            page,
+            page_size,
+            filters_arr,
         )
 
         return {

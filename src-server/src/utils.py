@@ -491,7 +491,7 @@ def count_rows(project_name: str, file_path: str, filters: List[str]):
 
 
 def get_dataset_pagination(
-    project_name: str, file_path: str, page: int, page_size: int, filters: List[str]
+    table_name: str, page: int, page_size: int, filters: List[str]
 ):
     with LogException():
         offset = (page - 1) * page_size
@@ -500,7 +500,7 @@ def get_dataset_pagination(
 
         with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
             cursor = conn.cursor()
-            query = f'SELECT * FROM "{get_datafile_table_name(project_name, file_path)}" {where_conditions} LIMIT {page_size} OFFSET {offset};'
+            query = f'SELECT * FROM "{table_name}" {where_conditions} LIMIT {page_size} OFFSET {offset};'
             cursor.execute(query)
             return cursor.fetchall()
 
