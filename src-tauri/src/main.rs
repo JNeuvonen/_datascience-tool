@@ -41,7 +41,9 @@ fn main() {
             }
 
             if cfg!(debug_assertions) {
-                Command::new("python")
+                let python_path =
+                    std::env::var("DEV_PYTHON_PATH").unwrap_or_else(|_| "python".to_string());
+                Command::new(python_path)
                     .current_dir("../src-server/src")
                     .arg("-m")
                     .arg("uvicorn")
