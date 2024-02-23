@@ -30,7 +30,7 @@
 
 ### Env vars
 
-`DEV_PYTHON_PATH` Add this to `.env` within `the'src-tauri` directory. This should point to the Python runtime that you want to use for development.
+`DEV_PYTHON_PATH` Add this to `.env` within the `src-tauri` directory. This should point to the Python runtime that you want to use for development.
 
 
 ### Run locally
