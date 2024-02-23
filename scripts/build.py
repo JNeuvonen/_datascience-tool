@@ -21,6 +21,4 @@ def package_python_environment():
     print("Done packaging python environment")
 
 if __name__ == "__main__":
-    subprocess.run(['npm', 'install'], shell=True)
     package_python_environment()
-    subprocess.run(['npm', 'run', 'tauri', 'build'], shell=True)
