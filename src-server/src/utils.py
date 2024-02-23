@@ -286,7 +286,10 @@ def get_sizes_of_files(file_paths: List[str]):
                 except zipfile.BadZipFile as e:
                     raise e
             else:
-                pass
+                ret.append({
+                    "file_path": file_path,
+                    "uncompressed_size": os.path.getsize(file_path)
+                })
 
         return ret
 
