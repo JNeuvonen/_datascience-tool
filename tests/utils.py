@@ -37,8 +37,11 @@ def kill_process_on_port(port):
 
 
 def rm_file(path):
-    if os.path.isfile(path):
-        os.remove(path)
+    try:
+        if os.path.isfile(path):
+            os.remove(path)
+    except Exception:
+        pass
 
 
 def del_db_files():
