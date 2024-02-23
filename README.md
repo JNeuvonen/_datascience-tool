@@ -21,4 +21,20 @@
 - Visualize data
 
 <img width="1722" alt="image" src="https://github.com/JNeuvonen/_datascience-tool/assets/74303261/219e1370-c3bc-4887-8f90-9d62cb23fc7c">
+
+### Dev requirements
+
+- Python
+- Rust
+- Node (v18 or higher)
+
+### Run locally
+
+- `git clone https://github.com/JNeuvonen/_datascience-tool`
+- `cd _datascience-tool`
+- `npm install`
+- `npm run tauri dev`
+
+
+
  
