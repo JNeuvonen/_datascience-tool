@@ -18,7 +18,42 @@
 - Advanced filtering options based on the column type (categorical, date, number etc.)
 - Combine datasets, create row-wise aggregations, and other routine data manipulation
 - Create new datasets based on the existing ones
+- Cross platform (tested to work on Mac and Windows, Linux will come soon)
 - Visualize data
 
 <img width="1722" alt="image" src="https://github.com/JNeuvonen/_datascience-tool/assets/74303261/219e1370-c3bc-4887-8f90-9d62cb23fc7c">
+
+### Dev requirements
+
+- Python
+- Rust
+- Node (v18 or higher)
+
+### Env vars
+
+`DEV_PYTHON_PATH` Add this to `.env` within the `src-tauri` directory. This should point to the Python runtime that you want to use for development.
+
+### Run locally
+
+Before running the following steps, you should make sure that the Python runtime has the required dependencies. The full list of dependencies can be found at:'src-server/requirements.txt`.
+
+- `git clone https://github.com/JNeuvonen/_datascience-tool`
+- `cd _datascience-tool`
+- `npm install`
+- `npm run tauri dev`
+
+### Building for prod
+
+There's an additional requirement of installing pyoxidizer for packaging the python runtime into a binary. 
+
+- Run `python scripts/build.py`. This creates the python runtime binary that is used in production.
+- Set `PROD_PYTHON__BUILD` env var within `src-tauri` to point to the `pyserver` executable that the previous step created, here's an example:
+  `PROD_PYTHON_BUILD="/Users/Jarno/Documents/_datascience-tool/src-tauri/binaries/build/x86_64-pc-windows-msvc/debug/install/pyserver"`
+- Run `npm run tauri build`
+
+
+
+
+
+
  
