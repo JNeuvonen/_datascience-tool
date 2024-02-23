@@ -28,6 +28,11 @@
 - Rust
 - Node (v18 or higher)
 
+### Env vars
+
+`DEV_PYTHON_PATH` Add this to `.env` within `the'src-tauri` directory. This should point to the Python runtime that you want to use for development.
+
+
 ### Run locally
 
 - `git clone https://github.com/JNeuvonen/_datascience-tool`
