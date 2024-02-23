@@ -13,7 +13,7 @@ import os
 import shutil
 
 from sqlalchemy.engine import base
-from config import append_app_data_path, is_testing
+from config import append_app_data_path, is_os_windows, is_testing 
 from constants import (
     TEMP_EXTRACTED_FILES,
     AppConstants,
@@ -69,14 +69,17 @@ def get_distinct_count(table_name: str, column_name: str):
         distinct_count = cursor.fetchone()[0]
         return distinct_count
 
-
 def get_table_size_in_bytes(table_name: str):
     with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
         cursor = conn.cursor()
-        cursor.execute(f"SELECT SUM(pgsize) FROM dbstat WHERE name='{table_name}'")
-        size = cursor.fetchone()[0]
+        cursor.execute(f"PRAGMA page_count;")
+        page_count = cursor.fetchone()[0]
+        cursor.execute(f"PRAGMA page_size;")
+        page_size = cursor.fetchone()[0]
+        cursor.execute(f"SELECT count(*) FROM '{table_name}';")
+        row_count = cursor.fetchone()[0]
+        size = page_count * page_size * row_count
         return size
-
 
 def get_distinct_values(table_name: str, column_name: str):
     with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
@@ -250,12 +253,7 @@ def get_datafile_init_metadata(path: str, project_id, was_import=True):
 
 
 def get_path_last_item(path: str):
-    if "/" not in path:
-        return path
-
-    parts = path.split("/")
-
-    return parts[len(parts) - 1]
+    return os.path.basename(path)
 
 
 @contextmanager

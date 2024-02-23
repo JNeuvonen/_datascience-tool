@@ -2,6 +2,7 @@ import os
 
 APP_DATA_PATH = os.getenv("APP_DATA_PATH", "")
 ENV = os.getenv("ENV", "")
+OS = os.getenv("OS", "")
 IS_TESTING = os.getenv("IS_TESTING", "")
 IS_DEBUG = os.getenv("IS_DEBUG", "")
 
@@ -12,6 +13,10 @@ def is_prod():
 
 def is_dev():
     return ENV == "DEV"
+
+
+def is_os_windows():
+    return OS == "windows"
 
 
 def is_debug():

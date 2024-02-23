@@ -31,8 +31,11 @@ def get_context_frame_params():
 
 class Logger:
     def __init__(self, log_file, log_level=logging.INFO):
-        if os.path.exists(log_file):
-            os.remove(log_file)
+        try: 
+            if os.path.exists(log_file):
+                os.remove(log_file)
+        except Exception as e:
+            pass
 
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(log_level)
