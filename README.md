@@ -18,6 +18,7 @@
 - Advanced filtering options based on the column type (categorical, date, number etc.)
 - Combine datasets, create row-wise aggregations, and other routine data manipulation
 - Create new datasets based on the existing ones
+- Cross platform (tested to work on Mac and Windows, Linux will come soon)
 - Visualize data
 
 <img width="1722" alt="image" src="https://github.com/JNeuvonen/_datascience-tool/assets/74303261/219e1370-c3bc-4887-8f90-9d62cb23fc7c">
