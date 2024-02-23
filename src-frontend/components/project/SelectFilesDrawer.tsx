@@ -5,23 +5,22 @@ import {
   Heading,
   Switch,
   Tooltip,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { usePathParams } from "../../hooks/usePathParams";
-import { useEffect, useState } from "react";
-import { useUploadMetadataQuery } from "../../client/queries";
-import { UNNAMED_PROJECT_PLACEHOLDER } from "../../pages";
 import { open } from "@tauri-apps/api/dialog";
+import { useEffect, useState } from "react";
+import { FaFileExport } from "react-icons/fa6";
+import { useUploadMetadataQuery } from "../../client/queries";
 import { uploadDatasets } from "../../client/requests";
-import { ChakraCard } from "../Card";
+import { useProjectContext } from "../../context/project";
+import { usePathParams } from "../../hooks/usePathParams";
+import { UNNAMED_PROJECT_PLACEHOLDER } from "../../pages";
+import { COLOR_BG_PRIMARY_SHADE_FOUR } from "../../styles/colors";
 import { getPathLastItem } from "../../utils/content";
 import { formatToGigaBytes } from "../../utils/number";
-import { COLOR_BG_PRIMARY_SHADE_FOUR } from "../../styles/colors";
+import { ChakraCard } from "../Card";
 import { Label } from "../Label";
 import { FormSubmitBar } from "../SubmitBar";
-import { FaFileExport } from "react-icons/fa6";
-import { useProjectContext } from "../../context/project";
 
 interface SelectFilesDrawerProps {
   onClose: () => void;

@@ -1,4 +1,3 @@
-import React from "react";
 import { useContext, type HTMLProps } from "react";
 import { Icons } from "../components/icons";
 import TauriAppWindowContext from "../contexts/plugin-window";

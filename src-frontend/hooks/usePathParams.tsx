@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/ban-types */
 import { useParams } from "react-router-dom";
 
@@ -10,6 +11,7 @@ export const usePathParams = <T extends {} = {}>() => {
 
   const transformedParams = Object.keys(params).reduce((acc, key) => {
     const newKey = key.replace(":", "") as keyof T;
+    //@ts-ignore
     acc[newKey] = params[key];
     return acc;
   }, {} as PathParams<T>);

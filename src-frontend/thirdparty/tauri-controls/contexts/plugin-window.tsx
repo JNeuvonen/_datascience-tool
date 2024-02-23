@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+//@ts-ignore
 import type { Window } from "@tauri-apps/api/window";
 import React, { createContext, useCallback, useEffect, useState } from "react";
 import { useAppContext } from "../../../context/app";

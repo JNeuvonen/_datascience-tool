@@ -1,19 +1,16 @@
-import React, { CSSProperties } from "react";
 import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverBody,
-  PopoverFooter,
   PlacementWithLogical,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
 } from "@chakra-ui/react";
-import {
-  COLOR_BG_PRIMARY_SHADE_ONE,
-  COLOR_BG_TERTIARY,
-} from "../styles/colors";
+import React, { CSSProperties } from "react";
+import { COLOR_BG_PRIMARY_SHADE_ONE } from "../styles/colors";
 
 interface Props {
   children?: React.ReactNode;

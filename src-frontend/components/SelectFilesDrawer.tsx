@@ -8,22 +8,22 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { usePathParams } from "../hooks/usePathParams";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { useUploadMetadataQuery } from "../client/queries";
-import { UNNAMED_PROJECT_PLACEHOLDER } from "../pages";
 import { open } from "@tauri-apps/api/dialog";
+import { useEffect, useState } from "react";
+import { FaFileExport } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
+import { useUploadMetadataQuery } from "../client/queries";
 import { uploadDatasets } from "../client/requests";
-import { ChakraCard } from "./Card";
+import { usePathParams } from "../hooks/usePathParams";
+import { UNNAMED_PROJECT_PLACEHOLDER } from "../pages";
+import { COLOR_BG_PRIMARY_SHADE_FOUR } from "../styles/colors";
+import { ROUTES, ROUTE_KEYS } from "../utils/constants";
 import { getPathLastItem } from "../utils/content";
 import { formatToGigaBytes } from "../utils/number";
-import { COLOR_BG_PRIMARY_SHADE_FOUR } from "../styles/colors";
-import { ChakraModal } from "./Modal";
-import { ROUTES, ROUTE_KEYS } from "../utils/constants";
+import { ChakraCard } from "./Card";
 import { Label } from "./Label";
+import { ChakraModal } from "./Modal";
 import { FormSubmitBar } from "./SubmitBar";
-import { FaFileExport } from "react-icons/fa6";
 import { NameProjectModal } from "./project/NameProjectModal";
 
 interface SelectFilesDrawerProps {

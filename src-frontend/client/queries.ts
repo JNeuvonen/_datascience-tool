@@ -1,15 +1,14 @@
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
+import { UNNAMED_PROJECT_PLACEHOLDER } from "../pages";
 import { QUERY_KEYS } from "../utils/constants";
 import {
   FileMetadata,
-  Project,
   ProjectData,
   getDatafileColumns,
   getFileUploadMetadata,
   getProjectData,
   getProjects,
 } from "./requests";
-import { UNNAMED_PROJECT_PLACEHOLDER } from "../pages";
 
 export function useUploadMetadataQuery(
   files: string[]

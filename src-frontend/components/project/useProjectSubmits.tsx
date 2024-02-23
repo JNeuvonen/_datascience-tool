@@ -91,20 +91,20 @@ export const dfUpdateJoinCol = async (
   }
 };
 
-export async function saveDatasetFile(id: number, filters: string[]) {
-  const response = await fetch(URLS.downloadDataset(datasetName));
-  if (!response.ok) throw new Error("Network response was not ok.");
+// export async function saveDatasetFile(id: number, filters: string[]) {
+//   const response = await fetch(URLS.downloadDataset(datasetName));
+//   if (!response.ok) throw new Error("Network response was not ok.");
 
-  const blob = await response.blob();
+//   const blob = await response.blob();
 
-  if (window.__TAURI__) {
-    const arrayBuffer = await blob.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    const filePath = await save({ defaultPath: `${datasetName}.csv` });
-    if (filePath) {
-      await writeBinaryFile({ path: filePath, contents: uint8Array });
-    }
-  } else {
-    saveAs(blob, `${datasetName}.csv`);
-  }
-}
+//   if (window.__TAURI__) {
+//     const arrayBuffer = await blob.arrayBuffer();
+//     const uint8Array = new Uint8Array(arrayBuffer);
+//     const filePath = await save({ defaultPath: `${datasetName}.csv` });
+//     if (filePath) {
+//       await writeBinaryFile({ path: filePath, contents: uint8Array });
+//     }
+//   } else {
+//     saveAs(blob, `${datasetName}.csv`);
+//   }
+// }

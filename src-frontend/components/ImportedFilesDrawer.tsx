@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { useProjectContext } from "../context/project";
-import { BasicTable } from "./UnstyledTable";
 import { formatBytes } from "../utils/number";
+import { BasicTable } from "./UnstyledTable";
 
 interface SelectFilesDrawerProps {
   onClose: () => void;

@@ -1,17 +1,16 @@
-import { useEffect } from "react";
-import { useProjectContext } from "../../context/project";
-import { Box, useToast } from "@chakra-ui/react";
-import { ChakraModal } from "../Modal";
-import { SetJoinColModal } from "./SetJoinColModal";
-import { MergeDataframes, NameProjectModal } from ".";
-import { useNavigate } from "react-router-dom";
-import { ROUTES, ROUTE_KEYS } from "../../utils/constants";
-import { TextInputModal } from "../PromptTextInputModal";
+import { useToast } from "@chakra-ui/react";
 import cloneDeep from "lodash/cloneDeep";
-import { updateDatafile } from ".";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { MergeDataframes, NameProjectModal, updateDatafile } from ".";
+import { useProjectContext } from "../../context/project";
+import { ROUTES, ROUTE_KEYS } from "../../utils/constants";
 import { ConfirmModal } from "../ConfirmModal";
-import { deleteDatafile } from "./useProjectSubmits";
+import { ChakraModal } from "../Modal";
+import { TextInputModal } from "../PromptTextInputModal";
 import { ExportDataModal } from "./ExportDataModal";
+import { SetJoinColModal } from "./SetJoinColModal";
+import { deleteDatafile } from "./useProjectSubmits";
 
 export const ProjectUXHelper = () => {
   const {

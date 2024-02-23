@@ -1,12 +1,11 @@
-import React from "react";
 import { useEffect, useState } from "react";
+import { useAppContext } from "../../context/app";
 import { cn } from "./libs/utils";
 import type { WindowTitlebarProps } from "./types";
 import {
   WindowControls,
   convertPlatformToRightFormat,
 } from "./window-controls";
-import { useAppContext } from "../../context/app";
 
 export function WindowTitlebar({
   children,

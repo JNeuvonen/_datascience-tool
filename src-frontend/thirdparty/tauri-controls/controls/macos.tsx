@@ -1,9 +1,8 @@
-import React from "react";
 import { useContext, useEffect, useState, type HTMLProps } from "react";
-import { Icons } from "../components/icons";
-import { cn } from "../libs/utils";
 import { Button } from "../components/button";
+import { Icons } from "../components/icons";
 import TauriAppWindowContext from "../contexts/plugin-window";
+import { cn } from "../libs/utils";
 
 export function MacOS({ className, ...props }: HTMLProps<HTMLDivElement>) {
   const { minimizeWindow, maximizeWindow, fullscreenWindow, closeWindow } =

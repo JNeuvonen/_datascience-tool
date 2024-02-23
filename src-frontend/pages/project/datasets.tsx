@@ -1,16 +1,17 @@
 import { Box } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
 import { ChakraDrawer } from "../../components/Drawer";
+import { ImportedFilesDrawer } from "../../components/ImportedFilesDrawer";
+import { BottomMenu } from "../../components/project/BottomMenu";
+import { DatasetDataGrid } from "../../components/project/DataGrid";
+import { DataGridSkeleton } from "../../components/project/DataGridSkeleton";
 import { SelectFilesDrawer } from "../../components/project/SelectFilesDrawer";
 import { useProjectContext } from "../../context/project";
-import useQueryParams from "../../hooks/useQueryParams";
-import { removeQueryParam } from "../../utils/location";
-import { ImportedFilesDrawer } from "../../components/ImportedFilesDrawer";
-import { DatasetDataGrid } from "../../components/project/DataGrid";
 import { usePathParams } from "../../hooks/usePathParams";
+import useQueryParams from "../../hooks/useQueryParams";
 import { getAgGridFilterType } from "../../utils/dataset";
-import { DataGridSkeleton } from "../../components/project/DataGridSkeleton";
-import { BottomMenu } from "../../components/project/BottomMenu";
+import { removeQueryParam } from "../../utils/location";
+import { CellClickedEvent, CellValueChangedEvent } from "ag-grid-community";
 
 interface PageQueryParams {
   openFileSelection: string | undefined;
@@ -70,8 +71,12 @@ export const ProjectDatasetsPage = () => {
                   : {},
             };
           })}
-          onCellClicked={(e: CellClickedEvent) => {}}
-          handleCellValueChanged={(rowData: CellValueChangedEvent) => {}}
+          onCellClicked={(e: CellClickedEvent) => {
+            console.log(e);
+          }}
+          handleCellValueChanged={(rowData: CellValueChangedEvent) => {
+            console.log(rowData);
+          }}
           columnLabels={fileColumnsQuery.data.map((item) => item.name)}
           projectName={project}
         />

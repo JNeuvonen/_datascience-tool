@@ -1,10 +1,9 @@
-import React from "react";
 import { useEffect, useState } from "react";
+import { useAppContext } from "../../context/app";
 import { TauriAppWindowProvider } from "./contexts/plugin-window";
 import { Gnome, MacOS, Windows } from "./controls";
-import type { WindowControlsProps } from "./types";
-import { useAppContext } from "../../context/app";
 import { cn } from "./libs/utils";
+import type { WindowControlsProps } from "./types";
 
 export const convertPlatformToRightFormat = (platform: string) => {
   switch (platform) {
