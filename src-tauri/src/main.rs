@@ -40,6 +40,8 @@ fn main() {
                 fs::create_dir_all(&app_data_path).expect("Failed to create app data directory");
             }
 
+            let current_os = fetch_platform();
+
             if cfg!(debug_assertions) {
                 let python_path =
                     std::env::var("DEV_PYTHON_PATH").unwrap_or_else(|_| "python".to_string());
@@ -51,6 +53,7 @@ fn main() {
                     .arg("--reload")
                     .env("APP_DATA_PATH", &app_data_path)
                     .env("ENV", "DEV")
+                    .env("OS", current_os)
                     .spawn()
                     .expect("Failed to start FastAPI server")
             } else {
@@ -67,6 +70,7 @@ fn main() {
                     .stdout(Stdio::piped())
                     .env("APP_DATA_PATH", &app_data_path)
                     .env("ENV", "PROD")
+                    .env("OS", current_os)
                     .spawn()
                     .expect("Failed to start FastAPI server")
             };
