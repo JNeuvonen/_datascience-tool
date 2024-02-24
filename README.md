@@ -50,6 +50,7 @@ There's an additional requirement of installing pyoxidizer for packaging the pyt
 - Set `PROD_PYTHON__BUILD` env var within `src-tauri` to point to the `pyserver` executable that the previous step created, here's an example:
   `PROD_PYTHON_BUILD="/Users/Jarno/Documents/_datascience-tool/src-tauri/binaries/build/x86_64-pc-windows-msvc/debug/install/pyserver"`
 - Run `npm run tauri build`
+- Artifacts will be found from src-tauri/target
 
 
 
