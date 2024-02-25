@@ -49,7 +49,7 @@ fn main() {
                     .current_dir("../src-server/src")
                     .arg("-m")
                     .arg("uvicorn")
-                    .arg("main:app") 
+                    .arg("server:app")
                     .arg("--reload")
                     .env("APP_DATA_PATH", &app_data_path)
                     .env("ENV", "DEV")
@@ -57,14 +57,13 @@ fn main() {
                     .spawn()
                     .expect("Failed to start FastAPI server")
             } else {
+                // let py_build_path = fetch_env("PROD_PYTHON_BUILD".to_string()).unwrap();
 
-                let py_build_path = fetch_env("PROD_PYTHON_BUILD".to_string()).unwrap();
-                
                 let binary_path = app
                     .path_resolver()
                     .resource_dir()
                     .unwrap()
-                    .join(py_build_path)
+                    .join("binaries/build/aarch64-apple-darwin/debug/install/pyserver")
                     .to_str()
                     .unwrap()
                     .to_string();
