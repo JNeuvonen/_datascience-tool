@@ -10,8 +10,35 @@
     "version": "0.0.0"
   },
   "tauri": {
+    "macOSPrivateApi": true,
     "allowlist": {
-      "all": true
+      "all": true,
+      "shell": {
+        "all": false,
+        "open": true
+      },
+      "os": {
+        "all": true
+      },
+      "window": {
+        "all": true
+      },
+      "fs": {
+        "writeFile": true,
+        "readFile": true,
+        "copyFile": true,
+        "createDir": true,
+        "removeDir": true,
+        "removeFile": true,
+        "renameFile": true
+      },
+      "http": {
+        "all": true
+      },
+      "dialog": {
+        "open": true,
+        "save": true
+      }
     },
     "bundle": {
       "active": true,
