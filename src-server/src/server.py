@@ -62,7 +62,7 @@ def route_get_root():
 
 def run():
     uvicorn.run(
-        "main:app",
+        "server:app",
         host="0.0.0.0",
         port=8001 if is_testing() else 8000,  # makes running integration tests easier
         log_level="info",
