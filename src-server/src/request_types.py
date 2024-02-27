@@ -26,3 +26,9 @@ class BodyCreateDatafile(BaseModel):
 class BodyMergeDataframes(BaseModel):
     dataframes: List[str]
     join_prefix: Optional[str] = Field(default=None)
+
+
+class BodyExportDataframe(BaseModel):
+    export_all: bool
+    data_idx_start: int
+    data_idx_end: int

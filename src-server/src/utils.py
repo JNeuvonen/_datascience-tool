@@ -13,7 +13,7 @@ import os
 import shutil
 
 from sqlalchemy.engine import base
-from config import append_app_data_path, is_os_windows, is_testing 
+from config import append_app_data_path, is_os_windows, is_testing
 from constants import (
     TEMP_EXTRACTED_FILES,
     AppConstants,
@@ -69,6 +69,7 @@ def get_distinct_count(table_name: str, column_name: str):
         distinct_count = cursor.fetchone()[0]
         return distinct_count
 
+
 def get_table_size_in_bytes(table_name: str):
     with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
         cursor = conn.cursor()
@@ -80,6 +81,7 @@ def get_table_size_in_bytes(table_name: str):
         row_count = cursor.fetchone()[0]
         size = page_count * page_size * row_count
         return size
+
 
 def get_distinct_values(table_name: str, column_name: str):
     with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
@@ -286,10 +288,12 @@ def get_sizes_of_files(file_paths: List[str]):
                 except zipfile.BadZipFile as e:
                     raise e
             else:
-                ret.append({
-                    "file_path": file_path,
-                    "uncompressed_size": os.path.getsize(file_path)
-                })
+                ret.append(
+                    {
+                        "file_path": file_path,
+                        "uncompressed_size": os.path.getsize(file_path),
+                    }
+                )
 
         return ret
 
@@ -489,6 +493,26 @@ def count_rows(project_name: str, file_path: str, filters: List[str]):
             query = f'SELECT COUNT(*) FROM "{get_datafile_table_name(project_name, file_path)}" {where_conditions};'
             cursor.execute(query)
             return cursor.fetchone()[0]
+
+
+def get_df_export(
+    table_name: str,
+    export_all: bool,
+    data_start: int,
+    data_end: int,
+    filters: List[str],
+):
+    with LogException():
+        where_conditions = "WHERE " + " AND ".join(filters) if filters else ""
+
+        with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+            if export_all:
+                query = f'SELECT * FROM "{table_name}" {where_conditions};'
+            else:
+                query = f'SELECT * FROM "{table_name}" {where_conditions} LIMIT {data_end} OFFSET {data_start};'
+
+            df = pd.read_sql_query(query, conn)
+            return df
 
 
 def get_dataset_pagination(
@@ -701,3 +725,10 @@ async def merge_dataframes(
         executor = ThreadPoolExecutor()
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(executor, lambda: asyncio.run(func_wrapper()))
+
+
+def cleanup_temp_csvs():
+    dir = append_app_data_path("")
+    for file in os.listdir(dir):
+        if file.endswith(".csv"):
+            os.remove(os.path.join(dir, file))

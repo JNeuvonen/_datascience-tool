@@ -1,18 +1,20 @@
 import asyncio
 import json
 from fastapi import APIRouter, Body, HTTPException, Response, status
-from config import is_testing
+from config import append_app_data_path, is_testing
 from constants import AppConstants
 from decorators import HttpResponseContext
 from fastapi import Query
 
 from query_datafile import DatafileQuery, DatafileSchema
 from query_project import ProjectQuery
-from request_types import BodyCreateDatafile, BodyMergeDataframes
+from request_types import BodyCreateDatafile, BodyExportDataframe, BodyMergeDataframes
 from utils import (
     ag_grid_filters_struct_to_sql,
+    cleanup_temp_csvs,
     create_empty_table,
     get_datafile_table_name,
+    get_df_export,
     merge_dataframes,
     rename_table,
 )
@@ -145,14 +147,30 @@ async def route_set_join_col(id: int, join_col: str):
 
 
 @router.get(RoutePaths.EXPORT)
-async def route_export_df(id: int, filters: str = Query(None)):
+async def route_export_df(
+    id: int, body: BodyExportDataframe, filters: str = Query(None)
+):
     with HttpResponseContext():
+        cleanup_temp_csvs()
+
         filters_parsed = json.loads(filters)
         filters_arr = []
 
         for key, value in filters_parsed.items():
             sql_filters = ag_grid_filters_struct_to_sql(key, value)
             filters_arr.append(sql_filters)
+
+        df_metadata = DatafileQuery.retrieve(id)
+        df = get_df_export(
+            df_metadata.df_table_name,
+            body.export_all,
+            body.data_idx_start,
+            body.data_idx_end,
+            filters_arr,
+        )
+        csv_path = append_app_data_path("temporal.csv")
+        df.to_csv(csv_path, index=False)
+
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
         )
