@@ -39,6 +39,7 @@ Before running the following steps, you should make sure that the Python runtime
 
 - `git clone https://github.com/JNeuvonen/_datascience-tool`
 - `cd _datascience-tool`
+- `pip install -r src-server/requirements.txt`
 - `npm install`
 - `npm run tauri dev`
 
