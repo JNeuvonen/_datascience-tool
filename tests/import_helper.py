@@ -3,7 +3,7 @@ from tests.constants import SERVER_SOURCE_DIR
 
 
 sys.path.append(SERVER_SOURCE_DIR)
-import main as main_helper
+import server as main_helper
 from orm import create_tables as ct, drop_tables as dt, db_delete_all_data as ddad
 from route_project import RoutePaths as ProjectRoutes
 from constants import APP_DB as APP_DB_HELPER, DATASET_DB_PATH as DATASET_DB_PATH_HELPER
