@@ -1,13 +1,16 @@
 import asyncio
+import json
 from fastapi import APIRouter, Body, HTTPException, Response, status
 from config import is_testing
 from constants import AppConstants
 from decorators import HttpResponseContext
+from fastapi import Query
 
 from query_datafile import DatafileQuery, DatafileSchema
 from query_project import ProjectQuery
 from request_types import BodyCreateDatafile, BodyMergeDataframes
 from utils import (
+    ag_grid_filters_struct_to_sql,
     create_empty_table,
     get_datafile_table_name,
     merge_dataframes,
@@ -22,6 +25,7 @@ class RoutePaths:
     POST = "/"
     SET_JOIN_COL = "/set-join-col/{id}"
     MERGE = "/merge/{id}"
+    EXPORT = "/export/{id}"
 
 
 router = APIRouter()
@@ -135,6 +139,20 @@ async def route_merge_dataframes(id: int, body: BodyMergeDataframes):
 async def route_set_join_col(id: int, join_col: str):
     with HttpResponseContext():
         DatafileQuery.update_join_column(id, join_col)
+        return Response(
+            content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
+        )
+
+
+@router.get(RoutePaths.EXPORT)
+async def route_export_df(id: int, filters: str = Query(None)):
+    with HttpResponseContext():
+        filters_parsed = json.loads(filters)
+        filters_arr = []
+
+        for key, value in filters_parsed.items():
+            sql_filters = ag_grid_filters_struct_to_sql(key, value)
+            filters_arr.append(sql_filters)
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK
         )
