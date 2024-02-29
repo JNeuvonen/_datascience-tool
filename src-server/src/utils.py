@@ -499,7 +499,7 @@ def get_df_export(
     table_name: str,
     export_all: bool,
     data_start: int,
-    data_end: int,
+    data_limit: int,
     filters: List[str],
 ):
     with LogException():
@@ -509,7 +509,7 @@ def get_df_export(
             if export_all:
                 query = f'SELECT * FROM "{table_name}" {where_conditions};'
             else:
-                query = f'SELECT * FROM "{table_name}" {where_conditions} LIMIT {data_end} OFFSET {data_start};'
+                query = f'SELECT * FROM "{table_name}" {where_conditions} LIMIT {data_limit} OFFSET {data_start};'
 
             df = pd.read_sql_query(query, conn)
             return df

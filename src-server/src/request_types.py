@@ -31,4 +31,4 @@ class BodyMergeDataframes(BaseModel):
 class BodyExportDataframe(BaseModel):
     export_all: bool
     data_idx_start: int
-    data_idx_end: int
+    data_limit: int

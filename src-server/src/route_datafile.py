@@ -146,14 +146,14 @@ async def route_set_join_col(id: int, join_col: str):
         )
 
 
-@router.get(RoutePaths.EXPORT)
+@router.post(RoutePaths.EXPORT)
 async def route_export_df(
     id: int, body: BodyExportDataframe, filters: str = Query(None)
 ):
     with HttpResponseContext():
         cleanup_temp_csvs()
 
-        filters_parsed = json.loads(filters)
+        filters_parsed = body.filters
         filters_arr = []
 
         for key, value in filters_parsed.items():
@@ -165,7 +165,7 @@ async def route_export_df(
             df_metadata.df_table_name,
             body.export_all,
             body.data_idx_start,
-            body.data_idx_end,
+            body.data_limit,
             filters_arr,
         )
         csv_path = append_app_data_path("temporal.csv")
