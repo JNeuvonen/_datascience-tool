@@ -1,12 +1,17 @@
+import { save } from "@tauri-apps/api/dialog";
 import {
+  BodyExportDataframe,
   DataFile,
   delOnDatafile,
+  exportDataframe,
   postOnDatafile,
   putOnDatafile,
   putUpdateDfJoinCol,
   reqMergeDataframes,
 } from "../../client/requests";
 import { createStandaloneToast } from "@chakra-ui/react";
+import { writeBinaryFile } from "@tauri-apps/api/fs";
+import { saveAs } from "file-saver";
 const { toast } = createStandaloneToast();
 
 export const updateDatafile = async (
@@ -91,20 +96,26 @@ export const dfUpdateJoinCol = async (
   }
 };
 
-// export async function saveDatasetFile(id: number, filters: string[]) {
-//   const response = await fetch(URLS.downloadDataset(datasetName));
-//   if (!response.ok) throw new Error("Network response was not ok.");
+export async function saveDatasetFile(
+  id: number,
+  body: BodyExportDataframe,
+  filters: string,
+  datasetName: string,
+  successCallback?: () => void
+) {
+  const response = await exportDataframe(id, body, filters);
+  if (!response.ok) throw new Error("Network response was not ok.");
 
-//   const blob = await response.blob();
-
-//   if (window.__TAURI__) {
-//     const arrayBuffer = await blob.arrayBuffer();
-//     const uint8Array = new Uint8Array(arrayBuffer);
-//     const filePath = await save({ defaultPath: `${datasetName}.csv` });
-//     if (filePath) {
-//       await writeBinaryFile({ path: filePath, contents: uint8Array });
-//     }
-//   } else {
-//     saveAs(blob, `${datasetName}.csv`);
-//   }
-// }
+  const blob = await response.blob();
+  if (window.__TAURI__) {
+    const arrayBuffer = await blob.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    const filePath = await save({ defaultPath: `${datasetName}.csv` });
+    if (filePath) {
+      await writeBinaryFile({ path: filePath, contents: uint8Array });
+      if (successCallback) successCallback();
+    }
+  } else {
+    saveAs(blob, `${datasetName}.csv`);
+  }
+}

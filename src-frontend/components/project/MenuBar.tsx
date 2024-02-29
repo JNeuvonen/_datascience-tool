@@ -89,9 +89,19 @@ export const ProjectMenuBar = () => {
           >
             Select imported file
           </MenuItem>
-          <MenuItem icon={<FaDownload />} onClick={exportDataModal.onOpen}>
-            Export data
-          </MenuItem>
+
+          <Tooltip
+            label="Select a file first"
+            isDisabled={selectedFile !== null}
+          >
+            <MenuItem
+              icon={<FaDownload />}
+              onClick={exportDataModal.onOpen}
+              isDisabled={!selectedFile}
+            >
+              Export data
+            </MenuItem>
+          </Tooltip>
           <MenuItem icon={<FaFileSignature />}>Create a new dataframe</MenuItem>
           <MenuItem icon={<FaFileExcel />}>Save project</MenuItem>
         </ChakraMenu>

@@ -236,3 +236,20 @@ export const putUpdateDfJoinCol = async (id: number, joinCol: string) => {
   });
   return res;
 };
+
+export interface BodyExportDataframe {
+  exportAll: boolean;
+  exportIdxStart: number;
+  exportIdxEnd: number;
+}
+
+export const exportDataframe = (
+  id: number,
+  body: BodyExportDataframe,
+  filters: string
+) => {
+  return fetch(REST_API_URL.df_export(id, filters), {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+};

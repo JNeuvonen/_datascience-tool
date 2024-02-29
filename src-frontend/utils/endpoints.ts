@@ -29,4 +29,6 @@ export const REST_API_URL = {
   merge_datafames: (id: number) => `${BASE_URL}/datafile/merge/${id}`,
   df_set_join_col: (id: number, joinCol: string) =>
     `${BASE_URL}/datafile/set-join-col/${id}?join_col=${joinCol}`,
+  df_export: (id: number, filters: string) =>
+    `${BASE_URL}/datafile/export/${id}?filters=${filters}`,
 };
