@@ -35,7 +35,7 @@
 
 ### Run locally
 
-Before running the following steps, you should make sure that the Python runtime has the required dependencies. The full list of dependencies can be found at:'src-server/requirements.txt`.
+Before running the following steps, you should make sure that the Python runtime has the required dependencies. The full list of dependencies can be found at: `src-server/requirements.txt`.
 
 - `git clone https://github.com/JNeuvonen/_datascience-tool`
 - `cd _datascience-tool`
