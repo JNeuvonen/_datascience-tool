@@ -95,7 +95,7 @@ export const LogProvider: React.FC<LogProviderProps> = ({ children }) => {
       });
       updateTitleBarContent(
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <Spinner size={"xs"} /> Added {filesDone}/{filesMax} files
+          <Spinner size={"xs"} /> Adding files: {filesDone}/{filesMax}
         </div>
       );
     } else if (msg.includes(BACKEND_STREAM_MESSAGES.file_upload_finish)) {
