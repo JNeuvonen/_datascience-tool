@@ -20,7 +20,7 @@ export const SetJoinColModal = (props: Props) => {
     const res = await setJoinCol(project, selectedColumn);
     if (res.status === 200 || res === "OK") {
       toast({
-        title: "Created project",
+        title: "Updated project's join column",
         position: "bottom-left",
         status: "info",
         duration: 5000,
