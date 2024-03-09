@@ -128,6 +128,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({
     messageName: DOM_EVENT_CHANNELS.refetch_component,
     messageCallback: () => {
       projectQuery.refetch();
+      fileColumnsQuery.refetch();
     },
   });
   return (

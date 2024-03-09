@@ -107,6 +107,9 @@ export const LogProvider: React.FC<LogProviderProps> = ({ children }) => {
         duration: 5000,
         isClosable: true,
       });
+      dispatchDomEvent({
+        channel: DOM_EVENT_CHANNELS.refetch_component,
+      });
     }
   };
 

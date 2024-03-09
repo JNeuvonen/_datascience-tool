@@ -78,7 +78,7 @@ export const DatasetDataGrid = ({
       };
       gridApi.setGridOption("datasource", dataSource);
     }
-  }, [gridApi, selectedFile]);
+  }, [gridApi, selectedFile, columnDefs]);
 
   return (
     <div
