@@ -13,6 +13,7 @@ from utils import (
     ag_grid_filters_struct_to_sql,
     cleanup_temp_csvs,
     create_empty_table,
+    delete_table,
     get_datafile_table_name,
     get_df_export,
     merge_dataframes,
@@ -83,12 +84,15 @@ async def route_get_file(id: int):
 @router.delete(RoutePaths.DEL)
 async def route_delete_datafile(id: int):
     with HttpResponseContext():
+        dfile = DatafileQuery.retrieve(id)
         was_success = DatafileQuery.delete(id)
 
-        if was_success is not True:
+        if was_success is not True or dfile is None:
             raise HTTPException(
                 status_code=400, detail=f"Datafile was not found for id {id}"
             )
+
+        delete_table(dfile.df_table_name)
 
         return Response(
             content="OK", media_type="text/plain", status_code=status.HTTP_200_OK

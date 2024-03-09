@@ -101,6 +101,12 @@ def get_first_nonnull(table_name: str, column_name: str):
         return first_row_value
 
 
+def delete_table(table_name: str):
+    with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
+        cursor = conn.cursor()
+        cursor.execute(f'DROP TABLE IF EXISTS "{table_name}"')
+
+
 def get_columns(table_name: str):
     with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
         cursor = conn.cursor()
@@ -678,11 +684,23 @@ async def merge_dataframes(
     base_df_table_name: str, list_of_df_table_names: List[str], join_prefix
 ):
     async def func_wrapper():
+        logger = get_logger()
+        logger.log(
+            Messages.UPLOAD_FILES.format(
+                FILES_DONE="0", FILES_MAX=len(list_of_df_table_names)
+            ),
+            logging.INFO,
+            False,
+            False,
+        )
+
         base_df = read_dataset_to_mem(base_df_table_name)
 
         base_df_metadata = DatafileQuery.retrieve(base_df_table_name, "df_table_name")
+        idx = 0
 
         for item in list_of_df_table_names:
+            idx += 1
             df = read_dataset_to_mem(item)
 
             if base_df.shape[0] == 0:
@@ -705,6 +723,15 @@ async def merge_dataframes(
                 join_prefix,
             )
 
+            logger.log(
+                Messages.UPLOAD_FILES.format(
+                    FILES_DONE=idx, FILES_MAX=len(list_of_df_table_names)
+                ),
+                logging.INFO,
+                False,
+                False,
+            )
+
         with sqlite3.connect(AppConstants.DB_DATASETS) as conn:
             base_df.to_sql(
                 base_df_metadata.df_table_name,
@@ -718,6 +745,13 @@ async def merge_dataframes(
 
         updated_df_metadata = get_datafile_metadata(base_df_metadata.df_table_name)
         DatafileQuery.update_row_metadata(base_df_metadata.id, updated_df_metadata)
+
+        logger.log(
+            Messages.FILE_UPLOAD_FINISH,
+            logging.INFO,
+            False,
+            False,
+        )
 
     if is_testing():
         await func_wrapper()
