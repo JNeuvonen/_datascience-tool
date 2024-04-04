@@ -15,7 +15,7 @@
 
 - Import & export datasets
 - Quickly inspect the rows of very large datasets using pagination (tested to be quick on +20m rows)
-- Advanced filtering options based on the column type (categorical, date, number etc.)
+- Fine-grained filtering options based on the column type (categorical, date, number etc.)
 - Combine datasets, create row-wise aggregations, and other routine data manipulation
 - Create new datasets based on the existing ones
 - Cross platform (tested to work on Mac and Windows, Linux will come soon)
