@@ -2,6 +2,8 @@
 
 `_datascience-tool` is a tool for simplifying common computing tasks data scientists and ML engineers perform on datasets. These include tasks such as combining datasets, creating row-wise aggregations, visualizing & exploring data, and removing nulls. This is mostly dull-to-write and repetitive code that interfaces with pandas and matplotlib. This routine data manipulation and visualization code is repetitive and tedious to write, and `_datascience-tool` aims to automate these common data manipulation tasks.
 
+So to summarize the project in one sentence: automation to routine data visualization, combining, aggeration, and column creation tasks using Pandas and Matplotlib, all managed through a sophisticated user interface.
+
 
 ### Setup
 
